@@ -3,6 +3,13 @@
 Flutter + Kotlin + Python asosidagi Android haydovchi kuzatuvi prototipi.
 Interfeys o‘zbekcha, kod MVC asosida sodda qatlamlarga ajratilgan.
 
+## Loyiha maqsadi va ish qoidalari
+
+- [PROJECT_BRIEF](docs/PROJECT_BRIEF.md) — asl talablar, texnologiyalar va qabul qilish mezonlari.
+- [DEVELOPMENT_RULES](docs/DEVELOPMENT_RULES.md) — MVC, clean code, AI va kichik feat/fix commit qoidalari.
+- [PROJECT_STATUS](docs/PROJECT_STATUS.md) — tayyor/qolgan ishlar va keyingi sessiyada davom ettirish.
+- [AGENTS.md](AGENTS.md) — ushbu hujjatlarni har bir ish boshida o‘qish bo‘yicha agent ko‘rsatmasi.
+
 ## Hozirgi imkoniyatlar
 
 - Old kamera orqali yuz, ko‘z ochiqligi va boshning burilish/egilish burchaklari.
