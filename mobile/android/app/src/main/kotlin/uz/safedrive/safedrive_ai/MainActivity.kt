@@ -1,0 +1,132 @@
+package uz.safedrive.safedrive_ai
+
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.os.Build
+import android.view.WindowManager
+import androidx.core.content.ContextCompat
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodChannel
+import uz.safedrive.safedrive_ai.controller.AlarmController
+import uz.safedrive.safedrive_ai.controller.MonitorRuntime
+import uz.safedrive.safedrive_ai.controller.MonitorService
+import uz.safedrive.safedrive_ai.model.MonitorState
+import uz.safedrive.safedrive_ai.view.CameraPreviewFactory
+
+class MainActivity : FlutterActivity() {
+    private var pendingStart: MethodChannel.Result? = null
+    private var startAfterResume: MethodChannel.Result? = null
+    private var tester: AlarmController? = null
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        flutterEngine.platformViewsController.registry.registerViewFactory("uz.safedrive/camera", CameraPreviewFactory())
+        val messenger = flutterEngine.dartExecutor.binaryMessenger
+        EventChannel(messenger, "uz.safedrive/states").setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, sink: EventChannel.EventSink) {
+                MonitorRuntime.sink = sink
+                sink.success(MonitorRuntime.state.toMap())
+            }
+            override fun onCancel(arguments: Any?) { MonitorRuntime.sink = null }
+        })
+        MethodChannel(messenger, "uz.safedrive/monitor").setMethodCallHandler { call, result ->
+            val preferences = getSharedPreferences("monitor", MODE_PRIVATE)
+            when (call.method) {
+                "state" -> result.success(MonitorRuntime.state.toMap())
+                "start" -> requestStart(result)
+                "stop" -> { stopService(Intent(this, MonitorService::class.java)); result.success(null) }
+                "testAlarm" -> {
+                    if (MonitorRuntime.state.active) result.error("active", "Sinash uchun kuzatuvni to‘xtating.", null)
+                    else if (!audible()) result.error("volume", "Telefonning alarm ovozini balandlating.", null)
+                    else {
+                        try {
+                            tester?.close()
+                            tester = AlarmController(this) {}
+                            tester?.test()
+                            result.success(null)
+                        } catch (_: Exception) { result.error("audio", "Signalni ishga tushirib bo‘lmadi.", null) }
+                    }
+                }
+                "preferences" -> {
+                    if (call.arguments != null) {
+                        preferences.edit().putBoolean("voice", call.argument<Boolean>("voice") ?: true)
+                            .putBoolean("llm", call.argument<Boolean>("llm") ?: false).apply()
+                    }
+                    result.success(mapOf("voice" to preferences.getBoolean("voice", true),
+                        "llm" to preferences.getBoolean("llm", false)))
+                }
+                else -> result.notImplemented()
+            }
+        }
+    }
+
+    private fun audible() = getSystemService(AudioManager::class.java).getStreamVolume(AudioManager.STREAM_ALARM) > 0
+
+    private fun requestStart(result: MethodChannel.Result) {
+        if (pendingStart != null || startAfterResume != null) { result.error("busy", "Ruxsat javobini kuting.", null); return }
+        if (!audible()) { result.error("volume", "Telefonning alarm ovozini balandlating.", null); return }
+        val permissions = mutableListOf<String>()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+            permissions += Manifest.permission.CAMERA
+        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+            permissions += Manifest.permission.POST_NOTIFICATIONS
+        if (permissions.isEmpty()) startMonitor(result)
+        else { pendingStart = result; requestPermissions(permissions.toTypedArray(), 41) }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode != 41) return
+        val result = pendingStart ?: return
+        pendingStart = null
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (MonitorRuntime.activityVisible) startMonitor(result) else startAfterResume = result
+        }
+        else result.error("permission", "Kamera ruxsati kerak. Telefon sozlamalarida uni yoqing.", null)
+    }
+
+    private fun startMonitor(result: MethodChannel.Result) {
+        if (!MonitorRuntime.activityVisible) {
+            result.error("background", "Ilovani ochib, kuzatuvni qayta boshlang.", null); return
+        }
+        try {
+            tester?.close(); tester = null
+            ContextCompat.startForegroundService(this, Intent(this, MonitorService::class.java))
+            MonitorRuntime.publish(MonitorState("starting", "Kamera ochilmoqda", active = true))
+            result.success(null)
+        } catch (_: Exception) { result.error("service", "Kuzatuvni boshlab bo‘lmadi.", null) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        MonitorRuntime.activityVisible = true
+        MonitorRuntime.attachPreview()
+        startAfterResume?.let { result -> startAfterResume = null; startMonitor(result) }
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        MonitorRuntime.service?.updateRotation()
+    }
+
+    override fun onPause() {
+        MonitorRuntime.activityVisible = false
+        MonitorRuntime.attachPreview()
+        tester?.close(); tester = null
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        pendingStart?.error("closed", "Ilova yopildi. Qayta urinib ko‘ring.", null)
+        pendingStart = null
+        startAfterResume?.error("closed", "Ilova yopildi. Qayta urinib ko‘ring.", null)
+        startAfterResume = null
+        MonitorRuntime.sink = null
+        super.onDestroy()
+    }
+}
