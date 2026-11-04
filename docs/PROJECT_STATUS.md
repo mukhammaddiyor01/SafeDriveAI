@@ -1,0 +1,66 @@
+# SafeDriveAI — joriy holat va davom ettirish
+
+Oxirgi mazmuniy tekshiruv: **2026-11-05**. Bu hujjat tayyorlik holatini saqlaydi;
+mahsulotning yakuniy talablari [PROJECT_BRIEF.md](PROJECT_BRIEF.md)da.
+Dalillar: [VERIFICATION.md](VERIFICATION.md). O‘zgargan qismni yangi dalil bilan yangilang.
+
+## Joriy bosqich
+
+**Birinchi ishlaydigan prototip. To‘liq ko‘p burchakli yakuniy mahsulot hali tayyor emas.**
+Flutter + Kotlin + Python MVC tuzilmasi mavjud. APK 0.1.0+1, arm64, Android API 26+;
+lokal fayl `releases/SafeDriveAI.apk`. Repositoryga kod va hujjatlar yuborilgan.
+Oldingi bitta katta commit 29 ta kichik `feat:`/`fix:` commitga ajratilgan; keyin
+ish tartibi alohida commitda saqlangan. Keyingi o‘zgarishlar ham kichik commitlarda bajarilsin.
+
+## Talablar bo‘yicha holat
+
+| Talab | Hozir bor | Hali bajarilishi yoki tasdiqlanishi kerak |
+|---|---|---|
+| SD-01 Kamera | CameraX, preview va ML Kit tahlili emulyatorda ishladi | Galaxy A51 haqiqiy kamera sinovi |
+| SD-02 Yuz/ko‘z/bosh/bo‘yin | Yuz, ko‘z ehtimollari va bosh burchaklari; Python YOLO bosh/yelka tajribasi | To‘liq bo‘yin holati, ishonchlilik va maxsus modelni telefonga ulash |
+| SD-03 Alarm | Vaqtga asoslangan domain mantiq, ovoz/vibratsiya kodi va unit testlar | Haqiqiy ko‘z yumilishida kechikish, eshitilish va yolg‘on alarm sinovi |
+| SD-04 Fon | Android 13 emulyatorida Home va ekran o‘chganida tahlil davom etdi; notification Stop ishladi | A51’da uzoq ishlash, batareya, qizish, qo‘ng‘iroq va boshqa kamera bilan sinash |
+| SD-05 Ko‘p burchak | Yonboshda noaniq ko‘z holati limited sifatida ko‘rsatiladi | Yonbosh va turli tutqich burchaklari uchun model va haqiqiy baholash |
+| SD-06 Dataset/model | Manifest, subject split, PyTorch trening/baholash va YOLO vositalari bor | Haqiqiy datasetni tayyorlash, o‘qitish va held-out natijalar; mobil model adapteri |
+| SD-07 Ovoz/LLM | TTS eslatma, savol, mahalliy Ollama API adapteri va fallback | Haqiqiy Ollama modeli, o‘zbekcha ovoz, ovozli javobni tinglash va suhbat oqimi |
+| SD-08 USB APK | Release APK yig‘ildi, imzo va emulyatorga install tekshirildi | Galaxy A51’ga USB orqali o‘rnatish; telefon o‘sha sinovda ulanmagan |
+| SD-09 MVC | Flutter, Kotlin va Python qatlamlari ajratilgan | Keyingi funksiyalarda chegaralarni saqlash |
+| SD-10 Commit | Kichik feat/fix tarix va loyiha qoidalari mavjud | Har bir keyingi qadamda shu tartibga amal qilish |
+
+## Tekshirilgan boshlang‘ich dalillar
+
+- Flutter: static analysis toza, 3 ta controller/UI test o‘tgan.
+- Kotlin: vaqtga asoslangan mantiq uchun 8 ta unit test o‘tgan.
+- Python: dataset, pipeline va assistant uchun 10 ta test o‘tgan.
+- Release APK emulyatorda ochildi; R8 ML Kit registrar tuzatishi tekshirildi.
+- Home’dan keyin inferens hisoblagichi oshdi. Ekran Asleep holatida kuzatuvlar
+  260 → 567 bo‘ldi; oxirgi qayta ishlangan kadr yoshi 32 ms edi.
+- Python server /health va /question HTTP 200 qaytardi; haqiqiy LLM modeli
+  o‘rnatilmaganda offline fallback sinovdan o‘tdi.
+- YOLO/PyTorch sun’iy bo‘sh kadrda ishga tushdi. Trening pipeline ham sun’iy
+  tasvirlarda tekshirildi. **Bular haqiqiy haydovchi aniqligi natijalari emas.**
+
+## Keyingi ishlarning yo‘nalishi
+
+1. **Qurilma dalili:** Galaxy A51 Android versiyasi va USB ulanishi mavjud bo‘lganda
+   [DEVICE_TESTING.md](DEVICE_TESTING.md) bo‘yicha sinash; muammolarni alohida kichik fixlarda tuzatish.
+2. **Dataset:** mos manba va label’larni tanlash, subject split va turli burchaklar
+   qamrovini tayyorlash. Tartib: [DATASETS.md](DATASETS.md).
+3. **Maxsus model:** haqiqiy train/val/test bilan trening, burchaklar bo‘yicha
+   baholash va ishonchsiz holatlarni ajratish. O‘lchanmagan aniqlikni yozmaslik.
+4. **Mobil integratsiya:** tasdiqlangan modelni telefonga mos formatga export qilish,
+   preprocessing/natija tengligini va A51 tezligi/quvvatini tekshirish.
+5. **Ovozli yordamchi:** haqiqiy LLM/TTS oqimini sinash; ovozli javobni tinglashni
+   alohida kichik funksiyalar bilan qo‘shish. Alarmni suhbatga bog‘lamaslik.
+
+Bu tartib yangi funksiyalarni hozir avtomatik boshlash topshirig‘i emas. Foydalanuvchining
+joriy vazifasini bajaring; undagi ishni mos talab va keyingi qadam bilan bog‘lang.
+
+## Keyingi sessiyada davom ettirish
+
+1. `AGENTS.md`, PROJECT_BRIEF, DEVELOPMENT_RULES va ushbu faylni o‘qing.
+2. `git status`, oxirgi commitlar va tegishli kodni tekshiring; foydalanuvchi
+   o‘zgartirishlarini ustidan yozmang. Texnik detallar uchun ARCHITECTURE’ni oching.
+3. Bitta kichik natijani tanlang, tegishli tekshiruvni bajaring va feat/fix commit qiling.
+4. Yangi dalil yoki holat bo‘lsa shu faylni yangilang. Batafsil sinov dalilini
+   VERIFICATION’da sanasi bilan saqlang; eski sinovni bugungi sinov deb ko‘rsatmang.
