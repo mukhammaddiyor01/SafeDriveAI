@@ -1,0 +1,26 @@
+.DS_Store
+untitled folder/
+.venv/
+__pycache__/
+*.egg-info/
+*.py[cod]
+.pytest_cache/
+.env
+data/
+artifacts/
+runs/
+*.pt
+*.onnx
+*.tflite
+*.apk
+mobile/.dart_tool/
+mobile/.flutter-plugins*
+mobile/build/
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/key.properties
+*.jks
+*.keystore
+.idea/
+.tools/
+releases/
