@@ -1,0 +1,23 @@
+{
+  "policy": "80% train / 20% test, rounded to whole images, disjoint subjects",
+  "seed": 42,
+  "images": 84822,
+  "counts": {
+    "train": 67858,
+    "test": 16964
+  },
+  "test_fraction": 0.19999528424229562,
+  "subjects": {
+    "train": 30,
+    "test": 7
+  },
+  "history_audited": true,
+  "previously_used_test_images": 16964,
+  "history_note": "Any prior image or subject use marks the sample used",
+  "date": "2026-11-06",
+  "source": "MRL Eye 2018, existing locally used corpus",
+  "prior_experiment_manifest": "data/mrl/prepared-clean/manifest.csv",
+  "new_real_training_performed": false,
+  "new_test_inference_performed": false,
+  "conclusion": "Split meets rounded 80/20, but every test sample has prior use; obtain unused test data before a new real run."
+}
