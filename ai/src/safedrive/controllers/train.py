@@ -1,4 +1,4 @@
-"""Train on train subjects, select using validation, and keep the test set untouched."""
+"""Train only on train subjects; the default 80/20 protocol saves the fixed final epoch."""
 
 import argparse
 from datetime import datetime, timezone
@@ -58,26 +58,24 @@ def train(manifest: Path, output: Path, epochs: int, seed: int, *,
         raise ValueError(f"Output is not empty: {output}")
     selected_device = resolve_device(device)
     frame = read_prepared_manifest(manifest)
+    if set(frame.split) != {"train", "test"}:
+        raise ValueError("New training requires an 80/20 train/test manifest; legacy validation splits are historical only")
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.set_num_threads(threads)
     cv2.setNumThreads(1)
-    loaders = {
-        split: DataLoader(EyeDataset(frame[frame.split == split]), batch_size=batch_size,
-                          shuffle=split == "train", num_workers=0,
-                          generator=torch.Generator().manual_seed(seed))
-        for split in ("train", "val")
-    }
+    loader = DataLoader(EyeDataset(frame[frame.split == "train"]), batch_size=batch_size,
+                        shuffle=True, num_workers=0,
+                        generator=torch.Generator().manual_seed(seed))
     model = EyeClassifier(pool_size=pool_size).to(selected_device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
     criterion = nn.BCEWithLogitsLoss()
-    best_loss = float("inf")
     history = []
     output.mkdir(parents=True, exist_ok=True)
     card = {
         "input": "float32 NCHW [N,1,64,64], OpenCV grayscale / 255, INTER_AREA resize",
-        "output": "closed-eye logit; sigmoid then a separately selected threshold",
+        "output": "closed-eye logit; choose sigmoid threshold before test inference",
         "architecture": {"name": "EyeClassifier", "pool_size": pool_size},
         "seed": seed, "manifest": str(manifest.resolve()),
         "manifest_sha256": file_sha256(manifest), "dataset_fingerprint": manifest_fingerprint(frame),
@@ -86,7 +84,8 @@ def train(manifest: Path, output: Path, epochs: int, seed: int, *,
         "device": str(selected_device), "torch_version": str(torch.__version__),
         "batch_size": batch_size, "threads": threads, "requested_epochs": epochs,
         "learning_rate": 0.001, "optimizer": "AdamW", "loss": "BCEWithLogitsLoss",
-        "selection": "lowest validation loss; no test inference during training",
+        "selection": "fixed final epoch; no test inference or test-driven selection during training",
+        "split_policy": "80/20 train/test",
         "started_at_utc": datetime.now(timezone.utc).isoformat(), "completed_epochs": 0,
         "status": "training in progress; research only",
         "partition_counts": {str(key): int(value) for key, value in frame.split.value_counts().items()},
@@ -97,14 +96,11 @@ def train(manifest: Path, output: Path, epochs: int, seed: int, *,
     for epoch in range(epochs):
         started = time.perf_counter()
         row = {"epoch": epoch + 1}
-        row["train_loss"] = epoch_loss(model, loaders["train"], criterion, selected_device, optimizer)
-        row["val_loss"] = epoch_loss(model, loaders["val"], criterion, selected_device)
+        row["train_loss"] = epoch_loss(model, loader, criterion, selected_device, optimizer)
         row["seconds"] = round(time.perf_counter() - started, 3)
-        if row["val_loss"] < best_loss:
-            best_loss = row["val_loss"]
+        if epoch + 1 == epochs:
             torch.save({key: value.detach().cpu() for key, value in model.state_dict().items()}, output / "eye_state.pt")
-            card.update(best_epoch=epoch + 1, best_val_loss=best_loss,
-                        checkpoint_sha256=file_sha256(output / "eye_state.pt"))
+            card.update(selected_epoch=epoch + 1, checkpoint_sha256=file_sha256(output / "eye_state.pt"))
         history.append(row)
         card["completed_epochs"] = epoch + 1
         (output / "history.json").write_text(json.dumps(history, indent=2) + "\n")

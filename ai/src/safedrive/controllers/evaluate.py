@@ -71,7 +71,8 @@ def evaluate(manifest: Path, weights: Path, output: Path, threshold: float = 0.5
         "evaluated_at_utc": datetime.now(timezone.utc).isoformat(),
         "split": "test", "subjects": int(test.subject_id.nunique()), "threshold": threshold,
         "checkpoint_sha256": file_sha256(weights), "dataset_fingerprint": card["dataset_fingerprint"],
-        "best_epoch": card["best_epoch"], "torch_version": str(torch.__version__),
+        "selected_epoch": card.get("selected_epoch", card.get("best_epoch")),
+        "selection": card.get("selection"), "torch_version": str(torch.__version__),
         "device": "cpu", "batch_size": batch_size, "metrics": classification_metrics(test),
         "limitations": "Eye-crop frame classification only; no event-level, multiview, RGB phone or alarm validation",
     }

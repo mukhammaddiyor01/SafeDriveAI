@@ -12,7 +12,7 @@ from safedrive.models.provenance import file_sha256
 from safedrive.models.mrl import ARCHIVE_URL, SOURCE_URL, parse_filename
 
 
-def import_mrl(image_root: Path, output: Path, archive: Path, seed: int = 42):
+def import_mrl(image_root: Path, output: Path, archive: Path, seed: int = 42, *, prior_manifests=()):
     import pandas as pd
 
     if not image_root.is_dir() or not archive.is_file():
@@ -37,7 +37,7 @@ def import_mrl(image_root: Path, output: Path, archive: Path, seed: int = 42):
     # Exclude every copy, including conflicting labels or copies assigned to different people.
     frame = frame.loc[~repeated].copy()
     frame.to_csv(output / "source.csv", index=False)
-    summary = prepare_manifest(output / "source.csv", output / "manifest.csv", seed)
+    summary = prepare_manifest(output / "source.csv", output / "manifest.csv", seed, prior_manifests=prior_manifests)
     prepared = pd.read_csv(output / "manifest.csv", dtype=str)
     counts = prepared.groupby(["split", "label"]).size().unstack(fill_value=0)
     counts["subjects"] = prepared.groupby("split").subject_id.nunique()
@@ -47,6 +47,8 @@ def import_mrl(image_root: Path, output: Path, archive: Path, seed: int = 42):
         "archive_sha256": file_sha256(archive),
         "manifest_sha256": file_sha256(output / "manifest.csv"),
         "imported_at_utc": datetime.now(timezone.utc).isoformat(),
+        "split_policy": "80% train / 20% test, rounded to whole images, disjoint subjects",
+        "history_audited": bool(prior_manifests),
         "images": len(frame), "subjects": int(frame.subject_id.nunique()), "seed": seed,
         "raw_images": raw_images, "excluded_duplicate_images": int(repeated.sum()),
         "deduplication": "Exclude every member of each repeated file-byte SHA-256 group before splitting",
@@ -66,8 +68,9 @@ def main():
     parser.add_argument("--archive", type=Path, required=True)
     parser.add_argument("--output", type=Path, default=Path("data/mrl/prepared"))
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--prior-manifest", type=Path, action="append", default=[])
     args = parser.parse_args()
-    import_mrl(args.image_root, args.output, args.archive, args.seed)
+    import_mrl(args.image_root, args.output, args.archive, args.seed, prior_manifests=args.prior_manifest)
 
 
 if __name__ == "__main__":
