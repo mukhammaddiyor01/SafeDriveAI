@@ -22,7 +22,7 @@ def read_manifest(path: Path):
     missing = REQUIRED_COLUMNS - set(frame.columns)
     if missing:
         raise ValueError(f"Missing CSV columns: {', '.join(sorted(missing))}")
-    if frame.empty or frame[list(REQUIRED_COLUMNS)].eq("").any().any():
+    if frame.empty or frame[list(REQUIRED_COLUMNS)].apply(lambda column: column.str.strip().eq("")).any().any():
         raise ValueError("Manifest must contain nonempty rows and fields")
     if not set(frame.label) <= LABELS:
         raise ValueError("label must be open or closed")
@@ -36,6 +36,24 @@ def read_manifest(path: Path):
     for image_path in frame.image_path:
         if not Path(image_path).is_file():
             raise ValueError(f"Image does not exist: {image_path}")
+    return frame
+
+
+def read_prepared_manifest(path: Path):
+    """Use the same data-integrity checks for training and held-out evaluation."""
+    frame = read_manifest(path)
+    if "split" not in frame or not set(frame.split) <= {"train", "val", "test"}:
+        raise ValueError("Run prepare first; split must be train, val, or test")
+    if (frame.groupby("subject_id").split.nunique() > 1).any():
+        raise ValueError("Subject leakage across splits")
+    for split in ("train", "val", "test"):
+        if set(frame.loc[frame.split == split, "label"]) != LABELS:
+            raise ValueError(f"{split} needs both open and closed eye examples")
+    if "image_sha256" in frame:
+        if not frame.image_sha256.str.fullmatch(r"[0-9a-f]{64}").all():
+            raise ValueError("Invalid image_sha256")
+        if frame.image_sha256.duplicated().any():
+            raise ValueError("Duplicate image content in prepared manifest")
     return frame
 
 

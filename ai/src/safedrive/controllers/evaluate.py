@@ -11,9 +11,8 @@ def evaluate(manifest: Path, weights: Path, output: Path, threshold: float = 0.5
 
     if not 0 < threshold < 1:
         raise ValueError("threshold must be between zero and one")
-    frame = pd.read_csv(manifest, dtype=str, keep_default_na=False)
-    if frame.groupby("subject_id").split.nunique().max() != 1:
-        raise ValueError("Subject leakage across splits")
+    from safedrive.models.dataset import read_prepared_manifest
+    frame = read_prepared_manifest(manifest)
     test = frame[frame.split == "test"].copy()
     if test.empty:
         raise ValueError("No test examples")

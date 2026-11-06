@@ -6,7 +6,6 @@ from pathlib import Path
 
 
 def train(manifest: Path, output: Path, epochs: int, seed: int):
-    import pandas as pd
     import torch
     from torch import nn
     from torch.utils.data import DataLoader
@@ -15,13 +14,8 @@ def train(manifest: Path, output: Path, epochs: int, seed: int):
     if epochs < 1:
         raise ValueError("epochs must be positive")
     torch.manual_seed(seed)
-    frame = pd.read_csv(manifest, dtype=str, keep_default_na=False)
-    if not {"split", "image_path", "label", "subject_id", "view"} <= set(frame):
-        raise ValueError("Run prepare first to produce a split manifest")
-    if frame.groupby("subject_id").split.nunique().max() != 1:
-        raise ValueError("Subject leakage across splits")
-    if not set(frame.label) <= {"open", "closed"}:
-        raise ValueError("Invalid labels")
+    from safedrive.models.dataset import read_prepared_manifest
+    frame = read_prepared_manifest(manifest)
     loaders = {}
     for split in ("train", "val"):
         subset = frame[frame.split == split]
