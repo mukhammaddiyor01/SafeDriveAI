@@ -56,7 +56,7 @@ def evaluate(manifest: Path, weights: Path, output: Path, threshold: float = 0.5
     test = frame[frame.split == "test"].copy()
     torch.set_num_threads(threads)
     cv2.setNumThreads(1)
-    model = EyeClassifier()
+    model = EyeClassifier(pool_size=card.get("architecture", {}).get("pool_size", 1))
     model.load_state_dict(torch.load(weights, map_location="cpu", weights_only=True))
     model.eval()
     probabilities = []

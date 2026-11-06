@@ -5,13 +5,15 @@ from torch import nn
 
 
 class EyeClassifier(nn.Module):
-    def __init__(self):
+    def __init__(self, pool_size: int = 1):
         super().__init__()
+        if pool_size not in (1, 4):
+            raise ValueError("pool_size must be 1 or 4")
         self.layers = nn.Sequential(
             nn.Conv2d(1, 16, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
             nn.Conv2d(16, 32, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
             nn.Conv2d(32, 64, 3, padding=1), nn.ReLU(),
-            nn.AdaptiveAvgPool2d(1), nn.Flatten(), nn.Linear(64, 1),
+            nn.AdaptiveAvgPool2d(pool_size), nn.Flatten(), nn.Linear(64 * pool_size * pool_size, 1),
         )
 
     def forward(self, image: torch.Tensor) -> torch.Tensor:

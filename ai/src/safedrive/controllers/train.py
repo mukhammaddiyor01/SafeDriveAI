@@ -44,7 +44,7 @@ def epoch_loss(model, loader, criterion, device, optimizer=None):
 
 
 def train(manifest: Path, output: Path, epochs: int, seed: int, *,
-          device: str = "cpu", batch_size: int = 32, threads: int = 4):
+          device: str = "cpu", batch_size: int = 32, threads: int = 4, pool_size: int = 1):
     import cv2
     import numpy as np
     import torch
@@ -69,7 +69,7 @@ def train(manifest: Path, output: Path, epochs: int, seed: int, *,
                           generator=torch.Generator().manual_seed(seed))
         for split in ("train", "val")
     }
-    model = EyeClassifier().to(selected_device)
+    model = EyeClassifier(pool_size=pool_size).to(selected_device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
     criterion = nn.BCEWithLogitsLoss()
     best_loss = float("inf")
@@ -78,6 +78,7 @@ def train(manifest: Path, output: Path, epochs: int, seed: int, *,
     card = {
         "input": "float32 NCHW [N,1,64,64], OpenCV grayscale / 255, INTER_AREA resize",
         "output": "closed-eye logit; sigmoid then a separately selected threshold",
+        "architecture": {"name": "EyeClassifier", "pool_size": pool_size},
         "seed": seed, "manifest": str(manifest.resolve()),
         "manifest_sha256": file_sha256(manifest), "dataset_fingerprint": manifest_fingerprint(frame),
         "training_code_sha256": file_sha256(Path(__file__)),
@@ -123,9 +124,10 @@ def main():
     parser.add_argument("--device", choices=("auto", "cpu", "mps", "cuda"), default="auto")
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--threads", type=int, default=4)
+    parser.add_argument("--pool-size", type=int, choices=(1, 4), default=1)
     args = parser.parse_args()
     train(args.manifest, args.output, args.epochs, args.seed,
-          device=args.device, batch_size=args.batch_size, threads=args.threads)
+          device=args.device, batch_size=args.batch_size, threads=args.threads, pool_size=args.pool_size)
 
 
 if __name__ == "__main__":
