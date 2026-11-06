@@ -3,6 +3,8 @@
 from pathlib import Path
 import hashlib
 
+from safedrive.models.provenance import file_sha256
+
 
 REQUIRED_COLUMNS = {"image_path", "subject_id", "label", "view"}
 LABELS = {"open", "closed"}
@@ -54,6 +56,9 @@ def read_prepared_manifest(path: Path):
             raise ValueError("Invalid image_sha256")
         if frame.image_sha256.duplicated().any():
             raise ValueError("Duplicate image content in prepared manifest")
+        for row in frame.itertuples():
+            if file_sha256(Path(row.image_path)) != row.image_sha256:
+                raise ValueError(f"Image content changed after import: {row.image_path}")
     return frame
 
 

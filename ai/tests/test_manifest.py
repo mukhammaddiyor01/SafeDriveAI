@@ -1,4 +1,5 @@
 import tempfile
+import hashlib
 import unittest
 from pathlib import Path
 
@@ -53,4 +54,12 @@ class PreparedManifestTest(unittest.TestCase):
             row["image_sha256"] = f"{index:064x}"
         self.rows[-1]["image_sha256"] = self.rows[0]["image_sha256"]
         with self.assertRaisesRegex(ValueError, "Duplicate image content"):
+            self.read()
+
+    def test_image_changed_after_import_is_rejected(self):
+        for row in self.rows:
+            image = self.root / row["image_path"]
+            row["image_sha256"] = hashlib.sha256(image.read_bytes()).hexdigest()
+        (self.root / self.rows[0]["image_path"]).write_bytes(b"modified after import")
+        with self.assertRaisesRegex(ValueError, "Image content changed"):
             self.read()
