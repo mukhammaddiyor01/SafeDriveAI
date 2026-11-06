@@ -27,7 +27,10 @@ Interfeys o‘zbekcha, kod MVC asosida sodda qatlamlarga ajratilgan.
 
 Bu yo‘l xavfsizligi uchun sertifikatlangan mahsulot emas. Hozirgi APK ko‘z holatini
 **bundled ML Kit** modeli bilan baholaydi. Maxsus PyTorch/YOLO modeli hali Android
-alarmiga ulanmagan va bu loyiha uchun haqiqiy datasetda model hali o‘qitilmagan.
+alarmiga ulanmagan. MRL infraqizil ko‘z tasvirlarida PyTorch klassifikatori o‘qitildi:
+held-out accuracy 86.06%, ochiq ko‘zni xato closed deyish ulushi 22.92%.
+Bu tadqiqot modeli telefon/ko‘p burchakli foydalanish uchun tasdiqlanmagan.
+Batafsil: [MRL boshlang‘ich natijasi](docs/MRL_BASELINE.md).
 YOLO COCO nuqtalari ko‘zning ochiq-yopiqligini yoki bo‘yinni bevosita o‘lchamaydi.
 
 Yonboshda yuz/bosh aniqlanishi mumkin, ammo ML Kit ko‘z klassifikatsiyasi asosan
@@ -108,7 +111,7 @@ Haqiqiy datasetni tayyorlash/o‘qitish: [docs/DATASETS.md](docs/DATASETS.md).
 
 ```bash
 python -m safedrive.views.cli data/eyes.csv --output artifacts/manifest.csv
-python -m safedrive.controllers.train artifacts/manifest.csv --epochs 15
+python -m safedrive.controllers.train artifacts/manifest.csv --epochs 15 --pool-size 4
 python -m safedrive.controllers.evaluate artifacts/manifest.csv artifacts/eye/eye_state.pt
 python -m safedrive.controllers.pose --source 0
 ```

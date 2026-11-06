@@ -1,10 +1,15 @@
 # Dataset va ko‘p burchakli model rejasi
 
 Bu repository shaxsiy video yoki datasetni tarqatmaydi. Hozirgi APK tayyor ML Kit
-modelidan foydalanadi. Quyidagi pipeline haqiqiy belgili eye crop datasetini kutadi;
-hali uni o‘qitilgan yoki yo‘lda tekshirilgan model deb hisoblash mumkin emas.
+modelidan foydalanadi. Pipeline belgili eye crop datasetini qabul qiladi;
+haqiqiy MRL eye-crop tajribasi [MRL_BASELINE.md](MRL_BASELINE.md)da qayd etilgan.
+Bu boshlang‘ich model RGB/ko‘p burchakli yo‘l sinovidan o‘tmagan va APK’ga ulanmagan.
 
 ## Manbalar
+
+- [MRL Eye](https://mrl.cs.vsb.cz/eyedataset.html): ochiq/yopiq ko‘z uchun IR tasvirlar.
+  [Import va dublikatlar](MRL_EYE.md), [oldindan qayd etilgan protokol](MRL_PROTOCOL.md),
+  [haqiqiy held-out natija](MRL_BASELINE.md). Bosh/kamera burchagi annotatsiyasi yo‘q.
 
 - [DROZY — University of Liège](https://www.drozy.ulg.ac.be/): uyquchanlik bilan bog‘liq
   video, vaqt va boshqa signallar. Oddiy RGB kamera bilan infraqizil yozuvlar orasida
@@ -16,7 +21,8 @@ hali uni o‘qitilgan yoki yo‘lda tekshirilgan model deb hisoblash mumkin emas
 
 Yuklashdan oldin tegishli muallifning foydalanish va qayta tarqatish shartlarini o‘qing.
 Ultralytics’ning ham AGPL/enterprise litsenziyasini tijoriy foydalanishdan oldin tekshiring.
-Datasetlar avtomatik yuklanmaydi, ulardan o‘lchangan aniqlik natijalari bu loyihada yo‘q.
+DROZY/DMD/DAD hali yuklanmagan yoki baholanmagan; MRL uchun lokal tadqiqot bajarilgan.
+Datasetlar va weights repositoryga qayta tarqatilmaydi.
 
 ## CSV formati
 
@@ -31,7 +37,7 @@ eyes/driver01_002.png,driver01,closed,front
 eyes/driver02_001.png,driver02,open,left
 ```
 
-`label`: open/closed; `view`: front/left/right/up/down. Bu misol haqiqiy dataset emas.
+`label`: open/closed; `view`: front/left/right/up/down/unknown. Manbada burchak bo‘lmasa unknown ishlatiladi. Bu misol haqiqiy dataset emas.
 Bir odamning barcha kun/video/kadrlariga bitta subject_id bering.
 Deterministik subject split: train 70%, val 15%, test 15% taxminiy taqsimot.
 Har bir splitda ikkala label bo‘lishi shart. Ko‘p subyekt kerak; aniq sonlar hash

@@ -31,7 +31,7 @@ APK: arm64, Android API 26+, target SDK 36, release rejimi, developer imzosi.
 
 [Emulyatordagi asosiy ekran](images/dashboard.png).
 
-## Hali tasdiqlanmagan
+## 2026-11-05 holatida hali tasdiqlanmagan
 
 Samsung Galaxy A51 ulanmagan: haqiqiy kamera, ko‘z/bosh holati aniqligi, 1.5 s
 signalning real kechikishi, ovoz/vibratsiya eshitilishi, tun/ko‘zoynak/yonbosh
@@ -42,3 +42,21 @@ model aniqligi dalili emas. Maxsus datasetda model o‘qitilmadi va PyTorch/YOLO
 modeli Android alarmiga ulanmagan. Haqiqiy Ollama modeli o‘rnatib ishga tushirilmadi:
 LLM adapteri HTTP mock bilan, mahalliy server esa offline fallback bilan tekshirildi.
 Ovozli javobni tinglash va to‘liq bo‘yin/ko‘p burchakli maxsus model keyingi ishlar.
+
+
+# Qo‘shimcha tekshiruv — 2026-11-06
+
+Talab SD-06 davom ettirildi. Android ilovasi va APK o‘zgarmadi; yangi Flutter/Kotlin
+qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida topilmadi.
+
+- Rasmiy MRL arxivi lokal yuklandi; SHA-256 va tasvir manbasi qayd etildi.
+- 84,898 tasvirdan 76 ta dublikat guruhiga tegishli tasvir chiqarildi; 84,822 qoldi.
+- 37 haydovchi train/val/test uchun 25/6/6 qilib ajratildi; filename, split,
+  takroriy/almashgan tasvir, checkpoint va dataset identifikatori tekshiriladi.
+- 24 ta Python unit/integratsion test o‘tdi. Synthetic sinov haqiqiy model natijasidan ajratilgan.
+- Ikkita 5-epoch MPS run faqat validation loss bilan solishtirildi; 4×4 pooling,
+  4-epoch checkpoint tanlandi. Protokol haqiqiy test inferensidan oldin commit qilindi.
+- 10,227 held-out IR eye-crop: accuracy 86.06%, closed recall 96.51%, FPR 22.92%.
+  Ko‘zoynakli guruh FPR 77.98%. Bu alarm hodisasi yoki telefon aniqligi emas.
+- [To‘liq natija va cheklovlar](MRL_BASELINE.md), [agregat JSON](experiments/mrl-eye-2026-11-06.json).
+- Tasvirlar, shaxsiy qatorlar va model weights Git’ga qo‘shilmadi. Model APK’ga ulanmagan.

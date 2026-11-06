@@ -1,6 +1,6 @@
 # SafeDriveAI — joriy holat va davom ettirish
 
-Oxirgi mazmuniy tekshiruv: **2026-11-05**. Bu hujjat tayyorlik holatini saqlaydi;
+Oxirgi mazmuniy tekshiruv: **2026-11-06**. Bu hujjat tayyorlik holatini saqlaydi;
 mahsulotning yakuniy talablari [PROJECT_BRIEF.md](PROJECT_BRIEF.md)da.
 Dalillar: [VERIFICATION.md](VERIFICATION.md). O‘zgargan qismni yangi dalil bilan yangilang.
 
@@ -21,7 +21,7 @@ ish tartibi alohida commitda saqlangan. Keyingi o‘zgarishlar ham kichik commit
 | SD-03 Alarm | Vaqtga asoslangan domain mantiq, ovoz/vibratsiya kodi va unit testlar | Haqiqiy ko‘z yumilishida kechikish, eshitilish va yolg‘on alarm sinovi |
 | SD-04 Fon | Android 13 emulyatorida Home va ekran o‘chganida tahlil davom etdi; notification Stop ishladi | A51’da uzoq ishlash, batareya, qizish, qo‘ng‘iroq va boshqa kamera bilan sinash |
 | SD-05 Ko‘p burchak | Yonboshda noaniq ko‘z holati limited sifatida ko‘rsatiladi | Yonbosh va turli tutqich burchaklari uchun model va haqiqiy baholash |
-| SD-06 Dataset/model | Manifest, subject split, PyTorch trening/baholash va YOLO vositalari bor | Haqiqiy datasetni tayyorlash, o‘qitish va held-out natijalar; mobil model adapteri |
+| SD-06 Dataset/model | MRL: 84,822 tasvir, 37 haydovchi; 5 epoch PyTorch MPS trening va 6 boshqa haydovchida held-out hisobot; YOLO vositasi bor | Yuqori FPR’ni validation asosida yaxshilash, yangi mustaqil RGB/ko‘p burchakli dalil, mobil model adapteri |
 | SD-07 Ovoz/LLM | TTS eslatma, savol, mahalliy Ollama API adapteri va fallback | Haqiqiy Ollama modeli, o‘zbekcha ovoz, ovozli javobni tinglash va suhbat oqimi |
 | SD-08 USB APK | Release APK yig‘ildi, imzo va emulyatorga install tekshirildi | Galaxy A51’ga USB orqali o‘rnatish; telefon o‘sha sinovda ulanmagan |
 | SD-09 MVC | Flutter, Kotlin va Python qatlamlari ajratilgan | Keyingi funksiyalarda chegaralarni saqlash |
@@ -31,23 +31,32 @@ ish tartibi alohida commitda saqlangan. Keyingi o‘zgarishlar ham kichik commit
 
 - Flutter: static analysis toza, 3 ta controller/UI test o‘tgan.
 - Kotlin: vaqtga asoslangan mantiq uchun 8 ta unit test o‘tgan.
-- Python: dataset, pipeline va assistant uchun 10 ta test o‘tgan.
+- Python: 2026-11-06 dataset, provenance, trening/baholash va assistant uchun 24 ta test o‘tdi.
+  Flutter/Kotlin/emulyator dalillari 2026-11-05 dagi sinovga tegishli; bu sessiyada Android kodi o‘zgarmadi.
 - Release APK emulyatorda ochildi; R8 ML Kit registrar tuzatishi tekshirildi.
 - Home’dan keyin inferens hisoblagichi oshdi. Ekran Asleep holatida kuzatuvlar
   260 → 567 bo‘ldi; oxirgi qayta ishlangan kadr yoshi 32 ms edi.
 - Python server /health va /question HTTP 200 qaytardi; haqiqiy LLM modeli
   o‘rnatilmaganda offline fallback sinovdan o‘tdi.
 - YOLO/PyTorch sun’iy bo‘sh kadrda ishga tushdi. Trening pipeline ham sun’iy
-  tasvirlarda tekshirildi. **Bular haqiqiy haydovchi aniqligi natijalari emas.**
+  tasvirlarda tekshirilgan edi; o‘sha smoke sinovlari haqiqiy aniqlik dalili emas.
+- 2026-11-06 MRL IR tasvirlarida haqiqiy trening va held-out test bajarildi:
+  accuracy 86.06%, closed recall 96.51%, ochiq ko‘zni xato closed deyish 22.92%.
+  Ko‘zoynakli guruhda FPR 77.98%; natija mobil alarmga tayyor deb belgilanmagan.
+- [MRL protokoli](MRL_PROTOCOL.md), [natijalar](MRL_BASELINE.md),
+  [manba/import](MRL_EYE.md). Tanlangan weights lokal
+  `artifacts/mrl-spatial-2026-11-06/eye_state.pt`; APK hamon ML Kit bilan ishlaydi.
 
 ## Keyingi ishlarning yo‘nalishi
 
 1. **Qurilma dalili:** Galaxy A51 Android versiyasi va USB ulanishi mavjud bo‘lganda
    [DEVICE_TESTING.md](DEVICE_TESTING.md) bo‘yicha sinash; muammolarni alohida kichik fixlarda tuzatish.
-2. **Dataset:** mos manba va label’larni tanlash, subject split va turli burchaklar
-   qamrovini tayyorlash. Tartib: [DATASETS.md](DATASETS.md).
-3. **Maxsus model:** haqiqiy train/val/test bilan trening, burchaklar bo‘yicha
-   baholash va ishonchsiz holatlarni ajratish. O‘lchanmagan aniqlikni yozmaslik.
+2. **Dataset:** MRL import/trening yakunlandi. Endi yangi mustaqil RGB yozuvlar,
+   ko‘zoynak/refleksiya va turli burchaklar qamrovini tayyorlash. Tartib: [DATASETS.md](DATASETS.md).
+3. **Maxsus model:** MRL boshlang‘ich modelining yuqori FPR va sifat muammolarini
+   validation bilan yaxshilash; yakuniy tekshiruv uchun yangi held-out dalil tayyorlash.
+   2026-11-06 test natijasiga moslab sozlab, uni yana yangi mustaqil natija deb yozmaslik.
+   Ko‘rinmas ko‘z, bosh/bo‘yin va haqiqiy burchaklar alohida qoladi.
 4. **Mobil integratsiya:** tasdiqlangan modelni telefonga mos formatga export qilish,
    preprocessing/natija tengligini va A51 tezligi/quvvatini tekshirish.
 5. **Ovozli yordamchi:** haqiqiy LLM/TTS oqimini sinash; ovozli javobni tinglashni
