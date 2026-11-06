@@ -1,0 +1,203 @@
+{
+  "date": "2026-11-06",
+  "requirement": "SD-06",
+  "dataset": {
+    "dataset": "MRL Eye 2018",
+    "source_url": "https://mrl.cs.vsb.cz/eyedataset.html",
+    "archive_url": "https://mrl.cs.vsb.cz/data/eyedataset/mrlEyes_2018_01.zip",
+    "archive_sha256": "17ff89928005cb6e63a53fe020e419060279ff59e57555cfa49693fc1865fdfc",
+    "images": 84822,
+    "raw_images": 84898,
+    "excluded_duplicate_images": 76,
+    "subjects": 37,
+    "seed": 42,
+    "deduplication": "Exclude every member of each repeated file-byte SHA-256 group before splitting",
+    "modality": "infrared eye crops; RGB phone performance is not established",
+    "view": "unknown: author filenames do not annotate head/camera angle"
+  },
+  "selection": {
+    "criterion": "lowest validation loss, before held-out inference",
+    "pool_1": {
+      "best_epoch": 4,
+      "best_val_loss": 0.5652371398435293
+    },
+    "pool_4": {
+      "best_epoch": 4,
+      "best_val_loss": 0.1694019938150728
+    }
+  },
+  "training": {
+    "architecture": {
+      "name": "EyeClassifier",
+      "pool_size": 4
+    },
+    "seed": 42,
+    "requested_epochs": 5,
+    "completed_epochs": 5,
+    "batch_size": 256,
+    "device": "mps",
+    "torch_version": "2.15.0",
+    "learning_rate": 0.001,
+    "optimizer": "AdamW",
+    "loss": "BCEWithLogitsLoss",
+    "training_code_sha256": "1104e80446c1455e38fed369bf3048229ff5840668e7844488a982e5aa39ccd8",
+    "model_code_sha256": "ddf3573d6dc84155c3029f1ccddd4d7667b63f0b776d92899b24b6fb257af4ad",
+    "checkpoint_sha256": "8c7e7616568618cb49b3d6dedb8bbcc868382aa9ab158459c8fb7c0d42800aac",
+    "started_at_utc": "2026-11-06T13:29:47.367486+00:00",
+    "finished_at_utc": "2026-11-06T13:32:44.177802+00:00"
+  },
+  "held_out": {
+    "evaluated_at_utc": "2026-11-06T13:33:36.603750+00:00",
+    "split": "test",
+    "subjects": 6,
+    "threshold": 0.5,
+    "checkpoint_sha256": "8c7e7616568618cb49b3d6dedb8bbcc868382aa9ab158459c8fb7c0d42800aac",
+    "dataset_fingerprint": "4dc986bc73cce9488df02201980a9c26107ad2dfa62329f8507e0c08d7fdfb29",
+    "best_epoch": 4,
+    "torch_version": "2.15.0",
+    "device": "cpu",
+    "batch_size": 128,
+    "metrics": {
+      "samples": 10227,
+      "tp": 4561,
+      "fn": 165,
+      "fp": 1261,
+      "tn": 4240,
+      "accuracy": 0.8605651706267723,
+      "recall_closed": 0.9650867541261109,
+      "false_positive_rate": 0.22923104890019996,
+      "precision_closed": 0.7834077636551013,
+      "balanced_accuracy": 0.8679278526129555
+    },
+    "limitations": "Eye-crop frame classification only; no event-level, multiview, RGB phone or alarm validation"
+  },
+  "capture_conditions": [
+    {
+      "condition": "view",
+      "value": "unknown",
+      "samples": 10227,
+      "tp": 4561,
+      "fn": 165,
+      "fp": 1261,
+      "tn": 4240,
+      "accuracy": 0.8605651706267723,
+      "recall_closed": 0.9650867541261109,
+      "false_positive_rate": 0.22923104890019996,
+      "precision_closed": 0.7834077636551013,
+      "balanced_accuracy": 0.8679278526129555
+    },
+    {
+      "condition": "glasses",
+      "value": "0",
+      "samples": 7541,
+      "tp": 2754,
+      "fn": 149,
+      "fp": 588,
+      "tn": 4050,
+      "accuracy": 0.9022676037660787,
+      "recall_closed": 0.9486737857388908,
+      "false_positive_rate": 0.12677878395860284,
+      "precision_closed": 0.8240574506283662,
+      "balanced_accuracy": 0.910947500890144
+    },
+    {
+      "condition": "glasses",
+      "value": "1",
+      "samples": 2686,
+      "tp": 1807,
+      "fn": 16,
+      "fp": 673,
+      "tn": 190,
+      "accuracy": 0.7434847356664185,
+      "recall_closed": 0.9912232583653319,
+      "false_positive_rate": 0.779837775202781,
+      "precision_closed": 0.7286290322580645,
+      "balanced_accuracy": 0.6056927415812754
+    },
+    {
+      "condition": "lighting",
+      "value": "0",
+      "samples": 5744,
+      "tp": 2344,
+      "fn": 79,
+      "fp": 952,
+      "tn": 2369,
+      "accuracy": 0.820508356545961,
+      "recall_closed": 0.9673957903425505,
+      "false_positive_rate": 0.2866606443842216,
+      "precision_closed": 0.7111650485436893,
+      "balanced_accuracy": 0.8403675729791644
+    },
+    {
+      "condition": "lighting",
+      "value": "1",
+      "samples": 4483,
+      "tp": 2217,
+      "fn": 86,
+      "fp": 309,
+      "tn": 1871,
+      "accuracy": 0.9118893598037029,
+      "recall_closed": 0.9626574033868867,
+      "false_positive_rate": 0.14174311926605504,
+      "precision_closed": 0.8776722090261283,
+      "balanced_accuracy": 0.9104571420604157
+    },
+    {
+      "condition": "reflections",
+      "value": "0",
+      "samples": 9137,
+      "tp": 4280,
+      "fn": 163,
+      "fp": 667,
+      "tn": 4027,
+      "accuracy": 0.9091605559811754,
+      "recall_closed": 0.9633130767499437,
+      "false_positive_rate": 0.14209629314017896,
+      "precision_closed": 0.8651708105922782,
+      "balanced_accuracy": 0.9106083918048824
+    },
+    {
+      "condition": "reflections",
+      "value": "1",
+      "samples": 226,
+      "tp": 74,
+      "fn": 0,
+      "fp": 86,
+      "tn": 66,
+      "accuracy": 0.6194690265486725,
+      "recall_closed": 1.0,
+      "false_positive_rate": 0.5657894736842105,
+      "precision_closed": 0.4625,
+      "balanced_accuracy": 0.7171052631578947
+    },
+    {
+      "condition": "reflections",
+      "value": "2",
+      "samples": 864,
+      "tp": 207,
+      "fn": 2,
+      "fp": 508,
+      "tn": 147,
+      "accuracy": 0.4097222222222222,
+      "recall_closed": 0.9904306220095693,
+      "false_positive_rate": 0.7755725190839695,
+      "precision_closed": 0.2895104895104895,
+      "balanced_accuracy": 0.6074290514627999
+    },
+    {
+      "condition": "sensor",
+      "value": "01",
+      "samples": 10227,
+      "tp": 4561,
+      "fn": 165,
+      "fp": 1261,
+      "tn": 4240,
+      "accuracy": 0.8605651706267723,
+      "recall_closed": 0.9650867541261109,
+      "false_positive_rate": 0.22923104890019996,
+      "precision_closed": 0.7834077636551013,
+      "balanced_accuracy": 0.8679278526129555
+    }
+  ],
+  "deployment": "Research baseline only; not integrated into Android alarm. RGB, multiview and Galaxy A51 remain unverified."
+}
