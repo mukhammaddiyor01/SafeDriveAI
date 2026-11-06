@@ -1,6 +1,7 @@
 """Synthetic data checks wiring only, never real driver-monitoring accuracy."""
 
 import tempfile
+import json
 import unittest
 from pathlib import Path
 import cv2
@@ -33,6 +34,14 @@ class PipelineTest(unittest.TestCase):
             evaluate(root / "manifest.csv", root / "model/eye_state.pt", root / "evaluation")
             metrics = pd.read_csv(root / "evaluation/metrics_by_view.csv")
             self.assertEqual(int(metrics.samples.sum()), int((split.split == "test").sum()))
+            card = json.loads((root / "model/model-card.json").read_text())
+            self.assertEqual(card["completed_epochs"], 1)
+            self.assertEqual(card["best_epoch"], 1)
+            self.assertEqual(card["device"], "cpu")
+            self.assertEqual(len(card["checkpoint_sha256"]), 64)
+            self.assertEqual(len(card["dataset_fingerprint"]), 64)
+            with self.assertRaisesRegex(ValueError, "not empty"):
+                train(root / "manifest.csv", root / "model", epochs=1, seed=42)
             state = torch.load(root / "model/eye_state.pt", weights_only=True)
             model = EyeClassifier()
             model.load_state_dict(state)

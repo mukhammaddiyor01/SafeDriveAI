@@ -3,21 +3,13 @@
 import argparse
 from dataclasses import asdict
 from datetime import datetime, timezone
-import hashlib
 import json
 import os
 from pathlib import Path
 
 from safedrive.models.dataset import prepare_manifest
+from safedrive.models.provenance import file_sha256
 from safedrive.models.mrl import ARCHIVE_URL, SOURCE_URL, parse_filename
-
-
-def file_sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def import_mrl(image_root: Path, output: Path, archive: Path, seed: int = 42):
