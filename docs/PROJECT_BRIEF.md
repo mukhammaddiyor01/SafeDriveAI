@@ -20,6 +20,7 @@ qolishni kafolatlash yoki suhbatni dam olish o‘rniga qo‘yish mahsulot va’d
 - Interfeys: **Flutter / Dart**; kamera va Android fon xizmati: **Kotlin**.
 - AI tayyorlash va tajribalar: **Python, OpenCV, Pandas, YOLO, PyTorch**.
 - Ovozli AI yordamchi: **LLM**; aniqlash va alarm undan mustaqil ishlashi kerak.
+- Dataset: **80% train / 20% avval ishlatilmagan test**; haydovchilar va tasvir nusxalari aralashmasin.
 - Arxitektura: **MVC**. Kod sodda, clean va odam o‘qib tushunadigan bo‘lsin.
 - Repository: https://github.com/mukhammaddiyor01/SafeDriveAI
 - Lokal loyiha: `/Users/mukhammaddiyor/Desktop/Projects/SafeDriveAI`.
@@ -33,7 +34,7 @@ qolishni kafolatlash yoki suhbatni dam olish o‘rniga qo‘yish mahsulot va’d
 | SD-03 | Uyquchanlik alomatlarida alarm berish | Uzoq ko‘z yumilishi/bosh holati voqealarida alarm kechikishi va yolg‘on signallar o‘lchanadi |
 | SD-04 | Fon rejimida ham ishlash | Ilova fon va ekran o‘chgan holatda jismoniy telefonda tekshiriladi; doimiy bildirishnoma va Stop mavjud |
 | SD-05 | Old, yonbosh va turli burchaklardan aniqlash | Burchaklar bo‘yicha alohida dataset baholashi va telefon sinovi mavjud |
-| SD-06 | AI datasetlardan foydalanish | Dataset manbasi, belgilar, subyektlar bo‘yicha split va held-out natijalar qayd etiladi |
+| SD-06 | AI datasetlardan foydalanish | Dataset manbasi, 80/20 split, testning ishlatilmaganligi va yakuniy test natijalari qayd etiladi |
 | SD-07 | Haydovchiga ovozli murojaat va savollar | TTS va haqiqiy LLM yo‘li tekshiriladi; ikki tomonlama suhbat uchun ovozli javobni tinglash ham alohida amalga oshiriladi |
 | SD-08 | USB orqali o‘rnatish | APK yig‘iladi, imzosi tekshiriladi va Galaxy A51’ga adb orqali o‘rnatiladi |
 | SD-09 | MVC va tushunarli kod | View, controller va domain model vazifalari ajratilgan; biznes mantig‘i alohida sinovdan o‘tadi |

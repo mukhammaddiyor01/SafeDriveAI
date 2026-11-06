@@ -28,6 +28,10 @@ saqlanadi; tasvirlarga o‘zboshimchalik bilan frontal/yonbosh belgisi berilmayd
 
 ## Import
 
+Yangi importer 80/20 ajratadi; mavjud tajriba manifestlarini `--prior-manifest`
+(repeatable) orqali auditga bering. [Amaldagi qoida](DATA_SPLIT_POLICY.md).
+Quyidagi eski `prepared-clean` natijasi tarixiy holat; output ustidan yozilmaydi.
+
 Arxivni lokal `data/mrl/raw/` ichiga ochgandan keyin loyiha ildizidan:
 
 ```bash
@@ -49,7 +53,7 @@ yoziladi. Bu tekshiruv qayta kodlangan yoki o‘xshash kadrlarni aniqlash usuli 
 Split subject ID bo‘yicha deterministik; seed `42`. Tasvirlar splitlar orasida
 tasodifiy kadrlar bo‘yicha aralashtirilmaydi.
 
-## 2026-11-06 import dalili
+## 2026-11-06 dastlabki import dalili — tarixiy train/val/test
 
 84,898 manba tasviridan 76 ta takroriy-hash guruhiga tegishli tasvir chiqarildi.
 Natija: **84,822 tasvir, 37 haydovchi**.

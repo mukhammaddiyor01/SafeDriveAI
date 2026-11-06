@@ -100,6 +100,10 @@ Qurilma yoki process qayta ishga tushsa, kuzatuvni ilova ichidan qayta yoqing.
 
 ## Python AI
 
+Yangi trening: **80% train / 20% test**. Test o‘qitish yoki model tanlashda
+ishlatilmaydi. [Amaldagi dataset qoidasi](docs/DATA_SPLIT_POLICY.md).
+Oldingi MRL natijalarini yangi 80/20 natijasi deb qabul qilmang.
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate

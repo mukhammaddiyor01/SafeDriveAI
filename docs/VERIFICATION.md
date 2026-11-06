@@ -60,3 +60,13 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   Ko‘zoynakli guruh FPR 77.98%. Bu alarm hodisasi yoki telefon aniqligi emas.
 - [To‘liq natija va cheklovlar](MRL_BASELINE.md), [agregat JSON](experiments/mrl-eye-2026-11-06.json).
 - Tasvirlar, shaxsiy qatorlar va model weights Git’ga qo‘shilmadi. Model APK’ga ulanmagan.
+
+
+## 80/20 talabi kiritilgandan keyingi tekshiruv — 2026-11-06
+
+- 33 ta Python testi o‘tdi; 80/20 nisbati, haydovchilar ajratilishi, train-only
+  yuklash, oxirgi epoch, ishlatilgan testni bloklash va manifestni muzlatish tekshirildi.
+- MRL uchun 67,858 train / 16,964 test ajratildi; 30/7 haydovchi.
+- Testning 16,964 tasviri ham oldingi foydalanishda topildi. Yangi haqiqiy trening
+  yoki test inferensi bajarilmadi; oldingi natijalar o‘zgartirilmadi.
+- [Audit va protokol](DATA_SPLIT_POLICY.md). Android/APK o‘zgarmadi.

@@ -39,8 +39,10 @@ eyes/driver02_001.png,driver02,open,left
 
 `label`: open/closed; `view`: front/left/right/up/down/unknown. Manbada burchak bo‘lmasa unknown ishlatiladi. Bu misol haqiqiy dataset emas.
 Bir odamning barcha kun/video/kadrlariga bitta subject_id bering.
-Deterministik subject split: train 70%, val 15%, test 15% taxminiy taqsimot.
-Har bir splitda ikkala label bo‘lishi shart. Ko‘p subyekt kerak; aniq sonlar hash
+Amaldagi split: **80% train / 20% test**, rasm soni butun songa yaxlitlanadi.
+Bir haydovchi ikkala splitga tushmaydi; butun subjectlar bilan nisbat chiqmasa xato
+qaytariladi. Har bir splitda ikkala label bo‘lishi shart. Eski 70/15/15 hash tartibi
+faqat tarixiy tajribaga tegishli. [80/20 va foydalanish auditi](DATA_SPLIT_POLICY.md). Ko‘p subyekt kerak; aniq sonlar hash
 taqsimotiga bog‘liq. Trening test ma’lumotiga tegmaydi. Baholash kamera burchagi bo‘yicha
 closed recall va false positive rate chiqaradi.
 

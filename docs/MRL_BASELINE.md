@@ -1,5 +1,9 @@
 # MRL ko‘z klassifikatori — haqiqiy boshlang‘ich natija
 
+**Tarixiy tajriba:** ushbu natija/buyruqlar 80/20 talabi kiritilishidan oldingi
+`2cabcca` va undan avvalgi train/val/test kodiga tegishli. Yangi ishlar uchun
+[80/20 qoidasi](DATA_SPLIT_POLICY.md) amal qiladi. Ushbu natija qayta nomlanmaydi.
+
 Sana: **2026-11-06**. Talab: **SD-06**. [Oldindan qayd etilgan protokol](MRL_PROTOCOL.md).
 [Import/manba](MRL_EYE.md). [Aniq agregat JSON hisobot](experiments/mrl-eye-2026-11-06.json).
 

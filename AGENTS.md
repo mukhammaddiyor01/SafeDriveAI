@@ -10,6 +10,11 @@
 
 ## Keep the project on course
 
+- New training uses 80% train / 20% untouched test, rounded to whole images, with
+  disjoint drivers. Follow [current split policy](docs/DATA_SPLIT_POLICY.md).
+- Never use the test set for training, checkpoint selection, architecture, or threshold tuning.
+  Audit available prior manifests; historical MRL test images are not fresh test data.
+
 - Follow the user's SafeDriveAI brief: Flutter Android UI, Kotlin camera/background service,
   Python/OpenCV/Pandas/YOLO/PyTorch AI tooling, LLM voice assistance, MVC, and USB-installable APK.
 - Connect each task to a requirement ID in PROJECT_BRIEF. Keep changes within the current request.

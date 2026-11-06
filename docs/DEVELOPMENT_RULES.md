@@ -46,8 +46,13 @@ Asosiy talablar: [PROJECT_BRIEF.md](PROJECT_BRIEF.md). Joriy texnik qarorlar:
 
 ## Dataset va tekshirish
 
+- Amaldagi qoida: 80% train / 20% test; butun rasmga yaxlitlash va oldingi
+  foydalanish auditi [DATA_SPLIT_POLICY.md](DATA_SPLIT_POLICY.md)da.
+- Yangi trening to‘liq 80% train bilan ishlaydi va oldindan belgilangan oxirgi
+  epochni saqlaydi. Testni model/epoch/threshold tanlashga ishlatmang.
+
 - Manba, label, preprocessing, subject split va model versiyasini qayd eting.
-- Bir haydovchining kadrlarini train/val/test orasida aralashtirmang. Test split
+- Bir haydovchining kadrlarini train va test orasida aralashtirmang. Test split
   natijasidan trening yoki threshold tanlash uchun foydalanmang.
 - Frontal, chap/o‘ng, yorug‘lik va ko‘rinish yo‘q holatlarni alohida baholang.
   Aniqlik, coverage, yolg‘on alarm va kechikish dalilsiz va’da qilinmasin.

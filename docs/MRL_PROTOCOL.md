@@ -1,5 +1,9 @@
 # MRL boshlang‘ich tajriba protokoli — 2026-11-06
 
+**Tarixiy tajriba:** ushbu natija/buyruqlar 80/20 talabi kiritilishidan oldingi
+`2cabcca` va undan avvalgi train/val/test kodiga tegishli. Yangi ishlar uchun
+[80/20 qoidasi](DATA_SPLIT_POLICY.md) amal qiladi. Ushbu natija qayta nomlanmaydi.
+
 Talab: SD-06. Manba/import: [MRL_EYE.md](MRL_EYE.md).
 Ushbu protokol haqiqiy test splitida inferensdan oldin qayd etilgan.
 
