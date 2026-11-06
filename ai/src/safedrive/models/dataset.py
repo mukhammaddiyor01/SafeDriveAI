@@ -6,7 +6,7 @@ import hashlib
 
 REQUIRED_COLUMNS = {"image_path", "subject_id", "label", "view"}
 LABELS = {"open", "closed"}
-VIEWS = {"front", "left", "right", "up", "down"}
+VIEWS = {"front", "left", "right", "up", "down", "unknown"}
 
 
 def subject_split(subject_id: str, seed: int = 42) -> str:
