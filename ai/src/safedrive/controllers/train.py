@@ -44,7 +44,8 @@ def epoch_loss(model, loader, criterion, device, optimizer=None):
 
 
 def train(manifest: Path, output: Path, epochs: int, seed: int, *,
-          device: str = "cpu", batch_size: int = 32, threads: int = 4, pool_size: int = 1):
+          device: str = "cpu", batch_size: int = 32, threads: int = 4, pool_size: int = 1,
+          balance_classes: bool = False):
     import cv2
     import numpy as np
     import torch
@@ -65,12 +66,18 @@ def train(manifest: Path, output: Path, epochs: int, seed: int, *,
     torch.manual_seed(seed)
     torch.set_num_threads(threads)
     cv2.setNumThreads(1)
-    loader = DataLoader(EyeDataset(frame[frame.split == "train"]), batch_size=batch_size,
+    train_rows = frame[frame.split == "train"]
+    loader = DataLoader(EyeDataset(train_rows), batch_size=batch_size,
                         shuffle=True, num_workers=0,
                         generator=torch.Generator().manual_seed(seed))
     model = EyeClassifier(pool_size=pool_size).to(selected_device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
-    criterion = nn.BCEWithLogitsLoss()
+    positive_weight = None
+    if balance_classes:
+        counts = train_rows.label.value_counts()
+        positive_weight = float(counts["open"] / counts["closed"])
+    weight_tensor = None if positive_weight is None else torch.tensor(positive_weight, device=selected_device)
+    criterion = nn.BCEWithLogitsLoss(pos_weight=weight_tensor)
     history = []
     output.mkdir(parents=True, exist_ok=True)
     card = {
@@ -85,6 +92,7 @@ def train(manifest: Path, output: Path, epochs: int, seed: int, *,
         "batch_size": batch_size, "threads": threads, "requested_epochs": epochs,
         "learning_rate": 0.001, "optimizer": "AdamW", "loss": "BCEWithLogitsLoss",
         "selection": "fixed final epoch; no test inference or test-driven selection during training",
+        "closed_class_weight": positive_weight,
         "split_policy": "80/20 train/test",
         "started_at_utc": datetime.now(timezone.utc).isoformat(), "completed_epochs": 0,
         "status": "training in progress; research only",
@@ -121,9 +129,11 @@ def main():
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--threads", type=int, default=4)
     parser.add_argument("--pool-size", type=int, choices=(1, 4), default=1)
+    parser.add_argument("--balance-classes", action="store_true", help="Weight closed eyes using train counts only")
     args = parser.parse_args()
     train(args.manifest, args.output, args.epochs, args.seed,
-          device=args.device, batch_size=args.batch_size, threads=args.threads, pool_size=args.pool_size)
+          device=args.device, batch_size=args.batch_size, threads=args.threads,
+          pool_size=args.pool_size, balance_classes=args.balance_classes)
 
 
 if __name__ == "__main__":
