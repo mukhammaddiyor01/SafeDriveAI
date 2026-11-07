@@ -1,6 +1,6 @@
 # SafeDriveAI — joriy holat va davom ettirish
 
-Oxirgi mazmuniy tekshiruv: **2026-11-06**. Bu hujjat tayyorlik holatini saqlaydi;
+Oxirgi mazmuniy tekshiruv: **2026-11-07**. Bu hujjat tayyorlik holatini saqlaydi;
 mahsulotning yakuniy talablari [PROJECT_BRIEF.md](PROJECT_BRIEF.md)da.
 Dalillar: [VERIFICATION.md](VERIFICATION.md). O‘zgargan qismni yangi dalil bilan yangilang.
 
@@ -12,6 +12,14 @@ MRL taqsimoti: 67,858 train / 16,964 test, haydovchilar 30/7.
 Auditda yangi test rasmlarining barchasi avval ishlatilgani aniqlandi; qayta
 trening yoki yangi test natijasi chiqarilmadi. Yangi mustaqil test ma’lumoti kerak.
 Oldingi 86.06% natija eski train/val/test tajribasiga tegishli, 80/20 natijasi emas.
+
+## RT-BENE tadqiqot tajribasi — 2026-11-07
+
+Yangi RT-BENE manbasida 7 000 train / 1 750 test tasvir bilan 80/20 tajriba bajarildi.
+Ikki test subyekti treningdan ajratildi. MRL tarixida mos fayl xeshlari topilmadi.
+Model 18 yopiq ko‘z tasviridan 15 tasini topdi va 1 732 ochiq tasvirdan 620 tasini xato
+yopiq dedi. Model tadqiqot bosqichida qoladi. Keyingi testlarda ushbu manifestni
+foydalanish tarixiga qo‘shing. [Natija va cheklovlar](RT_BENE_PILOT.md)
 
 ## Joriy bosqich
 

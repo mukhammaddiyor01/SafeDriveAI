@@ -1,0 +1,71 @@
+{
+  "split": {
+    "source": "https://zenodo.org/records/3685316",
+    "seed": 42,
+    "before_filtering": {
+      "train": 7002,
+      "test": 6359
+    },
+    "prior_manifest_sha256": "4590771afb6b7d569742461def36f4cfc3a4b57ebee295568b6bae30959b09de",
+    "archives_sha256": {
+      "s007_noglasses_eyes.tar": "53578b9d0d423af9bffaa282bfaeb9d6a29564c52c7bd57767b3f92d59190e78",
+      "s009_noglasses_eyes.tar": "97ef99fc02464ebe827131d3cb9da01f83ba5fed4ce9381b9307dce3aa8eebe4",
+      "s012_noglasses_eyes.tar": "960a7cd273a4d835b0d21584cf3f2ca7ade530a9aa6149efc82df6d97d08d5b1",
+      "s015_noglasses_eyes.tar": "b16743f52786c07996673d21e4ac187abcca4029fb7afe70d98269b6032ebdd0",
+      "s016_noglasses_eyes.tar": "758bffdd1f164ba642df5b1fd5fb792037fc9b50b8d3028628e09ad32597c708"
+    },
+    "duplicate_rows_excluded": 0,
+    "historical_rows_excluded": 0,
+    "dataset_fingerprint": "637a74142a31ba5312ab0ebc94bcdc2d15928d2d0034fb6b921791c7c493d8d2",
+    "counts": {
+      "test": {
+        "images": 1750,
+        "subjects": 2,
+        "closed": 18
+      },
+      "train": {
+        "images": 7000,
+        "subjects": 3,
+        "closed": 217
+      }
+    }
+  },
+  "training": {
+    "seed": 42,
+    "device": "mps",
+    "requested_epochs": 10,
+    "batch_size": 128,
+    "architecture": {
+      "name": "EyeClassifier",
+      "pool_size": 4
+    },
+    "closed_class_weight": 31.258064516129032,
+    "training_code_sha256": "620f6091b947fdc00a6ee2877f4c8df2a8b889af9ffae32cec7e2bebc696d8e9"
+  },
+  "test": {
+    "evaluated_at_utc": "2026-11-07T13:32:22.935739+00:00",
+    "split": "test",
+    "subjects": 2,
+    "threshold": 0.5,
+    "checkpoint_sha256": "84f515952ca45b7e23f5d9ba652f6f106e6d0f7169da56d569bd5c028f073944",
+    "dataset_fingerprint": "637a74142a31ba5312ab0ebc94bcdc2d15928d2d0034fb6b921791c7c493d8d2",
+    "selected_epoch": 10,
+    "selection": "fixed final epoch; no test inference or test-driven selection during training",
+    "torch_version": "2.15.0",
+    "device": "cpu",
+    "batch_size": 128,
+    "metrics": {
+      "samples": 1750,
+      "tp": 15,
+      "fn": 3,
+      "fp": 620,
+      "tn": 1112,
+      "accuracy": 0.644,
+      "recall_closed": 0.8333333333333334,
+      "false_positive_rate": 0.3579676674364896,
+      "precision_closed": 0.023622047244094488,
+      "balanced_accuracy": 0.737682832948422
+    },
+    "limitations": "Eye-crop frame classification only; no event-level, multiview, RGB phone or alarm validation"
+  }
+}
