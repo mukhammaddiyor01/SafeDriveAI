@@ -11,7 +11,7 @@ import pandas as pd
 import torch
 
 from safedrive.controllers.evaluate import evaluate
-from safedrive.models.dataset import read_prepared_manifest
+from safedrive.models.dataset import CENTER_MOUNTS, MOUNT_SCENARIOS, read_prepared_manifest
 from safedrive.models.eye_model import EyeClassifier
 from safedrive.models.provenance import file_sha256, manifest_fingerprint
 
@@ -49,6 +49,33 @@ class EvaluationTest(unittest.TestCase):
         self.assertEqual(summary["metrics"]["balanced_accuracy"], 0.5)
         report = pd.read_csv(self.root / "report/metrics_by_condition.csv")
         self.assertIn("glasses", set(report.condition))
+
+    def test_mount_report_keeps_left_and_right_views_separate(self):
+        rows = []
+        for driver in range(5):
+            for mount in CENTER_MOUNTS:
+                for view in ("left", "right"):
+                    for label, posture, gaze in sorted(MOUNT_SCENARIOS):
+                        path = self.root / f"mount_{len(rows)}.png"
+                        cv2.imwrite(str(path), np.full((8, 8), len(rows), dtype=np.uint8))
+                        rows.append({
+                            "image_path": str(path), "subject_id": str(driver),
+                            "split": "test" if driver == 4 else "train",
+                            "label": label, "view": view, "camera_mount": mount,
+                            "head_posture": posture, "gaze_target": gaze,
+                        })
+        pd.DataFrame(rows).to_csv(self.manifest, index=False)
+        self.card["dataset_fingerprint"] = manifest_fingerprint(read_prepared_manifest(self.manifest))
+        (self.root / "model-card.json").write_text(json.dumps(self.card))
+
+        with contextlib.redirect_stdout(io.StringIO()):
+            evaluate(self.manifest, self.weights, self.root / "report")
+        report = pd.read_csv(self.root / "report/metrics_by_mount.csv")
+        navigation = report[(report.camera_mount == "center_low") &
+                            (report.gaze_target == "navigation")].set_index("view")
+        self.assertEqual(navigation.samples.to_dict(), {"left": 1, "right": 1})
+        self.assertEqual(navigation.fp.to_dict(), {"left": 1, "right": 1})
+        self.assertEqual(int(report.samples.sum()), 16)
 
     def test_modified_checkpoint_is_rejected_before_loading(self):
         with self.weights.open("ab") as stream:

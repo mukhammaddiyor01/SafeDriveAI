@@ -126,3 +126,10 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - ARM64 release APK yig‘ildi, imzo va SHA-256 qiymati tekshirildi.
 - ADB qurilma ko‘rsatmadi. Jonli OpenAI va Galaxy A51 mikrofon oqimi sinovdan
   o‘tishi kerak.
+
+## Markaziy tutqichni kamera burchagi bo‘yicha baholash — 2026-11-08
+
+- 37 ta Python testi o‘tdi. Sun’iy 80/20 manifestda past markaziy tutqich
+  va navigator holatidagi chap va o‘ng kamera natijalari alohida chiqdi.
+- Test hisobotidagi barcha 16 tasvir hisobga olindi. Bu yangi haqiqiy
+  yozuvlardagi model aniqligini baholamaydi.

@@ -68,7 +68,8 @@ navigatorga qarash va ochiq ko‘z bilan bosh egilishi kerak. Shu shartlar
 bajarilmasa manifest rad etiladi. Avval ishlatilgan manifestlarni auditga kiriting.
 
 Baholashdagi `metrics_by_mount.csv` fayli ko‘z ochiq yoki yopiqligini
-tutqich, bosh holati va nigoh kesimida ko‘rsatadi. Bosh va nigoh bu hisobotda
+tutqich, kamera burchagi, bosh holati va nigoh kesimida ko‘rsatadi. Har bir qatorda
+namunalar va haydovchilar soni beriladi. `unknown` alohida ko‘rsatiladi. Bosh va nigoh bu hisobotda
 annotatsiya sifatida ishlatiladi. Ularni topadigan model alohida o‘qitiladi va baholanadi.
 
 ## Keyingi modelni qabul qilish mezonlari

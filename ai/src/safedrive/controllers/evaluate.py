@@ -74,7 +74,7 @@ def evaluate(manifest: Path, weights: Path, output: Path, threshold: float = 0.5
         "selected_epoch": card.get("selected_epoch", card.get("best_epoch")),
         "selection": card.get("selection"), "torch_version": str(torch.__version__),
         "device": "cpu", "batch_size": batch_size, "metrics": classification_metrics(test),
-        "limitations": "Eye-crop frame classification only; no event-level, multiview, RGB phone or alarm validation",
+        "limitations": "Eye-crop frame classification only; head posture and gaze are annotations. No event-level or on-device alarm validation.",
     }
     conditions = []
     for column in ("view", "glasses", "lighting", "reflections", "sensor", "subject_id"):
@@ -88,10 +88,11 @@ def evaluate(manifest: Path, weights: Path, output: Path, threshold: float = 0.5
     condition_frame[condition_frame.condition == "view"].rename(columns={"value": "view"}).drop(
         columns="condition").to_csv(output / "metrics_by_view.csv", index=False)
     if "camera_mount" in test:
+        mount_conditions = ["camera_mount", "view", *MOUNT_COLUMNS[1:]]
         rows = [
-            {**dict(zip(MOUNT_COLUMNS, labels)), "subjects": int(group.subject_id.nunique()),
+            {**dict(zip(mount_conditions, labels)), "subjects": int(group.subject_id.nunique()),
              **classification_metrics(group)}
-            for labels, group in test.groupby(list(MOUNT_COLUMNS), sort=True)
+            for labels, group in test.groupby(mount_conditions, sort=True)
         ]
         pd.DataFrame(rows).to_csv(output / "metrics_by_mount.csv", index=False)
     test.to_csv(output / "predictions.csv", index=False)
