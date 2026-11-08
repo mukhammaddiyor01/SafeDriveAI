@@ -41,7 +41,13 @@ class SettingsSheet extends StatelessWidget {
               'Recent voice turns are stored on this device and sent as context.',
             ),
             const SizedBox(height: 8),
-            if (controller.chatGptEmail == null) ...[
+            if (controller.waitingForChatGpt) ...[
+              const Text('Waiting for approval in your browser.'),
+              TextButton(
+                onPressed: controller.cancelChatGptSignIn,
+                child: const Text('Cancel sign-in'),
+              ),
+            ] else if (controller.chatGptEmail == null) ...[
               FilledButton(
                 onPressed: controller.busy || controller.state.active
                     ? null

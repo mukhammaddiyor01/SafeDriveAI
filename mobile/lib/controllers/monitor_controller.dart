@@ -12,6 +12,7 @@ class MonitorController extends ChangeNotifier {
   StreamSubscription<MonitorState>? _subscription;
   MonitorState state = const MonitorState();
   bool busy = false;
+  bool waitingForChatGpt = false;
   bool voice = true;
   bool llm = false;
   bool chatGptVerified = false;
@@ -66,13 +67,21 @@ class MonitorController extends ChangeNotifier {
       _perform(state.active ? _native.stop : _native.start);
   Future<void> testAlarm() => _perform(_native.testAlarm);
   Future<void> signInChatGpt() => _perform(() async {
-    chatGptEmail = await _native.signInChatGpt();
+    waitingForChatGpt = true;
+    _changed();
+    try {
+      chatGptEmail = await _native.signInChatGpt();
+    } finally {
+      waitingForChatGpt = false;
+    }
     if (chatGptEmail == null) return;
     await _native.setPreferences(voice: true, llm: true);
     voice = true;
     llm = true;
     chatGptVerified = false;
   });
+
+  Future<void> cancelChatGptSignIn() => _native.cancelChatGptSignIn();
 
   Future<void> signOutChatGpt() => _perform(() async {
     final revoked = await _native.signOutChatGpt();

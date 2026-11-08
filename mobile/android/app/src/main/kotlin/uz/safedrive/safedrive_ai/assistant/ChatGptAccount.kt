@@ -39,7 +39,7 @@ internal class ChatGptAccount(context: Context) {
 
     fun email(): String? = session()?.takeIf { it.has("access_token") }?.optString("email")
 
-    fun signIn(activity: Activity): String {
+    fun signIn(activity: Activity, cancelled: () -> Boolean): String {
         val old = session()
         val registered = old?.optString("client_id").orEmpty()
         val state = randomToken()
@@ -65,7 +65,7 @@ internal class ChatGptAccount(context: Context) {
             if (registered.isEmpty()) parameters["agent_name_hint"] = "SafeDriveAI"
             val url = "$AUTH/api/accounts/authorize?${form(parameters)}"
             activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-            val result = awaitCallback(listener, state)
+            val result = awaitCallback(listener, state, cancelled)
             val clientId = result.getQueryParameter("client_id") ?: registered
             require(clientId.startsWith("oaiapp_") && (registered.isEmpty() || registered == clientId))
             val code = requireNotNull(result.getQueryParameter("code"))
@@ -85,16 +85,22 @@ internal class ChatGptAccount(context: Context) {
         val selected = available.firstOrNull { it.optString("slug").endsWith("-sol") }
             ?: available.firstOrNull() ?: error("No ChatGPT model is available for this account.")
         callback.put("model", selected.getString("slug"))
+        if (cancelled()) throw java.util.concurrent.CancellationException()
         save(callback)
         return email
     }
 
-    private fun awaitCallback(listener: ServerSocket, state: String): Uri {
+    private fun awaitCallback(listener: ServerSocket, state: String, cancelled: () -> Boolean): Uri {
         val deadline = android.os.SystemClock.elapsedRealtime() + 180_000
-        while (true) {
-            listener.soTimeout = (deadline - android.os.SystemClock.elapsedRealtime())
-                .coerceIn(1, 180_000).toInt()
-            listener.accept().use { socket ->
+        listener.soTimeout = 1000
+        while (android.os.SystemClock.elapsedRealtime() < deadline) {
+            if (cancelled()) throw java.util.concurrent.CancellationException()
+            val connection = try {
+                listener.accept()
+            } catch (_: java.net.SocketTimeoutException) {
+                continue
+            }
+            connection.use { socket ->
                 socket.soTimeout = 2_000
                 val input = socket.getInputStream()
                 val line = StringBuilder()
@@ -117,16 +123,17 @@ internal class ChatGptAccount(context: Context) {
                     "<p>Authorization received. Return to SafeDriveAI to finish.</p>" +
                         "<a href='safedriveai://return'>Return to SafeDriveAI</a>"
                 } else "<p>Authorization did not complete. Return to SafeDriveAI.</p>"
+                val length = html.toByteArray(Charsets.UTF_8).size
                 socket.getOutputStream().write(
                     ("HTTP/1.1 ${if (accepted) "200 OK" else "400 Bad Request"}\r\n" +
                         "Content-Type: text/html; charset=utf-8\r\nCache-Control: no-store\r\n" +
-                        "Referrer-Policy: no-referrer\r\nConnection: close\r\n\r\n$html").toByteArray()
+                        "Referrer-Policy: no-referrer\r\nContent-Length: $length\r\nConnection: close\r\n\r\n$html").toByteArray()
                 )
                 if (accepted) return uri
                 if (matches) error("ChatGPT sign-in was declined.")
             }
-            check(android.os.SystemClock.elapsedRealtime() < deadline) { "ChatGPT sign-in timed out." }
         }
+        error("ChatGPT sign-in timed out.")
     }
 
     fun disconnect(): Boolean {

@@ -11,6 +11,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
+import java.util.concurrent.atomic.AtomicBoolean
 import uz.safedrive.safedrive_ai.assistant.ChatGptAccount
 import uz.safedrive.safedrive_ai.controller.AlarmController
 import uz.safedrive.safedrive_ai.controller.MonitorRuntime
@@ -19,6 +20,7 @@ import uz.safedrive.safedrive_ai.model.MonitorState
 import uz.safedrive.safedrive_ai.view.CameraPreviewFactory
 
 class MainActivity : FlutterActivity() {
+    private var signInAttempt: AtomicBoolean? = null
     private var pendingStart: MethodChannel.Result? = null
     private var startAfterResume: MethodChannel.Result? = null
     private var tester: AlarmController? = null
@@ -53,13 +55,21 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 "chatGptAccount" -> result.success(runCatching { ChatGptAccount(this).email() }.getOrNull())
+                "cancelChatGptSignIn" -> {
+                    signInAttempt?.set(true)
+                    result.success(null)
+                }
                 "signInChatGpt", "signOutChatGpt" -> {
                     val signIn = call.method == "signInChatGpt"
+                    val cancelled = AtomicBoolean(false)
+                    if (signIn) signInAttempt = cancelled
                     Thread {
                         try {
                             val account = ChatGptAccount(this)
-                            val value = if (signIn) account.signIn(this) else account.disconnect()
+                            val value = if (signIn) account.signIn(this, cancelled::get) else account.disconnect()
                             runOnUiThread { result.success(value) }
+                        } catch (_: java.util.concurrent.CancellationException) {
+                            runOnUiThread { result.success(null) }
                         } catch (_: java.net.SocketTimeoutException) {
                             runOnUiThread { result.error("chatgpt_timeout", "ChatGPT did not respond in time. Try again.", null) }
                         } catch (error: Exception) {
@@ -70,6 +80,8 @@ class MainActivity : FlutterActivity() {
                                         "ChatGPT sign-in was declined.", "ChatGPT sign-in timed out.")
                             } ?: "ChatGPT sign-in could not be completed. Check your account and internet connection."
                             runOnUiThread { result.error("chatgpt_account", message, null) }
+                        } finally {
+                            runOnUiThread { if (signInAttempt === cancelled) signInAttempt = null }
                         }
                     }.start()
                 }
@@ -147,6 +159,7 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
+        signInAttempt?.set(true)
         pendingStart?.error("closed", "The app closed. Open it and try again.", null)
         pendingStart = null
         startAfterResume?.error("closed", "The app closed. Open it and try again.", null)
