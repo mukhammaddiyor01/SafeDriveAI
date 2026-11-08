@@ -45,7 +45,7 @@ class MainActivity : FlutterActivity() {
                     else {
                         try {
                             tester?.close()
-                            tester = AlarmController(this) {}
+                            tester = AlarmController(this, prepareVoice = false) {}
                             tester?.test()
                             result.success(null)
                         } catch (_: Exception) { result.error("audio", "Could not play the alarm.", null) }

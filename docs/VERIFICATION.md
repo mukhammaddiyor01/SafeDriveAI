@@ -105,3 +105,13 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - ARM64 release APK yig‘ildi, imzo va SHA-256 mosligi tasdiqlandi.
 - Jonli OpenAI kaliti sozlanmagan va ADB qurilma ko‘rsatmadi. Jonli API
   javobi va Galaxy A51’da inglizcha ovozning eshitilishi tekshirilmagan.
+
+## Telefon sinovi va Test alarm tugmasi — 2026-11-08
+
+- Wireless debugging yo‘riqnomasidan keyin foydalanuvchi telefon sinovi yaxshi
+  o‘tganini bildirdi. Qaysi holatlar sinovdan o‘tgani alohida qayd etilmagan.
+- Test alarm faqat ovoz va vibratsiyani sinaydi. Sinov tugaganda, ilova fon
+  rejimiga o‘tganda yoki kuzatuv boshlanganda audio resurslari yopiladi.
+- 9 Kotlin va 3 Flutter testi o‘tdi. ARM64 APK qayta yig‘ildi, imzosi va SHA-256
+  qiymati tekshirildi. Shu yangi versiyada ovoz va vibratsiya jismoniy qurilmada
+  hali tinglanmagan.

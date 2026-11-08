@@ -7,7 +7,7 @@ Model, Android versiyasi, yorug‘lik, tutqich burchagi, APK versiyasi va natija
 |---|---|
 | Kamera ruxsatini rad etish | Tushunarli xabar, qayta urinish mumkin |
 | Alarm ovozi nol | Boshlashdan oldin ovozni oshirish haqida xabar |
-| Signalni sinash | Qisqa ovoz va vibratsiya; keyin o‘chadi |
+| Signalni sinash | Test alarm ovoz va vibratsiyani taxminan 2,5 s ijro etadi; keyin o‘chadi |
 | Oddiy qisqa ko‘z yumish | Alarm yo‘q |
 | 1.5 s davomli ko‘z yumish | Kechikishsiz alarm; real kechikishni o‘lchang |
 | Ko‘zlar yana ochilishi | Signal o‘chadi, holat yangilanadi |
@@ -25,5 +25,5 @@ Model, Android versiyasi, yorug‘lik, tutqich burchagi, APK versiyasi va natija
 | Inglizcha TTS yo‘q | Ovoz mavjud emasligi ko‘rsatiladi, alarm ishlaydi |
 | 30–60 min kuzatuv | FPS, qizish, quvvat sarfi va yolg‘on alarmni o‘lchang |
 
-Avtomatlashtirilgan testlar bu qurilma sinovining o‘rnini bosmaydi. Hozircha Galaxy
-A51’dagi haqiqiy kamera/background natijalari qayd etilmagan.
+Avtomatlashtirilgan testlar bu qurilma sinovining o‘rnini bosmaydi. Foydalanuvchi telefon sinovi yaxshi o‘tganini bildirdi. Kamera va fon sinovining
+batafsil natijalari hali qayd etilmagan.
