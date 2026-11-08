@@ -42,10 +42,13 @@ class AlarmController(
     }
 
     fun update(state: MonitorState) {
+        val liveEnabled = preferences.getBoolean("geminiLive", false)
+        val coachEnabled = preferences.getBoolean("llm", false) || liveEnabled
+        val voiceEnabled = preferences.getBoolean("voice", true)
         val wasUrgent = urgent
         urgent = state.status == "drowsy"
         if (state.alarm || !state.active || state.eyesOpen == null ||
-            !preferences.getBoolean("voice", true) || !preferences.getBoolean("llm", false)) {
+            !voiceEnabled || !coachEnabled) {
             voice.cancelConversation()
         }
         if (state.alarm && !ringing) {
@@ -58,13 +61,12 @@ class AlarmController(
             vibrator?.cancel()
         }
         val now = SystemClock.elapsedRealtime()
-        if (urgent && state.alarm && (!wasUrgent || now - lastPrompt >= 20_000) && preferences.getBoolean("voice", true)) {
+        if (urgent && state.alarm && (!wasUrgent || now - lastPrompt >= 20_000) && voiceEnabled) {
             lastPrompt = now
             voice.warn()
         }
-        if (recovery.update(state, now) && preferences.getBoolean("voice", true) &&
-            preferences.getBoolean("llm", false)) {
-            voice.startConversation()
+        if (recovery.update(state, now) && voiceEnabled && coachEnabled) {
+            voice.startConversation(liveEnabled)
         }
     }
 

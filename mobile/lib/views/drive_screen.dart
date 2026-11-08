@@ -80,6 +80,31 @@ class _DriveScreenState extends State<DriveScreen> {
                   ),
                   const SizedBox(height: 16),
                   _StatusMessage(state: state),
+                  if (state.assistant == 'Gemini Live connecting' ||
+                      state.assistant == 'Gemini Live active') ...[
+                    const SizedBox(height: 16),
+                    Center(
+                      child: CircleAvatar(
+                        radius: 42,
+                        backgroundColor: DriveColors.blue,
+                        child: state.assistant == 'Gemini Live connecting'
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            : const Icon(
+                                Icons.graphic_eq,
+                                color: Colors.white,
+                                size: 36,
+                              ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(child: Text(state.assistant)),
+                  ],
+                  if (state.assistant == 'Gemini Live unavailable' ||
+                      state.assistant ==
+                          'Gemini Live needs microphone permission')
+                    Text(state.assistant),
                   if (controller.error != null) ...[
                     const SizedBox(height: 12),
                     Text(

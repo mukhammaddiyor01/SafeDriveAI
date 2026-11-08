@@ -34,6 +34,8 @@ class FakeMonitor implements NativeMonitor {
   @override
   Future<void> testAlarm() async {}
   @override
+  Future<void> setGeminiLive(bool enabled) async {}
+  @override
   Future<void> connectChatGpt() async {}
   @override
   Future<String?> chatGptAccount() async => null;

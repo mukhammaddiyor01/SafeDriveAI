@@ -1,6 +1,7 @@
 """Run locally: uvicorn safedrive.controllers.assistant:app --host 127.0.0.1 --port 8765"""
 
 from contextlib import asynccontextmanager
+from datetime import datetime, timedelta, timezone
 import logging
 import os
 from pathlib import Path
@@ -20,8 +21,10 @@ logger = logging.getLogger("uvicorn.error")
 async def lifespan(app: FastAPI):
     async with httpx.AsyncClient(timeout=8.0) as client:
         app.state.coach = Coach(client)
+        app.state.http = client
         path = Path(os.getenv("SAFEDRIVE_CONVERSATION_FILE", "~/.safedriveai/conversation-id")).expanduser()
         key = gemini_setting("GEMINI_API")
+        app.state.gemini_key = key
         app.state.provider = "gemini" if key else "openai"
         app.state.conversation = (
             GeminiConversation(client, key, gemini_setting("GEMINI_MODEL") or "gemini-3.1-flash-lite")
@@ -84,3 +87,21 @@ async def turn(turn: DriverTurn):
         return {"text": text, "source": app.state.provider}
     except (httpx.HTTPError, OSError, ValueError, KeyError, TypeError):
         raise HTTPException(503, "Voice coach response unavailable") from None
+
+
+@app.post("/live/token")
+async def live_token():
+    key = app.state.gemini_key
+    if not key:
+        raise HTTPException(503, "Gemini Live requires GEMINI_API on the Mac")
+    expires = datetime.now(timezone.utc) + timedelta(minutes=2)
+    try:
+        response = await app.state.http.post(
+            "https://generativelanguage.googleapis.com/v1beta/auth_tokens",
+            headers={"x-goog-api-key": key},
+            json={"uses": 1, "expireTime": expires.isoformat()},
+        )
+        response.raise_for_status()
+        return {"token": response.json()["name"], "model": "models/gemini-3.8-live"}
+    except (httpx.HTTPError, ValueError, KeyError):
+        raise HTTPException(503, "Gemini Live could not issue a token") from None

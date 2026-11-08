@@ -186,3 +186,15 @@ holda saqlanadi va navbatdagi savolga kontekst bo‘ladi.
 **Sign out of ChatGPT** ushbu telefondagi sessiyani yopadi.
 
 [OpenAI kirish hujjati](https://developers.openai.com/siwc/token-sharing-open-source/sign-in)
+
+## Gemini Live ovozli suhbat
+
+MacBook yordamchi serverida `.env` faylidagi `GEMINI_API` dan foydalaniladi.
+Telefonni USB orqali ulang va `adb -d reverse tcp:8765 tcp:8765` ni bajaring.
+SafeDriveAI’da **Settings → Gemini Live** va **Voice reminders** ni yoqing.
+**Start monitoring** bosilganda mikrofon ruxsatini bering.
+
+Uyquchanlik alarmi tugab, ko‘zlar bir soniya ochiq ko‘ringach, ilova Gemini Live
+sessiyasini ochadi. Yumaloq indikator ulanish va suhbat holatini ko‘rsatadi.
+Mikrofon audiosi Gemini’ga uzatiladi. Sessiya 60 soniyadan keyin, alarm qaytsa
+yoki kuzatuv to‘xtatilsa yopiladi.

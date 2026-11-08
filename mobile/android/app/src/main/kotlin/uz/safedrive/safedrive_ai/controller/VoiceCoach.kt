@@ -2,6 +2,7 @@ package uz.safedrive.safedrive_ai.controller
 
 import android.content.Context
 import uz.safedrive.safedrive_ai.assistant.ChatGptAccount
+import uz.safedrive.safedrive_ai.assistant.GeminiLiveSession
 import android.content.Intent
 import android.media.AudioAttributes
 import android.os.Bundle
@@ -31,6 +32,7 @@ class VoiceCoach(
     private var ready = false
     private var generation = 0
     private var conversationActive = false
+    private var liveSession: GeminiLiveSession? = null
     private var recognizer: SpeechRecognizer? = null
     private val endListening = Runnable {
         releaseRecognizer()
@@ -77,8 +79,26 @@ class VoiceCoach(
         speech.speak("Pull over safely.", TextToSpeech.QUEUE_FLUSH, null, "rest")
     }
 
-    fun startConversation() {
-        if (closed || !ready) return
+    fun startConversation(useGeminiLive: Boolean) {
+        if (closed) return
+        if (useGeminiLive && allowVoiceReply) {
+            if (liveSession != null) return
+            if (ready) speech.stop()
+            liveSession = GeminiLiveSession { label, failed ->
+                onSource(label)
+                if (label != "Gemini Live connecting" && label != "Gemini Live active") {
+                    liveSession = null
+                    if (failed && ready) speech.speak("Pull over safely and rest.",
+                        TextToSpeech.QUEUE_FLUSH, null, "live-fallback")
+                }
+            }.also { it.start() }
+            return
+        }
+        if (useGeminiLive) {
+            onSource("Gemini Live needs microphone permission")
+            return
+        }
+        if (!ready) return
         conversationActive = true
         generation++
         requestTurn(null)
@@ -190,10 +210,12 @@ class VoiceCoach(
     }
 
     fun cancelConversation() {
-        if (conversationActive) stop()
+        if (conversationActive || liveSession != null) stop()
     }
 
     fun stop() {
+        liveSession?.finish()
+        liveSession = null
         generation++
         conversationActive = false
         releaseRecognizer()

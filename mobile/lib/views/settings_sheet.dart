@@ -31,6 +31,18 @@ class SettingsSheet extends StatelessWidget {
                   ? null
                   : (v) => controller.updatePreferences(voiceEnabled: v),
             ),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Gemini Live'),
+              subtitle: const Text(
+                'Start a live conversation after an alert clears. '
+                'Requires the Mac assistant and sends microphone audio to Gemini.',
+              ),
+              value: controller.geminiLive,
+              onChanged: controller.busy || controller.state.active
+                  ? null
+                  : controller.setGeminiLive,
+            ),
             const Divider(),
             Text(
               'ChatGPT voice coach',

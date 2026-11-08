@@ -107,13 +107,18 @@ class MainActivity : FlutterActivity() {
                         }
                     }.start()
                 }
+                "geminiLive" -> {
+                    preferences.edit().putBoolean("geminiLive", call.argument<Boolean>("enabled") == true).apply()
+                    result.success(null)
+                }
                 "preferences" -> {
                     if (call.arguments != null) {
                         preferences.edit().putBoolean("voice", call.argument<Boolean>("voice") ?: true)
                             .putBoolean("llm", call.argument<Boolean>("llm") ?: false).apply()
                     }
                     result.success(mapOf("voice" to preferences.getBoolean("voice", true),
-                        "llm" to preferences.getBoolean("llm", false)))
+                        "llm" to preferences.getBoolean("llm", false),
+                        "geminiLive" to preferences.getBoolean("geminiLive", false)))
                 }
                 else -> result.notImplemented()
             }
@@ -128,7 +133,8 @@ class MainActivity : FlutterActivity() {
         val permissions = mutableListOf<String>()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             permissions += Manifest.permission.CAMERA
-        if (getSharedPreferences("monitor", MODE_PRIVATE).getBoolean("llm", false) &&
+        val preferences = getSharedPreferences("monitor", MODE_PRIVATE)
+        if ((preferences.getBoolean("llm", false) || preferences.getBoolean("geminiLive", false)) &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
             permissions += Manifest.permission.RECORD_AUDIO
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)

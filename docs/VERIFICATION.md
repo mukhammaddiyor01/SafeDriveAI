@@ -155,3 +155,11 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - Release APK yig‘ildi, Flutter tahlili va to‘rtta testi o‘tdi. Chrome
   qaytish manzilini ilovada qo‘lda topshirish yo‘li qo‘shildi. Haqiqiy hisob
   orqali shu yo‘lni yakunlash telefon egasining tasdig‘ini talab qiladi.
+
+## Gemini Live — 2026-11-08
+
+- 37 ta Python testi, Kotlin unit testlari va to‘rtta Flutter testi o‘tdi.
+- SafeDriveAI token endpointi haqiqiy Gemini so‘rovida HTTP 200 qaytardi.
+  Alohida Live sinovida bir martalik token bilan 24 kHz audio olindi.
+- Release APK yig‘ildi va imzosi tekshirildi. Telefonda mikrofon, karnay
+  va alarmdan keyingi avtomatik ishga tushish alohida tekshirilishi kerak.

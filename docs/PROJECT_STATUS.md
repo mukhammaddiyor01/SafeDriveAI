@@ -99,3 +99,7 @@ SafeDriveAI sozlamalarida **Continue with ChatGPT** telefon brauzeri orqali
 hisobga kirishni boshlaydi. Mos hisobdan foydalanilganda, ovozli yordamchi
 telefondan OpenAI’ga ulanadi va so‘nggi 12 ta xabarni shifrlangan holda
 saqlaydi. Jonli hisob bilan Android sinovi hali talab qilinadi.
+
+**Gemini Live** rejimi alarmdan keyin 60 soniyagacha ikki tomonlama audio
+suhbatni boshlaydi. MacBook serveri bir martalik token beradi. Galaxy A51’da
+mikrofon va karnay bilan to‘liq sinov hali talab qilinadi.

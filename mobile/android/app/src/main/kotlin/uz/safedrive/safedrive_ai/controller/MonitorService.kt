@@ -57,7 +57,9 @@ class MonitorService : LifecycleService() {
         if (intent?.action == STOP) { stopSelf(); return START_NOT_STICKY }
         if (camera != null) return START_NOT_STICKY
         try {
-            val microphoneEnabled = getSharedPreferences("monitor", MODE_PRIVATE).getBoolean("llm", false) &&
+            val preferences = getSharedPreferences("monitor", MODE_PRIVATE)
+            val microphoneEnabled = (preferences.getBoolean("llm", false) ||
+                preferences.getBoolean("geminiLive", false)) &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
             val serviceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or
                 (if (microphoneEnabled) ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE else 0)
