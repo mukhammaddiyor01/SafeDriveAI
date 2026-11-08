@@ -21,14 +21,15 @@ class PipelineTest(unittest.TestCase):
             root = Path(directory)
             rows = []
             for subject in range(50):
-                for label, level in (("closed", 30), ("open", 220)):
+                for label, level in (("closed", 30), ("open", 180)):
                     filename = f"{subject}_{label}.png"
-                    cv2.imwrite(str(root / filename), np.full((64, 64), level, dtype=np.uint8))
+                    cv2.imwrite(str(root / filename), np.full((64, 64), level + subject, dtype=np.uint8))
                     rows.append({"image_path": filename, "subject_id": str(subject),
                                  "label": label, "view": "front"})
             pd.DataFrame(rows).to_csv(root / "source.csv", index=False)
             prepare_manifest(root / "source.csv", root / "manifest.csv")
             split = pd.read_csv(root / "manifest.csv")
+            self.assertTrue(split.image_sha256.is_unique)
             self.assertTrue((split.groupby("subject_id").split.nunique() == 1).all())
             train(root / "manifest.csv", root / "model", epochs=1, seed=42, pool_size=4)
             evaluate(root / "manifest.csv", root / "model/eye_state.pt", root / "evaluation")

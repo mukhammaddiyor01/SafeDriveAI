@@ -8,6 +8,8 @@ Dalillar: [VERIFICATION.md](VERIFICATION.md). O‘zgargan qismni yangi dalil bil
 
 **80% train / 20% ishlatilmagan test**. Yangi trening faqat train bilan ishlaydi;
 oldindan belgilangan oxirgi epoch saqlanadi. [To‘liq qoida](DATA_SPLIT_POLICY.md).
+Yangi umumiy manifestlar uchun SHA-256 hisoblanadi yoki tekshiriladi; takroriy
+mazmundagi tasvirlar split ajratilishidan oldin rad etiladi.
 MRL taqsimoti: 67,858 train / 16,964 test, haydovchilar 30/7.
 Auditda yangi test rasmlarining barchasi avval ishlatilgani aniqlandi; qayta
 trening yoki yangi test natijasi chiqarilmadi. Yangi mustaqil test ma’lumoti kerak.

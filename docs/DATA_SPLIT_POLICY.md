@@ -9,8 +9,10 @@ oldingi train/validation/test tajriba tartibidan ustun turadi.
   yaxlitlanadi: `round(total * 0.20)`; qolgan rasmlar train’ga kiradi.
 - Bir haydovchi ikkala splitga tushmaydi. Butun haydovchilar bilan shu nisbatni
   hosil qilib bo‘lmasa, noto‘g‘ri nisbatga o‘tish o‘rniga xato qaytariladi.
-- Bir xil fayl/hash nusxalari splitlar orasida bo‘lmasin. MRL importida takroriy
-  guruhlarning barcha nusxalari chiqariladi.
+- Umumiy tayyorlash buyrug‘i kirish CSV’ida SHA-256 ustuni bo‘lmasa uni
+  hisoblaydi, ustun berilgan bo‘lsa fayl mazmuni bilan tekshiradi. Bir xil
+  mazmundagi fayllar boshqa nomda bo‘lsa ham yangi manifest rad etiladi.
+  MRL importida takroriy guruhlarning barcha nusxalari oldindan chiqariladi.
 - Model faqat train’ning 80% tasvirlari bilan o‘qitiladi. Test model vaznlarini,
   epoch, arxitektura yoki thresholdni tanlashda ishlatilmaydi.
 - Hozirgi yangi trening alohida validation ajratmaydi: oldindan belgilangan epoch

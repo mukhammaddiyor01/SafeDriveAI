@@ -66,6 +66,16 @@ def validate_train_test_ratio(frame):
         raise ValueError(f"80/20 requires {expected} test images, found {actual}; add whole subjects rather than mixing a driver across splits")
 
 
+def verify_image_hashes(frame):
+    if not frame.image_sha256.str.fullmatch(r"[0-9a-f]{64}").all():
+        raise ValueError("Invalid image_sha256")
+    if frame.image_sha256.duplicated().any():
+        raise ValueError("Duplicate image content in manifest")
+    for row in frame.itertuples():
+        if file_sha256(Path(row.image_path)) != row.image_sha256:
+            raise ValueError(f"Image content changed after import: {row.image_path}")
+
+
 def read_prepared_manifest(path: Path):
     """Use the same data-integrity checks for training and held-out evaluation."""
     frame = read_manifest(path)
@@ -79,13 +89,7 @@ def read_prepared_manifest(path: Path):
         if set(frame.loc[frame.split == split, "label"]) != LABELS:
             raise ValueError(f"{split} needs both open and closed eye examples")
     if "image_sha256" in frame:
-        if not frame.image_sha256.str.fullmatch(r"[0-9a-f]{64}").all():
-            raise ValueError("Invalid image_sha256")
-        if frame.image_sha256.duplicated().any():
-            raise ValueError("Duplicate image content in prepared manifest")
-        for row in frame.itertuples():
-            if file_sha256(Path(row.image_path)) != row.image_sha256:
-                raise ValueError(f"Image content changed after import: {row.image_path}")
+        verify_image_hashes(frame)
     if "prior_usage" in frame:
         if not set(frame.prior_usage) <= {"used", "unseen_in_supplied_history"}:
             raise ValueError("Invalid prior_usage audit labels")
@@ -101,6 +105,12 @@ def prepare_manifest(source: Path, destination: Path, seed: int = 42, *, prior_m
     if destination.exists():
         raise ValueError(f"Manifest already exists; do not reshuffle a reserved test set: {destination}")
     frame = read_manifest(source)
+    if "image_sha256" in frame:
+        verify_image_hashes(frame)
+    else:
+        frame["image_sha256"] = frame.image_path.map(lambda path: file_sha256(Path(path)))
+        if frame.image_sha256.duplicated().any():
+            raise ValueError("Duplicate image content in manifest")
     test_subjects = select_test_subjects(frame.groupby("subject_id").size().to_dict(), seed)
     frame["split"] = frame.subject_id.map(lambda subject: "test" if subject in test_subjects else "train")
     validate_train_test_ratio(frame)
@@ -121,8 +131,7 @@ def prepare_manifest(source: Path, destination: Path, seed: int = 42, *, prior_m
             if "image_sha256" in prior:
                 used_hashes.update(prior.image_sha256)
         used = frame.image_path.isin(used_paths) | frame.subject_id.isin(used_subjects)
-        if "image_sha256" in frame:
-            used |= frame.image_sha256.isin(used_hashes)
+        used |= frame.image_sha256.isin(used_hashes)
         frame["prior_usage"] = used.map({True: "used", False: "unseen_in_supplied_history"})
     destination.parent.mkdir(parents=True, exist_ok=True)
     frame.to_csv(destination, index=False)

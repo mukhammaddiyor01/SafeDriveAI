@@ -74,6 +74,17 @@ class TrainTestUsageTest(unittest.TestCase):
         self.assertEqual(set(marked.subject_id), {subject})
         self.assertEqual(len(marked), 2)
 
+    def test_source_without_hashes_rejects_a_renamed_duplicate(self):
+        source = pd.read_csv(self.source, dtype=str).drop(columns="image_sha256")
+        first = Path(source.image_path.iloc[0])
+        duplicate = Path(source.image_path.iloc[-1])
+        duplicate.write_bytes(first.read_bytes())
+        source.to_csv(self.source, index=False)
+
+        with self.assertRaisesRegex(ValueError, "Duplicate image content"):
+            prepare_manifest(self.source, self.manifest)
+        self.assertFalse(self.manifest.exists())
+
     def test_a_reserved_manifest_is_not_reshuffled_or_overwritten(self):
         prepare_manifest(self.source, self.manifest)
         before = file_sha256(self.manifest)
@@ -94,6 +105,7 @@ class TrainTestUsageTest(unittest.TestCase):
         source = pd.read_csv(self.source, dtype=str)
         test_subject = next(iter(select_test_subjects({str(index): 2 for index in range(10)})))
         image_hash = source.loc[source.subject_id == test_subject, "image_sha256"].iloc[0]
+        source.drop(columns="image_sha256").to_csv(self.source, index=False)
         prior = self.root / "archived.csv"
         pd.DataFrame([{"image_path": "deleted.png", "subject_id": "another_old_id",
                        "label": "open", "view": "unknown", "image_sha256": image_hash}]).to_csv(prior, index=False)

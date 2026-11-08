@@ -87,3 +87,11 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   O‘rnatish xato bilan tugasa, ilovani ochish buyrug‘i yuborilmaydi.
 - Haqiqiy ADB qurilma ko‘rsatmadi. Skript to‘xtadi va USB debugging hamda
   telefondagi ruxsatni tekshirish bo‘yicha ko‘rsatma chiqardi.
+
+## Yangi dataset manifestida tasvir mazmuni (SD-06) — 2026-11-08
+
+- 34 ta Python testi va 4 ta subtest o‘tdi. Xesh ustunisiz kirishda
+  boshqa nomdagi nusxa rad etilishi va arxivdagi xesh orqali eski tasvir
+  aniqlanishi tekshirildi.
+- Pipeline sinovida 80/20 ajratish va butun train bilan o‘qitish sun’iy
+  tasvirlarda bajarildi. Yangi haqiqiy dataset yoki model aniqligi baholanmadi.
