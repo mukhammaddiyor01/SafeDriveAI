@@ -24,7 +24,7 @@ async def lifespan(app: FastAPI):
         key = gemini_setting("GEMINI_API")
         app.state.provider = "gemini" if key else "openai"
         app.state.conversation = (
-            GeminiConversation(client, key, gemini_setting("GEMINI_MODEL") or "gemini-2.5-flash")
+            GeminiConversation(client, key, gemini_setting("GEMINI_MODEL") or "gemini-3.1-flash-lite")
             if key else DriverConversation(client, path)
         )
         yield
