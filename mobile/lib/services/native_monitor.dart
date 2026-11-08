@@ -50,10 +50,15 @@ class MethodChannelMonitor implements NativeMonitor {
           throw const FormatException('ChatGPT connection unavailable');
         }
       })().timeout(const Duration(seconds: 10));
+    } on SocketException {
+      throw PlatformException(
+        code: 'coach_connection',
+        message: 'Start the Mac assistant and reconnect the ADB tunnel.',
+      );
     } catch (_) {
       throw PlatformException(
         code: 'coach_connection',
-        message: 'Could not connect to ChatGPT. Check the Mac assistant and ADB connection.',
+        message: 'ChatGPT connection failed. Check the OpenAI key and model in the Mac assistant terminal.',
       );
     } finally {
       client.close(force: true);
