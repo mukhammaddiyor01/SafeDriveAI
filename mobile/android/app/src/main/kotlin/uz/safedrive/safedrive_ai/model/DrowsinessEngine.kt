@@ -87,11 +87,12 @@ class DrowsinessEngine {
             eyeKnown && (duration >= 1_500 || (perclos != null && perclos >= 0.35)) ->
                 base.copy(status = "drowsy", message = "Drowsiness detected. Pull over safely.", alarm = true)
             poseDuration >= 2_500 ->
-                base.copy(status = "warning", message = "Head position changed. The camera cannot assess your eyes.", alarm = true)
+                base.copy(status = "warning", message = "Face angle is outside the monitoring range. Adjust the phone mount while parked.", alarm = true)
             !eyeKnown -> {
                 val reason = when {
                     o.faceCount == 0 -> "Face not visible. Check the camera angle and lighting."
                     o.faceCount > 1 -> "Multiple faces in frame. Aim the camera at the driver."
+                    abs(o.yaw) > 18 -> "Side angle limits eye tracking. Adjust the phone mount while parked."
                     else -> "Eyes not clearly visible. Adjust the camera angle."
                 }
                 base.copy(status = "limited", message = reason,

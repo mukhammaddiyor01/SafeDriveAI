@@ -135,7 +135,7 @@ class _DriveScreenState extends State<DriveScreen> {
                         ),
                         const SizedBox(width: 12),
                         _Metric(
-                          label: 'Head angle',
+                          label: 'Camera-relative yaw',
                           value: state.yaw == null
                               ? '—'
                               : '${state.yaw!.round()}°',
