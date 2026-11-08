@@ -95,3 +95,13 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   aniqlanishi tekshirildi.
 - Pipeline sinovida 80/20 ajratish va butun train bilan o‘qitish sun’iy
   tasvirlarda bajarildi. Yangi haqiqiy dataset yoki model aniqligi baholanmadi.
+
+## Inglizcha ekran va ChatGPT ovozli yordamchisi — 2026-11-08
+
+- 360×800 Flutter widget sinovidan olingan bosh ekran rasmi ko‘zdan kechirildi.
+  Flutter static analysis toza, 3 ta Flutter testi va 9 ta Kotlin testi o‘tdi.
+- 34 ta Python testi va 6 ta subtest o‘tdi. Mock OpenAI transporti tasdiqlangan
+  savolni qaytarish, HTTP xatosi, yaroqsiz javob va mahalliy fallbackni tekshirdi.
+- ARM64 release APK yig‘ildi, imzo va SHA-256 mosligi tasdiqlandi.
+- Jonli OpenAI kaliti sozlanmagan va ADB qurilma ko‘rsatmadi. Jonli API
+  javobi va Galaxy A51’da inglizcha ovozning eshitilishi tekshirilmagan.

@@ -1,41 +1,55 @@
-"""Local Ollama adapter. Raw camera images are never sent to the LLM."""
+"""Select an approved English rest-stop question with the OpenAI Responses API."""
 
 import os
 
+import httpx
 
-FALLBACK = "Xavfsiz joyda to‘xtab, dam oling. Keyingi dam olish joyi qayerda?"
-SYSTEM = (
-    "You are SafeDriveAI, a short Uzbek voice assistant. The driver may be drowsy. "
-    "Reply in Uzbek in at most two short sentences. Tell the driver to stop safely "
-    "and rest, then ask one easy question about their next rest stop. "
-    "Never suggest games, mental arithmetic, looking at a screen, caffeine as a cure, "
-    "or continuing to drive. Never claim to prevent sleep. Do not provide medical advice. "
-    "Return only the spoken words."
+
+FALLBACK = "Where is the next safe place to pull over?"
+QUESTIONS = (
+    FALLBACK,
+    "Can you find a safe place to park and rest?",
+    "Is there a safe rest area nearby?",
+)
+INSTRUCTIONS = (
+    "Select one English voice prompt for a drowsiness alert. "
+    "The app has already told the driver to pull over and rest. "
+    "Return exactly one of the supplied questions with no other text."
 )
 
 
 class Coach:
-    def __init__(self, client):
+    def __init__(self, client: httpx.AsyncClient):
         self.client = client
 
     async def question(self) -> tuple[str, str]:
-        model = os.getenv("OLLAMA_MODEL", "")
-        if not model:
+        key = os.getenv("OPENAI_API_KEY", "").strip()
+        model = os.getenv("OPENAI_MODEL", "").strip()
+        if not key or not model:
             return FALLBACK, "offline"
-        import httpx
         try:
             response = await self.client.post(
-                os.getenv("OLLAMA_URL", "http://127.0.0.1:11434").rstrip("/") + "/api/chat",
-                json={"model": model, "stream": False,
-                      "messages": [{"role": "system", "content": SYSTEM},
-                                   {"role": "user", "content": "Ask about the next safe rest stop."}],
-                      "options": {"temperature": 0.3, "num_predict": 100}},
+                "https://api.openai.com/v1/responses",
+                headers={"Authorization": f"Bearer {key}"},
+                json={
+                    "model": model,
+                    "instructions": INSTRUCTIONS,
+                    "input": "\n".join(QUESTIONS),
+                    "max_output_tokens": 128,
+                    "store": False,
+                },
             )
             response.raise_for_status()
-            content = response.json()["message"]["content"].strip()
-            if not content or len(content) > 300:
-                return FALLBACK, "offline"
-            # A fixed safety sentence is spoken by Android before any generated text.
-            return content, "ollama"
+            body = response.json()
+            if body.get("status") == "completed":
+                messages = [
+                    part["text"]
+                    for item in body["output"] if item["type"] == "message"
+                    for part in item["content"] if part["type"] == "output_text"
+                ]
+                question = " ".join(messages).strip()
+                if question in QUESTIONS:
+                    return question, "openai"
         except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError):
-            return FALLBACK, "offline"
+            pass
+        return FALLBACK, "offline"

@@ -41,7 +41,7 @@ ish tartibi alohida commitda saqlangan. Keyingi o‘zgarishlar ham kichik commit
 | SD-04 Fon | Android 13 emulyatorida Home va ekran o‘chganida tahlil davom etdi; notification Stop ishladi | A51’da uzoq ishlash, batareya, qizish, qo‘ng‘iroq va boshqa kamera bilan sinash |
 | SD-05 Ko‘p burchak | Yonboshda noaniq ko‘z holati limited sifatida ko‘rsatiladi | Yonbosh va turli tutqich burchaklari uchun model va haqiqiy baholash |
 | SD-06 Dataset/model | 80/20 kodi va foydalanish auditi mavjud; MRL: 84,822 tasvir, 37 haydovchi; 5 epoch PyTorch MPS trening va 6 boshqa haydovchida held-out hisobot; YOLO vositasi bor | Ishlatilmagan 20% test ma’lumoti, yuqori FPR’ni train doirasida yaxshilash, RGB/ko‘p burchakli dalil, mobil model adapteri |
-| SD-07 Ovoz/LLM | TTS eslatma, savol, mahalliy Ollama API adapteri va fallback | Haqiqiy Ollama modeli, o‘zbekcha ovoz, ovozli javobni tinglash va suhbat oqimi |
+| SD-07 Ovoz/LLM | Inglizcha TTS, USB orqali OpenAI Responses API adapteri va mahalliy savol | Jonli API, Galaxy A51’da ovoz va ikki tomonlama suhbat |
 | SD-08 USB APK | Release APK imzosi tekshirildi, emulyatorga o‘rnatildi; skript odatda USB telefonni tanlaydi va tanlangan qurilmada install hamda start bajaradi | Galaxy A51’ga USB orqali o‘rnatish; ADB hali qurilma ko‘rsatmadi |
 | SD-09 MVC | Flutter, Kotlin va Python qatlamlari ajratilgan | Keyingi funksiyalarda chegaralarni saqlash |
 | SD-10 Commit | Kichik feat/fix tarix va loyiha qoidalari mavjud | Har bir keyingi qadamda shu tartibga amal qilish |
@@ -49,7 +49,7 @@ ish tartibi alohida commitda saqlangan. Keyingi o‘zgarishlar ham kichik commit
 ## Tekshirilgan boshlang‘ich dalillar
 
 - Flutter: static analysis toza, 3 ta controller/UI test o‘tgan.
-- Kotlin: vaqtga asoslangan mantiq uchun 8 ta unit test o‘tgan.
+- Kotlin: vaqtga asoslangan mantiq uchun 9 ta unit test o‘tgan.
 - Python: 2026-11-06 dataset, provenance, trening/baholash va assistant va 80/20 test izolyatsiyasi uchun 33 ta test o‘tdi.
   Flutter/Kotlin/emulyator dalillari 2026-11-05 dagi sinovga tegishli; bu sessiyada Android kodi o‘zgarmadi.
 - Release APK emulyatorda ochildi; R8 ML Kit registrar tuzatishi tekshirildi.

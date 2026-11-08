@@ -31,7 +31,9 @@ class AlarmController(context: Context, onSource: (String) -> Unit) {
     }
 
     fun update(state: MonitorState) {
+        val wasUrgent = urgent
         urgent = state.status == "drowsy"
+        if (wasUrgent && !urgent) voice.stop()
         if (state.alarm && !ringing) {
             generation++
             ringing = true
@@ -41,7 +43,6 @@ class AlarmController(context: Context, onSource: (String) -> Unit) {
             handler.removeCallbacks(pulse)
             tone.stopTone()
             vibrator?.cancel()
-            voice.stop()
             generation++
         }
         val now = SystemClock.elapsedRealtime()

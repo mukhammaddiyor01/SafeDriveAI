@@ -1,7 +1,7 @@
 # SafeDriveAI
 
 Flutter + Kotlin + Python asosidagi Android haydovchi kuzatuvi prototipi.
-Interfeys o‘zbekcha, kod MVC asosida sodda qatlamlarga ajratilgan.
+Interfeys inglizcha, kod MVC asosida sodda qatlamlarga ajratilgan.
 
 ## Loyiha maqsadi va ish qoidalari
 
@@ -126,26 +126,32 @@ python -m safedrive.controllers.pose --source 0
 YOLO weights birinchi ishga tushishda yuklanadi. UI yoki alarm uchun Python server
 talab qilinmaydi. PyTorch treningi va YOLO tajribasi telefon emas, kompyuterda ishlaydi.
 
-## Ixtiyoriy mahalliy LLM
+## ChatGPT ovozli yordamchisi
 
-Kompyuterda Ollama va mos model mavjud bo‘lsa:
+Python serverini kompyuterda ishga tushiring. `OPENAI_API_KEY` kalitini
+kompyuter muhitiga xavfsiz kiriting va `OPENAI_MODEL` uchun API loyihangizda
+mavjud model ID’sini belgilang. Kalit kompyuterda qoladi.
 
 ```bash
-export OLLAMA_MODEL='siz-ornatgan-model-nomi'
+source scripts/env.sh
+source .venv/bin/activate
 uvicorn safedrive.controllers.assistant:app --host 127.0.0.1 --port 8765
 ```
 
-Boshqa terminalda:
+Boshqa terminalda, USB debugging orqali ulangan telefonga portni yo‘naltiring.
 
 ```bash
-adb reverse tcp:8765 tcp:8765
+source scripts/env.sh
+adb -d reverse tcp:8765 tcp:8765
 curl -X POST http://127.0.0.1:8765/question
 ```
 
-Ilova sozlamalarida "Kompyuterdagi AI yordamchi"ni yoqing. Telefonning kamera
-tasviri kompyuterga yuborilmaydi. Model yo‘q yoki server ishlamasa, `source: offline`
-qaytadi va oddiy savol ishlaydi. O‘zbekcha TTS ovozi bo‘lmasa, inglizcha eslatma
-ishlaydi; inglizcha fallback paytida LLM so‘ralmaydi. LLM alarm qarorini chiqarmaydi.
+Muvaffaqiyatli OpenAI javobi `source: openai` bilan qaytadi. Ilovada
+**Settings**, **Voice reminders** va **ChatGPT voice coach** sozlamalarini
+yoqing. Uyquchanlik aniqlanganda mahalliy alarm va inglizcha to‘xtash
+ogohlantirishi ishlaydi. OpenAI xavfsiz to‘xtash haqidagi tasdiqlangan savollardan
+birini tanlaydi. USB, internet yoki API ishlamasa, mahalliy savol aytiladi.
+Kamera kadrlari va audio yuborilmaydi. Joriy ovozli oqim bitta savolni aytadi.
 
 ## Tekshirish
 

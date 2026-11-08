@@ -17,7 +17,7 @@ flowchart LR
   K --> M[Observation / DrowsinessEngine]
   M --> A[Alarm / vibratsiya / TTS]
   M --> B
-  A -. ixtiyoriy USB .-> P[Python local API / Ollama]
+  A -. ixtiyoriy USB .-> P[Python local API / OpenAI]
 ```
 
 Kadrlar Kotlin ichida qoladi; Flutter stream faqat raqamlar va holat matnini oladi.
@@ -55,9 +55,11 @@ batareya optimizatsiyasi, signal/DND va telefon qo‘ng‘irog‘i jismoniy sino
 Tasvir/video saqlash, kamera upload endpoint’i va mikrofon ruxsati yo‘q.
 SharedPreferences’da faqat voice/llm sozlamalari turadi. LLM API loopback’da ishlaydi;
 Android cleartext faqat 127.0.0.1 uchun ruxsat etilgan. `adb reverse` USB tunnel beradi.
-Ollama so‘roviga faqat oldindan belgilangan matn yuboriladi. LLM natijasi kafolatlangan
-xavfsiz matn emas; uning oldidan qat’iy "to‘xtab dam oling" ogohlantirishi aytiladi.
-Serverni LAN/internetga ochish bu versiya doirasiga kirmaydi.
+OpenAI Responses API’ga faqat oldindan belgilangan inglizcha savollar yuboriladi.
+Python server javobni tasdiqlangan savollar ro‘yxati bilan tekshiradi.
+API kaliti server muhitida qoladi. Android har safar mahalliy to‘xtash ogohlantirishini
+aytadi va aloqa ishlamasa mahalliy savolni qo‘llaydi.
+Server USB orqali loopback’da ishlaydi.
 
 ## Rasmiy manbalar
 
@@ -68,7 +70,7 @@ Serverni LAN/internetga ochish bu versiya doirasiga kirmaydi.
 - [ML Kit Android face detection](https://developers.google.com/ml-kit/vision/face-detection/android)
 - [ML Kit face angles and frontal eye classification](https://developers.google.com/ml-kit/vision/face-detection/face-detection-concepts)
 - [Ultralytics pose keypoints](https://docs.ultralytics.com/tasks/pose/)
-- [Ollama chat API](https://docs.ollama.com/api/chat)
+- [OpenAI Responses API](https://developers.openai.com/api/docs/guides/text)
 
 ## Release optimizatsiyasi
 

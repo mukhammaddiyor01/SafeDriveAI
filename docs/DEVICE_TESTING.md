@@ -20,8 +20,9 @@ Model, Android versiyasi, yorug‘lik, tutqich burchagi, APK versiyasi va natija
 | Activity’ni qayta ochish | Ishlayotgan service holati ekranga qaytadi |
 | Android Force stop | Kuzatuv to‘xtaydi; avtomatik qayta ishga tushmaydi |
 | Qo‘ng‘iroq, DND, boshqa kamera | Kamera/ovoz ustuvorliklari va cheklovlar qayd etiladi |
-| LLM server yo‘q / USB uzildi | Oddiy ovozli eslatma; alarm uzilmaydi |
-| O‘zbek TTS yo‘q | Inglizcha eslatma, signal ishlaydi |
+| ChatGPT yoqilgan va USB server ishlayapti | Inglizcha eslatma va xavfsiz to‘xtash haqida savol; manba ChatGPT |
+| Server yo‘q yoki USB uzildi | Mahalliy inglizcha eslatma; alarm uzilmaydi |
+| Inglizcha TTS yo‘q | Ovoz mavjud emasligi ko‘rsatiladi, alarm ishlaydi |
 | 30–60 min kuzatuv | FPS, qizish, quvvat sarfi va yolg‘on alarmni o‘lchang |
 
 Avtomatlashtirilgan testlar bu qurilma sinovining o‘rnini bosmaydi. Hozircha Galaxy

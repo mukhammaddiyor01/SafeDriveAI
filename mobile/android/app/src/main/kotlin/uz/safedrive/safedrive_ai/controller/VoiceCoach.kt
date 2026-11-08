@@ -11,42 +11,40 @@ import java.net.URL
 import java.util.Locale
 import java.util.concurrent.Executors
 
+private const val FALLBACK_QUESTION = "Where is the next safe place to pull over?"
+
 class VoiceCoach(context: Context, private val onSource: (String) -> Unit) {
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadExecutor()
     private var closed = false
     private var ready = false
-    private var uzbek = false
     private var generation = 0
     private lateinit var speech: TextToSpeech
     init {
         speech = TextToSpeech(context.applicationContext) { status ->
-        handler.post {
-            if (!closed && status == TextToSpeech.SUCCESS) {
-                uzbek = speech.isLanguageAvailable(Locale.forLanguageTag("uz")) >= TextToSpeech.LANG_AVAILABLE
-                speech.language = if (uzbek) Locale.forLanguageTag("uz") else Locale.US
-                speech.setAudioAttributes(AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build())
-                ready = true
+            handler.post {
+                if (!closed && status == TextToSpeech.SUCCESS) {
+                    ready = speech.setLanguage(Locale.US) >= TextToSpeech.LANG_AVAILABLE
+                    speech.setAudioAttributes(AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build())
+                    if (!ready) onSource("English voice unavailable")
+                }
             }
-        }
         }
     }
 
     fun prompt(useLlm: Boolean) {
         if (closed || !ready) return
         val token = ++generation
-        val warning = if (uzbek) "Xavfsiz joyda to‘xtab, dam oling." else "Please stop safely and rest."
-        speech.speak(warning, TextToSpeech.QUEUE_FLUSH, null, "rest")
-        if (!useLlm || !uzbek) {
-            onSource(if (uzbek) "Mahalliy ovoz" else "English voice")
-            speech.speak(if (uzbek) "Keyingi dam olish joyi qayerda?" else "Where is your next safe rest stop?",
-                TextToSpeech.QUEUE_ADD, null, "question")
+        speech.speak("Pull over safely and rest.", TextToSpeech.QUEUE_FLUSH, null, "rest")
+        if (!useLlm) {
+            onSource("Local voice")
+            speech.speak(FALLBACK_QUESTION, TextToSpeech.QUEUE_ADD, null, "question")
             return
         }
         executor.execute {
-            var source = "Mahalliy ovoz"
+            var source = "Local voice"
             val text = try {
                 val connection = URL("http://127.0.0.1:8765/question").openConnection() as HttpURLConnection
                 try {
@@ -57,10 +55,15 @@ class VoiceCoach(context: Context, private val onSource: (String) -> Unit) {
                     connection.outputStream.use { it.write(byteArrayOf()) }
                     val result = connection.inputStream.bufferedReader().use { it.readText() }
                     val data = JSONObject(result)
-                    if (data.optString("source") == "ollama") source = "Ollama LLM"
-                    data.getString("text").take(300)
+                    val question = data.getString("text").trim()
+                    if (question.isBlank() || question.length > 300) {
+                        FALLBACK_QUESTION
+                    } else {
+                        if (data.optString("source") == "openai") source = "ChatGPT"
+                        question
+                    }
                 } finally { connection.disconnect() }
-            } catch (_: Exception) { "Keyingi dam olish joyi qayerda?" }
+            } catch (_: Exception) { FALLBACK_QUESTION }
             handler.post {
                 if (!closed && ready && token == generation) {
                     onSource(source)

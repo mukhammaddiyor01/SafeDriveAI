@@ -7,7 +7,7 @@ from safedrive.models.coach import Coach, FALLBACK
 
 class CoachTest(unittest.TestCase):
     def test_no_model_is_explicit_offline_fallback(self):
-        with patch.dict(os.environ, {"OLLAMA_MODEL": ""}):
+        with patch.dict(os.environ, {"OPENAI_MODEL": ""}):
             self.assertEqual(asyncio.run(Coach(None).question()), (FALLBACK, "offline"))
 
 

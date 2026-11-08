@@ -33,12 +33,12 @@ class SettingsSheet extends StatelessWidget {
             ),
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              title: const Text('AI voice coach'),
+              title: const Text('ChatGPT voice coach'),
               subtitle: const Text(
-                'Connect to the assistant over USB. Local reminders are available offline.',
+                'Use ChatGPT for a short rest-stop question. Requires the USB-connected assistant.',
               ),
               value: controller.llm,
-              onChanged: controller.busy
+              onChanged: controller.busy || !controller.voice
                   ? null
                   : (v) => controller.updatePreferences(llmEnabled: v),
             ),
@@ -50,7 +50,7 @@ class SettingsSheet extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             const Text(
-              'Spoken reminders use your phone’s text-to-speech engine.',
+              'Spoken reminders use your phone’s English voice. The app does not listen for replies.',
             ),
             const SizedBox(height: 20),
             FilledButton(

@@ -19,7 +19,8 @@ qolishni kafolatlash yoki suhbatni dam olish o‘rniga qo‘yish mahsulot va’d
   hali foydalanuvchi tomonidan bildirilmagan.
 - Interfeys: **Flutter / Dart**; kamera va Android fon xizmati: **Kotlin**.
 - AI tayyorlash va tajribalar: **Python, OpenCV, Pandas, YOLO, PyTorch**.
-- Ovozli AI yordamchi: **LLM**; aniqlash va alarm undan mustaqil ishlashi kerak.
+- Interfeys va ovozli yordamchi tili: **inglizcha**.
+- Ovozli AI yordamchi: **ChatGPT / OpenAI Responses API**; aniqlash va alarm mustaqil ishlaydi.
 - Dataset: **80% train / 20% avval ishlatilmagan test**; haydovchilar va tasvir nusxalari aralashmasin.
 - Arxitektura: **MVC**. Kod sodda, clean va odam o‘qib tushunadigan bo‘lsin.
 - Repository: https://github.com/mukhammaddiyor01/SafeDriveAI
