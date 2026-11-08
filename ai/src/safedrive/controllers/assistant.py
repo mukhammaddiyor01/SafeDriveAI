@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from safedrive.models.coach import Coach
 from safedrive.models.conversation import DriverConversation
+from safedrive.models.gemini_conversation import GeminiConversation, gemini_setting
 
 
 logger = logging.getLogger("uvicorn.error")
@@ -20,7 +21,12 @@ async def lifespan(app: FastAPI):
     async with httpx.AsyncClient(timeout=8.0) as client:
         app.state.coach = Coach(client)
         path = Path(os.getenv("SAFEDRIVE_CONVERSATION_FILE", "~/.safedriveai/conversation-id")).expanduser()
-        app.state.conversation = DriverConversation(client, path)
+        key = gemini_setting("GEMINI_API")
+        app.state.provider = "gemini" if key else "openai"
+        app.state.conversation = (
+            GeminiConversation(client, key, gemini_setting("GEMINI_MODEL") or "gemini-2.5-flash")
+            if key else DriverConversation(client, path)
+        )
         yield
 
 
@@ -44,23 +50,26 @@ class DriverTurn(BaseModel):
 
 @app.post("/connect")
 async def connect():
+    provider = "Gemini" if app.state.provider == "gemini" else "OpenAI"
     try:
         conversation_id = await app.state.conversation.connect()
         return {"conversation_id": conversation_id}
     except httpx.HTTPStatusError as error:
         status = error.response.status_code
         if status in (401, 403):
-            detail = "OpenAI rejected access. Check the API key and project permissions."
+            detail = f"{provider} rejected access. Check the API key and project permissions."
         elif status == 404:
-            detail = "The saved conversation is unavailable to this OpenAI project."
+            detail = f"The configured model or conversation is unavailable to this {provider} project."
         elif status == 429:
-            detail = "OpenAI usage limit reached. Check project quota or billing."
+            detail = f"{provider} usage limit reached. Check project quota or billing."
         else:
-            detail = f"OpenAI returned HTTP {status}."
+            detail = f"{provider} returned HTTP {status}."
     except httpx.RequestError:
-        detail = "The assistant could not reach OpenAI. Check the Mac internet connection."
+        detail = f"The assistant could not reach {provider}. Check the Mac internet connection."
     except (OSError, ValueError, KeyError, TypeError):
         missing = [name for name in ("OPENAI_API_KEY", "OPENAI_MODEL") if not os.getenv(name, "").strip()]
+        if app.state.provider == "gemini":
+            missing = []
         detail = ("Missing server configuration: " + ", ".join(missing)) if missing else (
             "The assistant could not load or save the conversation."
         )
@@ -72,6 +81,6 @@ async def connect():
 async def turn(turn: DriverTurn):
     try:
         text = await app.state.conversation.turn(turn.reply)
-        return {"text": text, "source": "openai"}
+        return {"text": text, "source": app.state.provider}
     except (httpx.HTTPError, OSError, ValueError, KeyError, TypeError):
-        raise HTTPException(503, "ChatGPT response unavailable") from None
+        raise HTTPException(503, "Voice coach response unavailable") from None
