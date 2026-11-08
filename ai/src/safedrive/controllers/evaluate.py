@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 
-from safedrive.models.dataset import read_prepared_manifest
+from safedrive.models.dataset import MOUNT_COLUMNS, read_prepared_manifest
 from safedrive.models.provenance import file_sha256, manifest_fingerprint
 
 
@@ -87,6 +87,13 @@ def evaluate(manifest: Path, weights: Path, output: Path, threshold: float = 0.5
     condition_frame.to_csv(output / "metrics_by_condition.csv", index=False)
     condition_frame[condition_frame.condition == "view"].rename(columns={"value": "view"}).drop(
         columns="condition").to_csv(output / "metrics_by_view.csv", index=False)
+    if "camera_mount" in test:
+        rows = [
+            {**dict(zip(MOUNT_COLUMNS, labels)), "subjects": int(group.subject_id.nunique()),
+             **classification_metrics(group)}
+            for labels, group in test.groupby(list(MOUNT_COLUMNS), sort=True)
+        ]
+        pd.DataFrame(rows).to_csv(output / "metrics_by_mount.csv", index=False)
     test.to_csv(output / "predictions.csv", index=False)
     print(json.dumps(summary, indent=2), flush=True)
     return summary

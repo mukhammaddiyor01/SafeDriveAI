@@ -46,6 +46,31 @@ faqat tarixiy tajribaga tegishli. [80/20 va foydalanish auditi](DATA_SPLIT_POLIC
 taqsimotiga bog‘liq. Trening test ma’lumotiga tegmaydi. Baholash kamera burchagi bo‘yicha
 closed recall va false positive rate chiqaradi.
 
+## Markaziy telefon tutqichi va navigator
+
+To‘xtab turgan avtomobilda har bir haydovchini markazdagi past va baland
+tutqichdan yozing. Telefon tomonga qaramasdan yo‘l tomonga qarash, bosh tik
+holda navigatorga qisqa qarash, boshni egish va ko‘zni yumish holatlarini
+alohida belgilang. Kamera chap yoki o‘ng tomondan qarashini `view` da saqlang.
+Ko‘z crop’idan tashqari, bosh holatini o‘qitish uchun mos to‘liq yuz kadrini
+va yozuv vaqtini ham manba annotatsiyasida saqlang.
+
+Ko‘z CSV’iga uchta ustun qo‘shiladi.
+
+- `camera_mount` qiymatlari `center_low`, `center_high` yoki `front_reference`.
+- `head_posture` qiymatlari `upright` va `down`. Boshni yo‘lga nisbatan belgilang.
+- `gaze_target` qiymatlari `road`, `navigation` va `unknown`.
+  Yopiq ko‘z uchun `unknown` qo‘llanadi.
+
+Har ikkala split har ikki markaziy balandlikda to‘rtta holatni qamraydi.
+Bosh tik holda yo‘lga qarash, bosh tik holda ko‘z yumilishi, bosh tik holda
+navigatorga qarash va ochiq ko‘z bilan bosh egilishi kerak. Shu shartlar
+bajarilmasa manifest rad etiladi. Avval ishlatilgan manifestlarni auditga kiriting.
+
+Baholashdagi `metrics_by_mount.csv` fayli ko‘z ochiq yoki yopiqligini
+tutqich, bosh holati va nigoh kesimida ko‘rsatadi. Bosh va nigoh bu hisobotda
+annotatsiya sifatida ishlatiladi. Ularni topadigan model alohida o‘qitiladi va baholanadi.
+
 ## Keyingi modelni qabul qilish mezonlari
 
 1. Telefon tutqichi burchaklari, teri rangi, yoritish, ko‘zoynak va tun holatlarini qamrash.

@@ -11,6 +11,26 @@ LABELS = {"open", "closed"}
 VIEWS = {"front", "left", "right", "up", "down", "unknown"}
 
 
+MOUNT_COLUMNS = ("camera_mount", "head_posture", "gaze_target")
+CENTER_MOUNTS = ("center_low", "center_high")
+MOUNT_SCENARIOS = {
+    ("open", "upright", "road"),
+    ("closed", "upright", "unknown"),
+    ("open", "upright", "navigation"),
+    ("open", "down", "unknown"),
+}
+
+
+def validate_mount_coverage(frame):
+    for split in ("train", "test"):
+        for mount in CENTER_MOUNTS:
+            group = frame[(frame.split == split) & (frame.camera_mount == mount)]
+            samples = set(group[["label", "head_posture", "gaze_target"]].itertuples(index=False, name=None))
+            missing = MOUNT_SCENARIOS - samples
+            if missing:
+                raise ValueError(f"{split}/{mount} missing scenarios: {sorted(missing)}")
+
+
 def select_test_subjects(group_sizes, seed: int = 42) -> set[str]:
     """Reserve 20% (rounded to whole images) without splitting a driver."""
     subjects = sorted(group_sizes, key=lambda subject: hashlib.sha256(
@@ -48,6 +68,16 @@ def read_manifest(path: Path):
         raise ValueError("label must be open or closed")
     if not set(frame.view) <= VIEWS:
         raise ValueError(f"view must be one of {sorted(VIEWS)}")
+    if set(MOUNT_COLUMNS) & set(frame.columns):
+        for column, allowed in zip(MOUNT_COLUMNS, (
+            {*CENTER_MOUNTS, "front_reference"},
+            {"upright", "down"},
+            {"road", "navigation", "unknown"},
+        )):
+            if column not in frame or not set(frame[column]) <= allowed:
+                raise ValueError(f"{column} must be one of {sorted(allowed)}")
+        if ((frame.label == "closed") & (frame.gaze_target != "unknown")).any():
+            raise ValueError("Closed eyes require unknown gaze_target")
     frame["image_path"] = frame.image_path.map(
         lambda value: str((path.parent / value).resolve())
     )
@@ -95,6 +125,8 @@ def read_prepared_manifest(path: Path):
             raise ValueError("Invalid prior_usage audit labels")
         if (frame.loc[frame.split == "test", "prior_usage"] == "used").any():
             raise ValueError("Test contains previously used images; supply genuinely unused test data")
+    if "camera_mount" in frame:
+        validate_mount_coverage(frame)
     return frame
 
 
@@ -118,6 +150,8 @@ def prepare_manifest(source: Path, destination: Path, seed: int = 42, *, prior_m
         labels = set(frame.loc[frame.split == split, "label"])
         if labels != LABELS:
             raise ValueError(f"{split} needs both open and closed eye examples; add subjects")
+    if "camera_mount" in frame:
+        validate_mount_coverage(frame)
     if prior_manifests:
         used_hashes, used_paths, used_subjects = set(), set(), set()
         for prior_path in prior_manifests:

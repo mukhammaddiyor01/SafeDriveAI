@@ -92,3 +92,5 @@ joriy vazifasini bajaring; undagi ishni mos talab va keyingi qadam bilan bog‘l
 3. Bitta kichik natijani tanlang, tegishli tekshiruvni bajaring va feat/fix commit qiling.
 4. Yangi dalil yoki holat bo‘lsa shu faylni yangilang. Batafsil sinov dalilini
    VERIFICATION’da sanasi bilan saqlang; eski sinovni bugungi sinov deb ko‘rsatmang.
+
+Markaziy tutqich uchun dataset protokoli tayyor. Haqiqiy trening uchun bosh holati va navigatorga nigoh belgilangan RGB yozuvlar kerak. [Dataset tartibi](DATASETS.md)

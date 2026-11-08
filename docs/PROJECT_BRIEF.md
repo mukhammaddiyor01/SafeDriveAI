@@ -34,7 +34,7 @@ qolishni kafolatlash yoki suhbatni dam olish o‘rniga qo‘yish mahsulot va’d
 | SD-02 | Yuz, ko‘z, bosh va bo‘yin atrofidagi holatni baholash | Har bir kuzatiladigan belgi va uning ishonchliligi ko‘rsatiladi; taxminiy bo‘yin nuqtasi bevosita o‘lchov deb taqdim etilmaydi |
 | SD-03 | Uyquchanlik alomatlarida alarm berish | Uzoq ko‘z yumilishi/bosh holati voqealarida alarm kechikishi va yolg‘on signallar o‘lchanadi |
 | SD-04 | Fon rejimida ham ishlash | Ilova fon va ekran o‘chgan holatda jismoniy telefonda tekshiriladi; doimiy bildirishnoma va Stop mavjud |
-| SD-05 | Old, yonbosh va turli burchaklardan aniqlash | Burchaklar bo‘yicha alohida dataset baholashi va telefon sinovi mavjud |
+| SD-05 | Old, yonbosh va turli burchaklardan aniqlash | Markazdagi past va baland telefon tutqichlari, bosh tikligi va navigatorga nigoh bo‘yicha alohida dataset baholashi va telefon sinovi mavjud |
 | SD-06 | AI datasetlardan foydalanish | Dataset manbasi, 80/20 split, testning ishlatilmaganligi va yakuniy test natijalari qayd etiladi |
 | SD-07 | Haydovchiga ovozli murojaat va savollar | Mahalliy alarmdan keyin tiklanish dalili bo‘lsa inglizcha suhbat boshlanadi. Telefon javobni tinglaydi va SafeDriveAI uchun saqlangan OpenAI suhbatidan foydalanadi. |
 | SD-08 | USB orqali o‘rnatish | APK yig‘iladi, imzosi tekshiriladi va Galaxy A51’ga adb orqali o‘rnatiladi |
