@@ -42,8 +42,9 @@ class AlarmController(
     }
 
     fun update(state: MonitorState) {
+        val wasUrgent = urgent
         urgent = state.status == "drowsy"
-        if (state.alarm || state.status != "monitoring" ||
+        if (state.alarm || !state.active || state.eyesOpen == null ||
             !preferences.getBoolean("voice", true) || !preferences.getBoolean("llm", false)) {
             voice.cancelConversation()
         }
@@ -57,7 +58,7 @@ class AlarmController(
             vibrator?.cancel()
         }
         val now = SystemClock.elapsedRealtime()
-        if (urgent && state.alarm && now - lastPrompt >= 20_000 && preferences.getBoolean("voice", true)) {
+        if (urgent && state.alarm && (!wasUrgent || now - lastPrompt >= 20_000) && preferences.getBoolean("voice", true)) {
             lastPrompt = now
             voice.warn()
         }

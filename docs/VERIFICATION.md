@@ -133,3 +133,10 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   va navigator holatidagi chap va o‘ng kamera natijalari alohida chiqdi.
 - Test hisobotidagi barcha 16 tasvir hisobga olindi. Bu yangi haqiqiy
   yozuvlardagi model aniqligini baholamaydi.
+
+## Ovozli ogohlantirishni tuzatish va USB o‘rnatish — 2026-11-08
+
+- Kotlin va Flutter testlari o‘tdi. Release APK imzosi tekshirildi.
+- ADB orqali Galaxy A51’ga APK o‘rnatildi va ilova jarayoni ishga tushdi.
+  USB orqali 8765 port yo‘naltirildi. Jonli OpenAI suhbat va ovoz tezligi
+  telefonda alohida sinov talab qiladi.

@@ -46,6 +46,7 @@ class VoiceCoach(
             onSource("English voice unavailable")
             return
         }
+        speech.setSpeechRate(1.18f)
         speech.setAudioAttributes(AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
             .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build())
@@ -71,7 +72,7 @@ class VoiceCoach(
         if (closed || !ready) return
         cancelConversation()
         onSource("Local voice")
-        speech.speak("Pull over safely and rest.", TextToSpeech.QUEUE_FLUSH, null, "rest")
+        speech.speak("Pull over safely.", TextToSpeech.QUEUE_FLUSH, null, "rest")
     }
 
     fun startConversation() {
