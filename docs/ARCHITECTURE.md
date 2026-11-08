@@ -31,6 +31,7 @@ chegaralanadi. Bu Galaxy A51’da o‘lchangan FPS emas; qurilmada profil qilish
 - Ikkala ko‘z ochiqligi <0.35 bo‘lsa yopiq deb olinadi.
 - 700 ms da UI ogohlantiradi, 1500 ms da signal beradi.
 - PERCLOSga o‘xshash yopiq ko‘z ulushi 30 s oynada, kuzatilgan vaqt bilan hisoblanadi.
+  Ko‘zlar 3 s davomida baholanmasa, oldingi ulush tarixi tozalanadi.
   Bu klinik PERCLOS validatsiyasi emas; past ko‘z ochiqligi ehtimollari ishlatiladi.
 - 700 ms dan katta kadr uzilishlari tarixni tozalaydi; kuzatilmagan vaqt ko‘z yumilishi
   sifatida sanalmaydi. Alohida watchdog 3 s kadr kelmasa cheklov signalini beradi.

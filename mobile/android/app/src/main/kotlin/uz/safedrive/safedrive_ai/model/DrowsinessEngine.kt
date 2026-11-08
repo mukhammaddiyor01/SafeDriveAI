@@ -2,6 +2,8 @@ package uz.safedrive.safedrive_ai.model
 
 import kotlin.math.abs
 
+private const val VISIBILITY_TIMEOUT_MS = 3_000L
+
 /** Pure temporal logic. Time comes from a monotonic clock, never the wall clock. */
 class DrowsinessEngine {
     private data class Interval(val start: Long, val end: Long, val closed: Boolean)
@@ -53,6 +55,11 @@ class DrowsinessEngine {
             }
         }
         previous = o
+        val eyeKnown = validEyes(o)
+        val visibilityLostAt = unknownSince ?: now
+        val visibilityTimedOut = now - visibilityLostAt >= VISIBILITY_TIMEOUT_MS
+        if (visibilityTimedOut) history.clear()
+        unknownSince = if (eyeKnown) null else visibilityLostAt
         while (history.isNotEmpty() && history.first().end <= now - 30_000) history.removeFirst()
         val cutoff = now - 30_000
         var knownMs = 0L
@@ -66,8 +73,6 @@ class DrowsinessEngine {
         val poseUnusual = o.faceCount == 1 && (abs(o.pitch) > 25 || abs(o.yaw) > 30)
         poseSince = if (poseUnusual) poseSince ?: now else null
         val poseDuration = poseSince?.let { now - it } ?: 0L
-        val eyeKnown = validEyes(o)
-        unknownSince = if (!eyeKnown) unknownSince ?: now else null
         closedSince = if (eyeKnown && closed(o)) closedSince ?: now else null
         val duration = closedSince?.let { now - it } ?: 0L
         val base = MonitorState(
@@ -90,7 +95,7 @@ class DrowsinessEngine {
                     else -> "Ko‘zlar aniq ko‘rinmayapti. Kamera burchagini moslang."
                 }
                 base.copy(status = "limited", message = reason,
-                    alarm = now - (unknownSince ?: now) >= 3_000)
+                    alarm = visibilityTimedOut)
             }
             duration >= 700 -> base.copy(status = "warning", message = "Ko‘zlar yumilgan")
             else -> base.copy(status = "monitoring", message = "Kuzatuv faol")

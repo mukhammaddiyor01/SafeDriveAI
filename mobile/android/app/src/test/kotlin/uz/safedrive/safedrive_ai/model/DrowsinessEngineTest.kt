@@ -68,6 +68,25 @@ class DrowsinessEngineTest {
         assertTrue(state.perclos!! >= 0.35)
     }
 
+    @Test fun rollingPerclosResetsWhenEyesReturnAfterVisibilityTimeout() {
+        val engine = DrowsinessEngine()
+        for (t in 0L..12_000L step 100) {
+            engine.update(sample(t, if (t % 2000 < 1000) 0.1f else 0.9f))
+        }
+        assertTrue(engine.update(sample(12_100)).alarm)
+
+        for (t in 12_200L..15_100L step 100) {
+            val state = engine.update(sample(t, count = 0))
+            assertEquals("limited", state.status)
+            assertFalse(state.alarm)
+        }
+
+        val recovered = engine.update(sample(15_200))
+        assertEquals("monitoring", recovered.status)
+        assertFalse(recovered.alarm)
+        assertNull(recovered.perclos)
+    }
+
     @Test fun multipleFacesNeverProvideEyeEvidence() {
         val engine = DrowsinessEngine()
         val state = engine.update(sample(0, count = 2))

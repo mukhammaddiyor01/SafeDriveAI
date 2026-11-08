@@ -70,3 +70,12 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - Testning 16,964 tasviri ham oldingi foydalanishda topildi. Yangi haqiqiy trening
   yoki test inferensi bajarilmadi; oldingi natijalar o‘zgartirilmadi.
 - [Audit va protokol](DATA_SPLIT_POLICY.md). Android/APK o‘zgarmadi.
+
+## Kamera ko‘rinishi tiklangandagi alarm — 2026-11-08
+
+- Kotlin’da 9 ta test o‘tdi. Regressiya testi 3 s davomida yuz
+  ko‘rinmagach, ochiq ko‘zlar qayta ko‘ringanda eski PERCLOS alarmi
+  ishga tushmasligini tekshiradi.
+- Flutter analizida muammo topilmadi, 3 ta test o‘tdi.
+- ARM64 release APK qayta yig‘ildi. APK v2 imzosi va SHA-256 mosligi tekshirildi.
+- ADB qurilma ko‘rsatmadi. Yangilangan APK Galaxy A51 qurilmasida sinovdan o‘tmadi.
