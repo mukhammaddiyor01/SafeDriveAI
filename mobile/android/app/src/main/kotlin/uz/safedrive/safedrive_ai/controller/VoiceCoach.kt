@@ -1,6 +1,7 @@
 package uz.safedrive.safedrive_ai.controller
 
 import android.content.Context
+import uz.safedrive.safedrive_ai.assistant.ChatGptAccount
 import android.content.Intent
 import android.media.AudioAttributes
 import android.os.Bundle
@@ -23,6 +24,7 @@ class VoiceCoach(
     private val onSource: (String) -> Unit,
 ) {
     private val appContext = context.applicationContext
+    private val chatGpt = ChatGptAccount(appContext)
     private val handler = Handler(Looper.getMainLooper())
     private val executor = Executors.newSingleThreadExecutor()
     private var closed = false
@@ -85,29 +87,29 @@ class VoiceCoach(
     private fun requestTurn(reply: String?) {
         val token = generation
         executor.execute {
+            var source = "Voice coach"
             val text = try {
-                val connection = URL("http://127.0.0.1:8765/turn").openConnection() as HttpURLConnection
-                try {
-                    connection.requestMethod = "POST"
-                    connection.connectTimeout = 1500
-                    connection.readTimeout = 9000
-                    connection.doOutput = true
-                    connection.setRequestProperty("Content-Type", "application/json")
-                    val body = JSONObject()
-                    if (reply != null) body.put("reply", reply)
-                    connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
-                    val result = connection.inputStream.bufferedReader().use { it.readText() }
-                    JSONObject(result).getString("text").takeIf { it.isNotBlank() && it.length <= 300 }
-                } finally { connection.disconnect() }
+                if (chatGpt.email() != null) {
+                    source = "ChatGPT"
+                    chatGpt.turn(reply)
+                } else {
+                    val result = requestMacTurn(reply)
+                    source = when (result.optString("source")) {
+                        "gemini" -> "Gemini"
+                        "openai" -> "OpenAI"
+                        else -> "Voice coach"
+                    }
+                    result.getString("text").takeIf { it.isNotBlank() && it.length <= 300 }
+                }
             } catch (_: Exception) { null }
             handler.post {
                 if (closed || !conversationActive || token != generation) return@post
-                onSource(if (text == null) "ChatGPT unavailable" else "ChatGPT")
+                onSource(if (text == null) "$source unavailable" else source)
                 val utterance = when {
                     text == null -> "Pull over safely and rest."
                     reply != null -> text
                     !allowVoiceReply -> {
-                        onSource("ChatGPT · microphone unavailable")
+                        onSource("$source · microphone unavailable")
                         text
                     }
                     else -> text
@@ -120,10 +122,27 @@ class VoiceCoach(
         }
     }
 
+    private fun requestMacTurn(reply: String?): JSONObject {
+        val connection = URL("http://127.0.0.1:8765/turn").openConnection() as HttpURLConnection
+        try {
+            connection.requestMethod = "POST"
+            connection.connectTimeout = 1500
+            connection.readTimeout = 9000
+            connection.doOutput = true
+            connection.setRequestProperty("Content-Type", "application/json")
+            val body = JSONObject()
+            if (reply != null) body.put("reply", reply)
+            connection.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
+            return connection.inputStream.bufferedReader().use { JSONObject(it.readText()) }
+        } finally {
+            connection.disconnect()
+        }
+    }
+
     private fun listenForReply() {
         if (!SpeechRecognizer.isRecognitionAvailable(appContext)) {
             conversationActive = false
-            onSource("ChatGPT · speech recognition unavailable")
+            onSource("Voice recognition unavailable")
             return
         }
         val token = generation
@@ -159,7 +178,7 @@ class VoiceCoach(
         } catch (_: RuntimeException) {
             releaseRecognizer()
             conversationActive = false
-            onSource("ChatGPT · speech recognition unavailable")
+            onSource("Voice recognition unavailable")
         }
     }
 

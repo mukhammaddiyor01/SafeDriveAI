@@ -37,31 +37,44 @@ class SettingsSheet extends StatelessWidget {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const Text(
-              'Connect to the assistant on your Mac before starting monitoring. '
-              'After an alert clears, the coach asks a question and sends your '
-              'transcribed reply to the saved OpenAI conversation.',
+              'Connect your ChatGPT account to use the coach directly on this phone. '
+              'Recent voice turns are stored on this device and sent as context.',
             ),
             const SizedBox(height: 8),
-            OutlinedButton(
-              onPressed:
-                  controller.busy ||
-                      !controller.voice ||
-                      controller.state.active
-                  ? null
-                  : controller.connectChatGpt,
-              child: Text(
-                controller.llm ? 'Check ChatGPT connection' : 'Connect ChatGPT',
+            if (controller.chatGptEmail == null) ...[
+              FilledButton(
+                onPressed: controller.busy || controller.state.active
+                    ? null
+                    : controller.signInChatGpt,
+                child: const Text('Continue with ChatGPT'),
               ),
-            ),
-            if (controller.chatGptVerified)
-              const Text('ChatGPT conversation connected'),
-            if (controller.llm)
+              OutlinedButton(
+                onPressed:
+                    controller.busy ||
+                        !controller.voice ||
+                        controller.state.active
+                    ? null
+                    : controller.connectChatGpt,
+                child: const Text('Connect Mac assistant'),
+              ),
+              if (controller.chatGptVerified)
+                const Text('Mac assistant connected'),
+              if (controller.llm)
+                TextButton(
+                  onPressed: controller.busy || controller.state.active
+                      ? null
+                      : () => controller.updatePreferences(llmEnabled: false),
+                  child: const Text('Disconnect Mac assistant'),
+                ),
+            ] else ...[
+              Text('Connected as ${controller.chatGptEmail}'),
               TextButton(
                 onPressed: controller.busy || controller.state.active
                     ? null
-                    : () => controller.updatePreferences(llmEnabled: false),
-                child: const Text('Disconnect ChatGPT'),
+                    : controller.signOutChatGpt,
+                child: const Text('Sign out of ChatGPT'),
               ),
+            ],
             if (controller.error != null) Text(controller.error!),
             const SizedBox(height: 12),
             Text('Voice source: ${controller.state.assistant}'),

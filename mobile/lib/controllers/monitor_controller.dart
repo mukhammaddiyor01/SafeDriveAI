@@ -15,6 +15,7 @@ class MonitorController extends ChangeNotifier {
   bool voice = true;
   bool llm = false;
   bool chatGptVerified = false;
+  String? chatGptEmail;
   String? error;
   bool _disposed = false;
   bool _initialized = false;
@@ -40,6 +41,7 @@ class MonitorController extends ChangeNotifier {
       final prefs = await _native.preferences();
       voice = prefs['voice'] as bool? ?? true;
       llm = prefs['llm'] as bool? ?? false;
+      chatGptEmail = await _native.chatGptAccount();
     });
   }
 
@@ -63,6 +65,26 @@ class MonitorController extends ChangeNotifier {
   Future<void> toggleMonitoring() =>
       _perform(state.active ? _native.stop : _native.start);
   Future<void> testAlarm() => _perform(_native.testAlarm);
+  Future<void> signInChatGpt() => _perform(() async {
+    chatGptEmail = await _native.signInChatGpt();
+    if (chatGptEmail == null) return;
+    await _native.setPreferences(voice: true, llm: true);
+    voice = true;
+    llm = true;
+    chatGptVerified = false;
+  });
+
+  Future<void> signOutChatGpt() => _perform(() async {
+    final revoked = await _native.signOutChatGpt();
+    chatGptEmail = null;
+    await _native.setPreferences(voice: voice, llm: false);
+    llm = false;
+    if (revoked != true) {
+      error =
+          'Signed out on this phone. Remote revocation could not be confirmed.';
+    }
+  });
+
   Future<void> connectChatGpt() => _perform(() async {
     chatGptVerified = false;
     await _native.connectChatGpt();

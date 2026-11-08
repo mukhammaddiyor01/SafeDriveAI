@@ -10,6 +10,7 @@ class FakeMonitor implements NativeMonitor {
   final events = StreamController<MonitorState>.broadcast();
   int starts = 0;
   bool denyPermission = false;
+  bool? coachEnabled;
   @override
   Stream<MonitorState> get states => events.stream;
   @override
@@ -35,10 +36,38 @@ class FakeMonitor implements NativeMonitor {
   @override
   Future<void> connectChatGpt() async {}
   @override
-  Future<void> setPreferences({required bool voice, required bool llm}) async {}
+  Future<String?> chatGptAccount() async => null;
+  @override
+  Future<String?> signInChatGpt() async => 'Driver';
+  @override
+  Future<bool?> signOutChatGpt() async => true;
+  @override
+  Future<void> setPreferences({required bool voice, required bool llm}) async {
+    coachEnabled = llm;
+  }
 }
 
 void main() {
+  test(
+    'phone account enables the voice coach and sign-out disables it',
+    () async {
+      final native = FakeMonitor();
+      final controller = MonitorController(native);
+      await controller.initialize();
+
+      await controller.signInChatGpt();
+      expect(controller.chatGptEmail, 'Driver');
+      expect(native.coachEnabled, true);
+
+      await controller.signOutChatGpt();
+      expect(controller.chatGptEmail, isNull);
+      expect(native.coachEnabled, false);
+
+      controller.dispose();
+      await native.events.close();
+    },
+  );
+
   test('permission denial clears busy and allows retry', () async {
     final native = FakeMonitor();
     final controller = MonitorController(native);

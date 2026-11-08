@@ -175,3 +175,14 @@ Qurilmada bajariladigan tekshiruvlar: [docs/DEVICE_TESTING.md](docs/DEVICE_TESTI
 Texnik qarorlar va rasmiy manbalar: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 Tekshirilgan natijalar va chegaralar: [docs/VERIFICATION.md](docs/VERIFICATION.md).
+
+## Telefonda ChatGPT hisobiga kirish
+
+SafeDriveAI’da **Settings → Continue with ChatGPT** ni bosing. Telefon
+brauzerida hisob va tarifdan foydalanishga ruxsat bering, keyin
+**Return to SafeDriveAI** orqali qayting. Mos hisob bilan ovozli yordamchi
+telefon interneti orqali ishlaydi. So‘nggi 12 ta xabar telefonda shifrlangan
+holda saqlanadi va navbatdagi savolga kontekst bo‘ladi.
+**Sign out of ChatGPT** ushbu telefondagi sessiyani yopadi.
+
+[OpenAI kirish hujjati](https://developers.openai.com/siwc/token-sharing-open-source/sign-in)

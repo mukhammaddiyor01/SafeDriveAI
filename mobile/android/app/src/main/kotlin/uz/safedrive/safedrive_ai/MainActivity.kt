@@ -11,6 +11,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
+import uz.safedrive.safedrive_ai.assistant.ChatGptAccount
 import uz.safedrive.safedrive_ai.controller.AlarmController
 import uz.safedrive.safedrive_ai.controller.MonitorRuntime
 import uz.safedrive.safedrive_ai.controller.MonitorService
@@ -50,6 +51,27 @@ class MainActivity : FlutterActivity() {
                             result.success(null)
                         } catch (_: Exception) { result.error("audio", "Could not play the alarm.", null) }
                     }
+                }
+                "chatGptAccount" -> result.success(runCatching { ChatGptAccount(this).email() }.getOrNull())
+                "signInChatGpt", "signOutChatGpt" -> {
+                    val signIn = call.method == "signInChatGpt"
+                    Thread {
+                        try {
+                            val account = ChatGptAccount(this)
+                            val value = if (signIn) account.signIn(this) else account.disconnect()
+                            runOnUiThread { result.success(value) }
+                        } catch (_: java.net.SocketTimeoutException) {
+                            runOnUiThread { result.error("chatgpt_timeout", "ChatGPT did not respond in time. Try again.", null) }
+                        } catch (error: Exception) {
+                            val message = error.message?.takeIf {
+                                it.startsWith("ChatGPT returned HTTP ") ||
+                                    it in setOf("This ChatGPT account did not grant plan usage.",
+                                        "No ChatGPT model is available for this account.",
+                                        "ChatGPT sign-in was declined.", "ChatGPT sign-in timed out.")
+                            } ?: "ChatGPT sign-in could not be completed. Check your account and internet connection."
+                            runOnUiThread { result.error("chatgpt_account", message, null) }
+                        }
+                    }.start()
                 }
                 "preferences" -> {
                     if (call.arguments != null) {

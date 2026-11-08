@@ -140,3 +140,10 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - ADB orqali Galaxy A51’ga APK o‘rnatildi va ilova jarayoni ishga tushdi.
   USB orqali 8765 port yo‘naltirildi. Jonli OpenAI suhbat va ovoz tezligi
   telefonda alohida sinov talab qiladi.
+
+## Telefonda ChatGPT hisobiga kirish — 2026-11-08
+
+- Kotlin testlari, Flutter tahlili va to‘rtta Flutter testi o‘tdi.
+- ARM64 release APK yig‘ildi va imzosi tekshirildi.
+- ADB qurilma ko‘rsatmadi. Brauzer orqali haqiqiy hisobga kirish va
+  telefondan OpenAI’ga yuborilgan jonli suhbat hali tekshirilmagan.

@@ -94,3 +94,8 @@ joriy vazifasini bajaring; undagi ishni mos talab va keyingi qadam bilan bog‘l
    VERIFICATION’da sanasi bilan saqlang; eski sinovni bugungi sinov deb ko‘rsatmang.
 
 Markaziy tutqich uchun dataset protokoli tayyor. Haqiqiy trening uchun bosh holati va navigatorga nigoh belgilangan RGB yozuvlar kerak. [Dataset tartibi](DATASETS.md)
+
+SafeDriveAI sozlamalarida **Continue with ChatGPT** telefon brauzeri orqali
+hisobga kirishni boshlaydi. Mos hisobdan foydalanilganda, ovozli yordamchi
+telefondan OpenAI’ga ulanadi va so‘nggi 12 ta xabarni shifrlangan holda
+saqlaydi. Jonli hisob bilan Android sinovi hali talab qilinadi.
