@@ -83,6 +83,15 @@ class MonitorController extends ChangeNotifier {
 
   Future<void> cancelChatGptSignIn() => _native.cancelChatGptSignIn();
 
+  Future<void> completeChatGptSignIn(String address) async {
+    try {
+      await _native.completeChatGptSignIn(address);
+    } on PlatformException catch (failure) {
+      error = failure.message ?? 'Start ChatGPT sign-in again.';
+      _changed();
+    }
+  }
+
   Future<void> signOutChatGpt() => _perform(() async {
     final revoked = await _native.signOutChatGpt();
     chatGptEmail = null;

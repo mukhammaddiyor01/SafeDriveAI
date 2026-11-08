@@ -16,6 +16,7 @@ abstract interface class NativeMonitor {
   Future<String?> chatGptAccount();
   Future<String?> signInChatGpt();
   Future<void> cancelChatGptSignIn();
+  Future<void> completeChatGptSignIn(String address);
   Future<bool?> signOutChatGpt();
   Future<void> setPreferences({required bool voice, required bool llm});
 }
@@ -49,6 +50,9 @@ class MethodChannelMonitor implements NativeMonitor {
   @override
   Future<void> cancelChatGptSignIn() =>
       _methods.invokeMethod<void>('cancelChatGptSignIn');
+  @override
+  Future<void> completeChatGptSignIn(String address) => _methods
+      .invokeMethod<void>('completeChatGptSignIn', {'address': address});
   @override
   Future<bool?> signOutChatGpt() =>
       _methods.invokeMethod<bool>('signOutChatGpt');

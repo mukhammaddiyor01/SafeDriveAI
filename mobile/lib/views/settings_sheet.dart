@@ -44,6 +44,41 @@ class SettingsSheet extends StatelessWidget {
             if (controller.waitingForChatGpt) ...[
               const Text('Waiting for approval in your browser.'),
               TextButton(
+                onPressed: () async {
+                  var address = '';
+                  final value = await showDialog<String>(
+                    context: context,
+                    builder: (dialogContext) => AlertDialog(
+                      title: const Text('Finish ChatGPT sign-in'),
+                      content: TextField(
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        keyboardType: TextInputType.url,
+                        decoration: const InputDecoration(
+                          hintText: 'Paste the 127.0.0.1 address from Chrome',
+                        ),
+                        onChanged: (value) => address = value.trim(),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(dialogContext),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(dialogContext, address),
+                          child: const Text('Finish sign-in'),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (value != null && value.isNotEmpty) {
+                    await controller.completeChatGptSignIn(value);
+                  }
+                },
+                child: const Text('Paste browser return address'),
+              ),
+              TextButton(
                 onPressed: controller.cancelChatGptSignIn,
                 child: const Text('Cancel sign-in'),
               ),

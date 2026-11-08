@@ -147,3 +147,11 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - ARM64 release APK yig‘ildi va imzosi tekshirildi.
 - ADB qurilma ko‘rsatmadi. Brauzer orqali haqiqiy hisobga kirish va
   telefondan OpenAI’ga yuborilgan jonli suhbat hali tekshirilmagan.
+
+## Chrome orqali ChatGPT qaytish manzili — 2026-11-08
+
+- Galaxy A51’da OpenAI tasdiqlashdan keyin OAuth kodi va holatini loopback
+  manziliga yubordi. Chrome DevTools `ERR_CONNECTION_TIMED_OUT` ko‘rsatdi.
+- Release APK yig‘ildi, Flutter tahlili va to‘rtta testi o‘tdi. Chrome
+  qaytish manzilini ilovada qo‘lda topshirish yo‘li qo‘shildi. Haqiqiy hisob
+  orqali shu yo‘lni yakunlash telefon egasining tasdig‘ini talab qiladi.

@@ -12,6 +12,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 import uz.safedrive.safedrive_ai.assistant.ChatGptAccount
 import uz.safedrive.safedrive_ai.controller.AlarmController
 import uz.safedrive.safedrive_ai.controller.MonitorRuntime
@@ -20,6 +21,7 @@ import uz.safedrive.safedrive_ai.model.MonitorState
 import uz.safedrive.safedrive_ai.view.CameraPreviewFactory
 
 class MainActivity : FlutterActivity() {
+    private val pastedChatGptCallback = AtomicReference<String?>(null)
     private var signInAttempt: AtomicBoolean? = null
     private var pendingStart: MethodChannel.Result? = null
     private var startAfterResume: MethodChannel.Result? = null
@@ -55,6 +57,15 @@ class MainActivity : FlutterActivity() {
                     }
                 }
                 "chatGptAccount" -> result.success(runCatching { ChatGptAccount(this).email() }.getOrNull())
+                "completeChatGptSignIn" -> {
+                    val address = call.argument<String>("address")
+                    if (signInAttempt == null || address.isNullOrBlank() || address.length > 8192) {
+                        result.error("chatgpt_callback", "Start ChatGPT sign-in before pasting its return address.", null)
+                    } else {
+                        pastedChatGptCallback.set(address)
+                        result.success(null)
+                    }
+                }
                 "cancelChatGptSignIn" -> {
                     signInAttempt?.set(true)
                     result.success(null)
@@ -62,11 +73,16 @@ class MainActivity : FlutterActivity() {
                 "signInChatGpt", "signOutChatGpt" -> {
                     val signIn = call.method == "signInChatGpt"
                     val cancelled = AtomicBoolean(false)
-                    if (signIn) signInAttempt = cancelled
+                    if (signIn) {
+                        pastedChatGptCallback.set(null)
+                        signInAttempt = cancelled
+                    }
                     Thread {
                         try {
                             val account = ChatGptAccount(this)
-                            val value = if (signIn) account.signIn(this, cancelled::get) else account.disconnect()
+                            val value = if (signIn) account.signIn(this, cancelled::get) {
+                                pastedChatGptCallback.getAndSet(null)
+                            } else account.disconnect()
                             runOnUiThread { result.success(value) }
                         } catch (_: java.util.concurrent.CancellationException) {
                             runOnUiThread { result.success(null) }
@@ -77,11 +93,17 @@ class MainActivity : FlutterActivity() {
                                 it.startsWith("ChatGPT returned HTTP ") ||
                                     it in setOf("This ChatGPT account did not grant plan usage.",
                                         "No ChatGPT model is available for this account.",
-                                        "ChatGPT sign-in was declined.", "ChatGPT sign-in timed out.")
+                                        "ChatGPT sign-in was declined.", "ChatGPT sign-in timed out.",
+                                        "This return address does not match the current ChatGPT sign-in. Start again.")
                             } ?: "ChatGPT sign-in could not be completed. Check your account and internet connection."
                             runOnUiThread { result.error("chatgpt_account", message, null) }
                         } finally {
-                            runOnUiThread { if (signInAttempt === cancelled) signInAttempt = null }
+                            runOnUiThread {
+                                if (signInAttempt === cancelled) {
+                                    pastedChatGptCallback.set(null)
+                                    signInAttempt = null
+                                }
+                            }
                         }
                     }.start()
                 }

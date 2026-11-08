@@ -39,7 +39,7 @@ internal class ChatGptAccount(context: Context) {
 
     fun email(): String? = session()?.takeIf { it.has("access_token") }?.optString("email")
 
-    fun signIn(activity: Activity, cancelled: () -> Boolean): String {
+    fun signIn(activity: Activity, cancelled: () -> Boolean, takeCallback: () -> String?): String {
         val old = session()
         val registered = old?.optString("client_id").orEmpty()
         val state = randomToken()
@@ -65,7 +65,7 @@ internal class ChatGptAccount(context: Context) {
             if (registered.isEmpty()) parameters["agent_name_hint"] = "SafeDriveAI"
             val url = "$AUTH/api/accounts/authorize?${form(parameters)}"
             activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-            val result = awaitCallback(listener, state, cancelled)
+            val result = awaitCallback(listener, state, cancelled, takeCallback)
             val clientId = result.getQueryParameter("client_id") ?: registered
             require(clientId.startsWith("oaiapp_") && (registered.isEmpty() || registered == clientId))
             val code = requireNotNull(result.getQueryParameter("code"))
@@ -90,11 +90,26 @@ internal class ChatGptAccount(context: Context) {
         return email
     }
 
-    private fun awaitCallback(listener: ServerSocket, state: String, cancelled: () -> Boolean): Uri {
-        val deadline = android.os.SystemClock.elapsedRealtime() + 180_000
+    private fun awaitCallback(
+        listener: ServerSocket,
+        state: String,
+        cancelled: () -> Boolean,
+        takeCallback: () -> String?,
+    ): Uri {
+        val deadline = android.os.SystemClock.elapsedRealtime() + 300_000
         listener.soTimeout = 1000
         while (android.os.SystemClock.elapsedRealtime() < deadline) {
             if (cancelled()) throw java.util.concurrent.CancellationException()
+            takeCallback()?.let { address ->
+                val uri = Uri.parse(address.trim())
+                check(uri.scheme == "http" && uri.host == "127.0.0.1" &&
+                    uri.port == listener.localPort && uri.path == CALLBACK &&
+                    uri.getQueryParameter("state") == state &&
+                    !uri.getQueryParameter("code").isNullOrBlank() &&
+                    uri.getQueryParameter("error") == null
+                ) { "This return address does not match the current ChatGPT sign-in. Start again." }
+                return uri
+            }
             val connection = try {
                 listener.accept()
             } catch (_: java.net.SocketTimeoutException) {

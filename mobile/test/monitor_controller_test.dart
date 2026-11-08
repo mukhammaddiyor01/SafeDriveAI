@@ -42,6 +42,8 @@ class FakeMonitor implements NativeMonitor {
   @override
   Future<void> cancelChatGptSignIn() async {}
   @override
+  Future<void> completeChatGptSignIn(String address) async {}
+  @override
   Future<bool?> signOutChatGpt() async => true;
   @override
   Future<void> setPreferences({required bool voice, required bool llm}) async {
