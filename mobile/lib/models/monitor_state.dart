@@ -1,7 +1,7 @@
 class MonitorState {
   const MonitorState({
     this.status = 'stopped',
-    this.message = 'Kuzatuvni boshlashga tayyor',
+    this.message = 'Ready to monitor',
     this.active = false,
     this.eyesOpen,
     this.closedMs = 0,
@@ -10,7 +10,7 @@ class MonitorState {
     this.perclos,
     this.alarm = false,
     this.alerts = 0,
-    this.assistant = 'Ovozli eslatmalar',
+    this.assistant = 'Voice reminders',
   });
 
   factory MonitorState.fromMap(Map<dynamic, dynamic> map) => MonitorState(
@@ -24,7 +24,7 @@ class MonitorState {
     perclos: (map['perclos'] as num?)?.toDouble(),
     alarm: map['alarm'] as bool? ?? false,
     alerts: (map['alerts'] as num?)?.toInt() ?? 0,
-    assistant: map['assistant'] as String? ?? 'Ovozli eslatmalar',
+    assistant: map['assistant'] as String? ?? 'Voice reminders',
   );
   final String status;
   final String message;
@@ -39,12 +39,12 @@ class MonitorState {
   final String assistant;
 
   String get title => switch (status) {
-    'starting' => 'Kamera ochilmoqda',
-    'monitoring' => 'Kuzatuv faol',
-    'limited' => 'Ko‘rinish cheklangan',
-    'warning' => 'Diqqat talab etiladi',
-    'drowsy' => 'To‘xtab, dam oling',
-    'error' => 'Kuzatuv to‘xtadi',
-    _ => 'Safarga tayyorlaning',
+    'starting' => 'Starting camera',
+    'monitoring' => 'Monitoring active',
+    'limited' => 'Limited visibility',
+    'warning' => 'Check your position',
+    'drowsy' => 'Pull over and rest',
+    'error' => 'Monitoring stopped',
+    _ => 'Before you drive',
   };
 }

@@ -13,7 +13,7 @@ data class Observation(
 
 data class MonitorState(
     val status: String = "stopped",
-    val message: String = "Kuzatuvni boshlashga tayyor",
+    val message: String = "Ready to monitor",
     val active: Boolean = false,
     val eyesOpen: Double? = null,
     val closedMs: Long = 0,
@@ -22,7 +22,7 @@ data class MonitorState(
     val perclos: Double? = null,
     val alarm: Boolean = false,
     val alerts: Int = 0,
-    val assistant: String = "Ovozli eslatmalar",
+    val assistant: String = "Voice reminders",
 ) {
     fun toMap(): Map<String, Any?> = mapOf(
         "status" to status, "message" to message, "active" to active,

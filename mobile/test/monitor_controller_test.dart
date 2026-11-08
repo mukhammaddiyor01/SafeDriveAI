@@ -63,7 +63,7 @@ void main() {
       const MonitorState(status: 'drowsy', active: true, alarm: true),
     );
     await Future<void>.delayed(Duration.zero);
-    expect(controller.state.title, 'To‘xtab, dam oling');
+    expect(controller.state.title, 'Pull over and rest');
     await controller.toggleMonitoring();
     await Future<void>.delayed(Duration.zero);
     expect(controller.state.active, false);

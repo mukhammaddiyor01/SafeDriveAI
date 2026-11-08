@@ -16,15 +16,15 @@ class SettingsSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Ovoz va kuzatuv',
+              'Voice and monitoring',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 12),
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Ovozli eslatmalar'),
+              title: const Text('Voice reminders'),
               subtitle: const Text(
-                'Dam olish haqida qisqa savol va eslatmalar. Signal doim yoqilgan.',
+                'Play a brief spoken reminder during a drowsiness alert. The alarm stays on.',
               ),
               value: controller.voice,
               onChanged: controller.busy
@@ -33,9 +33,9 @@ class SettingsSheet extends StatelessWidget {
             ),
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Kompyuterdagi AI yordamchi'),
+              title: const Text('AI voice coach'),
               subtitle: const Text(
-                'USB orqali mahalliy LLM’ga ulanish. Ulanmasa, oddiy ovozli eslatma ishlaydi.',
+                'Connect to the assistant over USB. Local reminders are available offline.',
               ),
               value: controller.llm,
               onChanged: controller.busy
@@ -43,19 +43,19 @@ class SettingsSheet extends StatelessWidget {
                   : (v) => controller.updatePreferences(llmEnabled: v),
             ),
             const SizedBox(height: 12),
-            Text('Yordamchi: ${controller.state.assistant}'),
+            Text('Voice source: ${controller.state.assistant}'),
             const SizedBox(height: 20),
             const Text(
-              'Kamera tasvirlari saqlanmaydi va serverga yuborilmaydi. Ko‘zlar yonboshda, qorong‘ida yoki ko‘zoynak ortida ko‘rinmasa, ilova ko‘rinish cheklanganini bildiradi.',
+              'Camera frames stay on your phone. Adjust the camera if your eyes are hard to see.',
             ),
             const SizedBox(height: 14),
             const Text(
-              'Ovoz tili telefoningizdagi Text-to-Speech xizmatiga bog‘liq. O‘zbekcha ovoz mavjud bo‘lmasa, inglizcha eslatma ishlatiladi. Bu versiya ovozli javobni tinglamaydi.',
+              'Spoken reminders use your phone’s text-to-speech engine.',
             ),
             const SizedBox(height: 20),
             FilledButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Tayyor'),
+              child: const Text('Done'),
             ),
           ],
         ),

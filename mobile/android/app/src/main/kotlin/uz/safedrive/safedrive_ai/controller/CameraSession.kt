@@ -69,14 +69,14 @@ class CameraSession(
                             ))
                         }
                     }
-                    .addOnFailureListener { if (!closed) onFailure("Yuz tahlili ishlamadi. Kuzatuvni qayta boshlang.") }
+                    .addOnFailureListener { if (!closed) onFailure("Face detection failed. Restart monitoring.") }
                     .addOnCompleteListener { busy.set(false); proxy.close() }
             } catch (error: Exception) {
                 android.util.Log.e("SafeDriveAI", "Frame submission failed", error)
                 busy.set(false)
                 proxy.close()
                 if (!closed) ContextCompat.getMainExecutor(context).execute {
-                    onFailure("Kamera tasvirini tahlil qilib bo‘lmadi.")
+                    onFailure("Could not analyze the camera frame.")
                 }
             }
         }
@@ -88,7 +88,7 @@ class CameraSession(
                 bind()
             } catch (error: Exception) {
                 android.util.Log.e("SafeDriveAI", "Camera provider failed", error)
-                onFailure("Old kamera ochilmadi. Boshqa kamera ilovasini yoping.")
+                onFailure("Could not open the front camera. Close other camera apps.")
             }
         }, ContextCompat.getMainExecutor(context))
     }
@@ -121,7 +121,7 @@ class CameraSession(
             }
         } catch (error: Exception) {
             android.util.Log.e("SafeDriveAI", "Camera binding failed", error)
-            onFailure("Kamera band yoki ruxsat bekor qilingan. Kuzatuvni qayta boshlang.")
+            onFailure("Camera unavailable. Check permissions and restart monitoring.")
         }
     }
 

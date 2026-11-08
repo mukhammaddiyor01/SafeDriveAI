@@ -57,7 +57,7 @@ class _DriveScreenState extends State<DriveScreen> {
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Sozlamalar',
+                        tooltip: 'Settings',
                         icon: const Icon(Icons.tune_rounded),
                         onPressed: () => showModalBottomSheet<void>(
                           context: context,
@@ -72,16 +72,12 @@ class _DriveScreenState extends State<DriveScreen> {
                   Text(
                     state.title,
                     style: Theme.of(context).textTheme.headlineLarge,
-                    semanticsLabel: 'Holat: ${state.title}',
+                    semanticsLabel: 'Status: ${state.title}',
                   ),
                   const SizedBox(height: 9),
                   Text(
-                    state.active
-                        ? 'Kuzatuv fonda ham davom etadi.'
-                        : 'Yo‘lga chiqishdan oldin kuzatuvni yoqing.',
+                    state.active ? 'Monitoring continues in the background.' : 'Mount your phone, then start monitoring before you drive.',
                   ),
-                  const SizedBox(height: 22),
-                  CameraPanel(state: state),
                   const SizedBox(height: 16),
                   _StatusMessage(state: state),
                   if (controller.error != null) ...[
@@ -91,27 +87,7 @@ class _DriveScreenState extends State<DriveScreen> {
                       style: const TextStyle(color: DriveColors.red),
                     ),
                   ],
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      _Metric(
-                        label: 'Ko‘z ochiqligi',
-                        value: state.eyesOpen == null
-                            ? '—'
-                            : '${(state.eyesOpen! * 100).round()}%',
-                      ),
-                      const SizedBox(width: 12),
-                      _Metric(
-                        label: 'Bosh burilishi',
-                        value: state.yaw == null
-                            ? '—'
-                            : '${state.yaw!.round()}°',
-                      ),
-                      const SizedBox(width: 12),
-                      _Metric(label: 'Ogohlantirish', value: '${state.alerts}'),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   FilledButton.icon(
                     onPressed: controller.busy
                         ? null
@@ -123,10 +99,10 @@ class _DriveScreenState extends State<DriveScreen> {
                     ),
                     label: Text(
                       controller.busy
-                          ? 'Kutilmoqda…'
+                          ? 'Please wait…'
                           : state.active
-                          ? 'Kuzatuvni to‘xtatish'
-                          : 'Kuzatuvni boshlash',
+                          ? 'Stop monitoring'
+                          : 'Start monitoring',
                     ),
                     style: state.active
                         ? FilledButton.styleFrom(
@@ -134,14 +110,41 @@ class _DriveScreenState extends State<DriveScreen> {
                           )
                         : null,
                   ),
-                  const SizedBox(height: 8),
-                  TextButton.icon(
-                    onPressed: controller.busy || state.active
-                        ? null
-                        : controller.testAlarm,
-                    icon: const Icon(Icons.volume_up_outlined, size: 20),
-                    label: const Text('Signalni sinash'),
-                  ),
+                  if (!state.active) ...[
+                    const SizedBox(height: 8),
+                    TextButton.icon(
+                      onPressed: controller.busy || state.active
+                          ? null
+                          : controller.testAlarm,
+                      icon: const Icon(Icons.volume_up_outlined, size: 20),
+                      label: const Text('Test alarm'),
+                    ),
+                  ],
+                  const SizedBox(height: 22),
+                  CameraPanel(state: state),
+                  const SizedBox(height: 16),
+                  if (state.active) ...[
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        _Metric(
+                          label: 'Eye openness',
+                          value: state.eyesOpen == null
+                              ? '—'
+                              : '${(state.eyesOpen! * 100).round()}%',
+                        ),
+                        const SizedBox(width: 12),
+                        _Metric(
+                          label: 'Head angle',
+                          value: state.yaw == null
+                              ? '—'
+                              : '${state.yaw!.round()}°',
+                        ),
+                        const SizedBox(width: 12),
+                        _Metric(label: 'Alerts', value: '${state.alerts}'),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   const Divider(),
                   const SizedBox(height: 14),
@@ -156,7 +159,7 @@ class _DriveScreenState extends State<DriveScreen> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'Uyqu sezsangiz, xavfsiz joyda to‘xtab, dam oling. Ilova hushyor qolishni kafolatlamaydi.',
+                          'If you feel sleepy, pull over safely and rest.',
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),

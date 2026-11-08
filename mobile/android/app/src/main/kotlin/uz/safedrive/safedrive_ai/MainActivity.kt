@@ -40,15 +40,15 @@ class MainActivity : FlutterActivity() {
                 "start" -> requestStart(result)
                 "stop" -> { stopService(Intent(this, MonitorService::class.java)); result.success(null) }
                 "testAlarm" -> {
-                    if (MonitorRuntime.state.active) result.error("active", "Sinash uchun kuzatuvni to‘xtating.", null)
-                    else if (!audible()) result.error("volume", "Telefonning alarm ovozini balandlating.", null)
+                    if (MonitorRuntime.state.active) result.error("active", "Stop monitoring before testing the alarm.", null)
+                    else if (!audible()) result.error("volume", "Turn up your phone’s alarm volume.", null)
                     else {
                         try {
                             tester?.close()
                             tester = AlarmController(this) {}
                             tester?.test()
                             result.success(null)
-                        } catch (_: Exception) { result.error("audio", "Signalni ishga tushirib bo‘lmadi.", null) }
+                        } catch (_: Exception) { result.error("audio", "Could not play the alarm.", null) }
                     }
                 }
                 "preferences" -> {
@@ -67,8 +67,8 @@ class MainActivity : FlutterActivity() {
     private fun audible() = getSystemService(AudioManager::class.java).getStreamVolume(AudioManager.STREAM_ALARM) > 0
 
     private fun requestStart(result: MethodChannel.Result) {
-        if (pendingStart != null || startAfterResume != null) { result.error("busy", "Ruxsat javobini kuting.", null); return }
-        if (!audible()) { result.error("volume", "Telefonning alarm ovozini balandlating.", null); return }
+        if (pendingStart != null || startAfterResume != null) { result.error("busy", "Respond to the permission prompt.", null); return }
+        if (!audible()) { result.error("volume", "Turn up your phone’s alarm volume.", null); return }
         val permissions = mutableListOf<String>()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             permissions += Manifest.permission.CAMERA
@@ -86,19 +86,19 @@ class MainActivity : FlutterActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             if (MonitorRuntime.activityVisible) startMonitor(result) else startAfterResume = result
         }
-        else result.error("permission", "Kamera ruxsati kerak. Telefon sozlamalarida uni yoqing.", null)
+        else result.error("permission", "Allow camera access in your phone settings.", null)
     }
 
     private fun startMonitor(result: MethodChannel.Result) {
         if (!MonitorRuntime.activityVisible) {
-            result.error("background", "Ilovani ochib, kuzatuvni qayta boshlang.", null); return
+            result.error("background", "Open the app and restart monitoring.", null); return
         }
         try {
             tester?.close(); tester = null
             ContextCompat.startForegroundService(this, Intent(this, MonitorService::class.java))
-            MonitorRuntime.publish(MonitorState("starting", "Kamera ochilmoqda", active = true))
+            MonitorRuntime.publish(MonitorState("starting", "Starting camera", active = true))
             result.success(null)
-        } catch (_: Exception) { result.error("service", "Kuzatuvni boshlab bo‘lmadi.", null) }
+        } catch (_: Exception) { result.error("service", "Could not start monitoring.", null) }
     }
 
     override fun onResume() {
@@ -122,9 +122,9 @@ class MainActivity : FlutterActivity() {
     }
 
     override fun onDestroy() {
-        pendingStart?.error("closed", "Ilova yopildi. Qayta urinib ko‘ring.", null)
+        pendingStart?.error("closed", "The app closed. Open it and try again.", null)
         pendingStart = null
-        startAfterResume?.error("closed", "Ilova yopildi. Qayta urinib ko‘ring.", null)
+        startAfterResume?.error("closed", "The app closed. Open it and try again.", null)
         startAfterResume = null
         MonitorRuntime.sink = null
         super.onDestroy()

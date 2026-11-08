@@ -43,7 +43,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('SafeDriveAI'), findsOneWidget);
-    expect(find.text('Kuzatuvni boshlash'), findsOneWidget);
+    expect(find.text('Start monitoring'), findsOneWidget);
     expect(tester.takeException(), isNull);
     if (const bool.fromEnvironment('SAVE_SCREENSHOT')) {
       final render =
@@ -56,9 +56,9 @@ void main() {
         await file.writeAsBytes(bytes.buffer.asUint8List());
       });
     }
-    await tester.tap(find.byTooltip('Sozlamalar'));
+    await tester.tap(find.byTooltip('Settings'));
     await tester.pumpAndSettle();
-    expect(find.text('Ovoz va kuzatuv'), findsOneWidget);
+    expect(find.text('Voice and monitoring'), findsOneWidget);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
     await native.events.close();

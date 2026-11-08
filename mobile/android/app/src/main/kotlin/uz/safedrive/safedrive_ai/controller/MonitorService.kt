@@ -30,12 +30,12 @@ class MonitorService : LifecycleService() {
     private var lastStatus = ""
     private var lastMessage = ""
     private var observations = 0L
-    private var assistant = "Ovozli eslatmalar"
+    private var assistant = "Voice reminders"
     private val watchdog = object : Runnable {
         override fun run() {
             if (camera == null) return
             if (SystemClock.elapsedRealtime() - lastFrame >= 3_000) {
-                update(MonitorState("limited", "Kamera tasviri kelmayapti. Kamerani tekshiring.", active = true, alarm = true))
+                update(MonitorState("limited", "No camera frames. Check the camera.", active = true, alarm = true))
             }
             handler.postDelayed(this, 1000)
         }
@@ -45,7 +45,7 @@ class MonitorService : LifecycleService() {
         super.onCreate()
         MonitorRuntime.service = this
         getSystemService(NotificationManager::class.java).createNotificationChannel(
-            NotificationChannel(CHANNEL, "Haydovchi kuzatuvi", NotificationManager.IMPORTANCE_LOW)
+            NotificationChannel(CHANNEL, "Driver monitoring", NotificationManager.IMPORTANCE_LOW)
         )
     }
 
@@ -54,9 +54,9 @@ class MonitorService : LifecycleService() {
         if (intent?.action == STOP) { stopSelf(); return START_NOT_STICKY }
         if (camera != null) return START_NOT_STICKY
         try {
-            ServiceCompat.startForeground(this, 31, notification("Kamera ochilmoqda"),
+            ServiceCompat.startForeground(this, 31, notification("Starting camera"),
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA)
-            MonitorRuntime.publish(MonitorState("starting", "Yuzingizni kameraga qarating", active = true))
+            MonitorRuntime.publish(MonitorState("starting", "Face the camera", active = true))
             alarm = AlarmController(this) { source ->
                 assistant = source
                 MonitorRuntime.publish(MonitorRuntime.state.copy(assistant = source))
@@ -64,7 +64,7 @@ class MonitorService : LifecycleService() {
             camera = CameraSession(this, this, { observation ->
                 if (SystemClock.elapsedRealtime() - observation.timeMs > 700) {
                     engine.reset()
-                    update(MonitorState("limited", "Kamera tahlili sekinlashdi. Telefonni tekshiring.", active = true, alarm = true))
+                    update(MonitorState("limited", "Camera analysis slowed down. Check your phone.", active = true, alarm = true))
                 } else {
                     lastFrame = SystemClock.elapsedRealtime()
                     observations++
@@ -77,7 +77,7 @@ class MonitorService : LifecycleService() {
             handler.postDelayed(watchdog, 1000)
         } catch (error: Exception) {
             android.util.Log.e("SafeDriveAI", "Monitor startup failed", error)
-            fail("Kuzatuvni boshlab bo‘lmadi. Kamera ruxsatini tekshiring va ilova ochiq paytda boshlang.")
+            fail("Could not start monitoring. Check camera permission and try again with the app open.")
         }
         return START_NOT_STICKY
     }
@@ -112,9 +112,9 @@ class MonitorService : LifecycleService() {
         val stop = PendingIntent.getService(this, 1, Intent(this, MonitorService::class.java).setAction(STOP),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         return NotificationCompat.Builder(this, CHANNEL).setSmallIcon(R.drawable.ic_drive)
-            .setContentTitle("SafeDriveAI kuzatuvi").setContentText(message).setContentIntent(open)
+            .setContentTitle("SafeDriveAI monitoring").setContentText(message).setContentIntent(open)
             .setOngoing(true).setOnlyAlertOnce(true)
-            .addAction(R.drawable.ic_drive, "To‘xtatish", stop).build()
+            .addAction(R.drawable.ic_drive, "Stop", stop).build()
     }
 
     override fun onDestroy() {

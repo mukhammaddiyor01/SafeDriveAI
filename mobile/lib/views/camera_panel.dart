@@ -46,7 +46,7 @@ class CameraPanel extends StatelessWidget {
                       ),
                       const SizedBox(width: 7),
                       Text(
-                        state.active ? 'Old kamera' : 'Kamera o‘chiq',
+                        state.active ? 'Front camera' : 'Camera off',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
@@ -72,14 +72,14 @@ class _CameraGuide extends StatelessWidget {
   const _CameraGuide();
   @override
   Widget build(BuildContext context) => const Padding(
-    padding: EdgeInsets.only(top: 42, bottom: 18),
+    padding: EdgeInsets.fromLTRB(14, 48, 14, 14),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
           child: FittedBox(
             child: Icon(
-              Icons.face_retouching_natural,
+              Icons.center_focus_strong_outlined,
               color: Color(0xFF9DB4D6),
               size: 100,
             ),
@@ -87,13 +87,14 @@ class _CameraGuide extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          'Yuz va yelkangiz kadrda bo‘lsin',
+          'Keep your face and shoulders in frame',
           textAlign: TextAlign.center,
           style: TextStyle(color: Colors.white, fontSize: 14),
         ),
         SizedBox(height: 3),
         Text(
-          'Telefonni xavfsiz tutqichga mahkamlang',
+          'Use a secure phone mount',
+          textAlign: TextAlign.center,
           style: TextStyle(color: Color(0xFFB6C7E0), fontSize: 12),
         ),
       ],

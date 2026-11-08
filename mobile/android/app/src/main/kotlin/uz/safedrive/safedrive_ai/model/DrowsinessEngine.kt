@@ -35,7 +35,7 @@ class DrowsinessEngine {
         val now = o.timeMs
         val last = previous
         if (last != null && now <= last.timeMs) {
-            return MonitorState("limited", "Kamera vaqti yangilanmadi", active = true)
+            return MonitorState("limited", "Camera frames stopped updating.", active = true)
         }
         if (o.faceCount == 1 && o.trackingId != null && identity != null && o.trackingId != identity) {
             reset()
@@ -85,20 +85,20 @@ class DrowsinessEngine {
         )
         return when {
             eyeKnown && (duration >= 1_500 || (perclos != null && perclos >= 0.35)) ->
-                base.copy(status = "drowsy", message = "Uyquchanlik alomati. Xavfsiz joyda to‘xtang!", alarm = true)
+                base.copy(status = "drowsy", message = "Drowsiness detected. Pull over safely.", alarm = true)
             poseDuration >= 2_500 ->
-                base.copy(status = "warning", message = "Bosh holati o‘zgardi. Ko‘zlarni baholab bo‘lmayapti.", alarm = true)
+                base.copy(status = "warning", message = "Head position changed. The camera cannot assess your eyes.", alarm = true)
             !eyeKnown -> {
                 val reason = when {
-                    o.faceCount == 0 -> "Yuz ko‘rinmayapti. Kamera va yorug‘likni tekshiring."
-                    o.faceCount > 1 -> "Kadrda bir nechta yuz bor. Kamerani haydovchiga qarating."
-                    else -> "Ko‘zlar aniq ko‘rinmayapti. Kamera burchagini moslang."
+                    o.faceCount == 0 -> "Face not visible. Check the camera angle and lighting."
+                    o.faceCount > 1 -> "Multiple faces in frame. Aim the camera at the driver."
+                    else -> "Eyes not clearly visible. Adjust the camera angle."
                 }
                 base.copy(status = "limited", message = reason,
                     alarm = visibilityTimedOut)
             }
-            duration >= 700 -> base.copy(status = "warning", message = "Ko‘zlar yumilgan")
-            else -> base.copy(status = "monitoring", message = "Kuzatuv faol")
+            duration >= 700 -> base.copy(status = "warning", message = "Eyes closed")
+            else -> base.copy(status = "monitoring", message = "Monitoring active")
         }
     }
 }

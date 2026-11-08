@@ -30,7 +30,7 @@ class MonitorController extends ChangeNotifier {
         _changed();
       },
       onError: (Object failure) {
-        error = 'Kuzatuv bilan aloqa uzildi. Ilovani qayta oching.';
+        error = 'Monitoring disconnected. Reopen the app.';
         _changed();
       },
     );
@@ -50,9 +50,9 @@ class MonitorController extends ChangeNotifier {
     try {
       await action();
     } on PlatformException catch (failure) {
-      error = failure.message ?? 'Amal bajarilmadi.';
+      error = failure.message ?? 'Could not complete the action.';
     } catch (_) {
-      error = 'Amal bajarilmadi. Ilovani qayta oching.';
+      error = 'Could not complete the action. Reopen the app.';
     } finally {
       busy = false;
       _changed();
