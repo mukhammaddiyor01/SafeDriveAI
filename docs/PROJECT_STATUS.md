@@ -40,7 +40,7 @@ ish tartibi alohida commitda saqlangan. Keyingi o‘zgarishlar ham kichik commit
 | SD-05 Ko‘p burchak | Yonboshda noaniq ko‘z holati limited sifatida ko‘rsatiladi | Yonbosh va turli tutqich burchaklari uchun model va haqiqiy baholash |
 | SD-06 Dataset/model | 80/20 kodi va foydalanish auditi mavjud; MRL: 84,822 tasvir, 37 haydovchi; 5 epoch PyTorch MPS trening va 6 boshqa haydovchida held-out hisobot; YOLO vositasi bor | Ishlatilmagan 20% test ma’lumoti, yuqori FPR’ni train doirasida yaxshilash, RGB/ko‘p burchakli dalil, mobil model adapteri |
 | SD-07 Ovoz/LLM | TTS eslatma, savol, mahalliy Ollama API adapteri va fallback | Haqiqiy Ollama modeli, o‘zbekcha ovoz, ovozli javobni tinglash va suhbat oqimi |
-| SD-08 USB APK | Release APK yig‘ildi, imzo va emulyatorga install tekshirildi | Galaxy A51’ga USB orqali o‘rnatish; telefon o‘sha sinovda ulanmagan |
+| SD-08 USB APK | Release APK imzosi tekshirildi, emulyatorga o‘rnatildi; skript odatda USB telefonni tanlaydi va tanlangan qurilmada install hamda start bajaradi | Galaxy A51’ga USB orqali o‘rnatish; ADB hali qurilma ko‘rsatmadi |
 | SD-09 MVC | Flutter, Kotlin va Python qatlamlari ajratilgan | Keyingi funksiyalarda chegaralarni saqlash |
 | SD-10 Commit | Kichik feat/fix tarix va loyiha qoidalari mavjud | Har bir keyingi qadamda shu tartibga amal qilish |
 

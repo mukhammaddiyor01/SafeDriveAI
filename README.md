@@ -88,11 +88,14 @@ Bu release rejimida yig‘ilgan, developer imzoli sinov APK; Play Store uchun al
 4. Mac terminalida loyiha ichidan:
 
 ```bash
-adb devices
+source scripts/env.sh
+adb devices -l
 ./scripts/install-android.sh
 ```
 
-Bir nechta telefon bo‘lsa `ANDROID_SERIAL` orqali kerakli telefonni tanlang.
+Skript odatda bitta USB telefonni tanlaydi. Bir nechta telefon ulanganida
+`adb devices -l` chiqishidan Galaxy A51 seriya raqamini olib,
+`ANDROID_SERIAL=TELEFON_SERIYA_RAQAMI ./scripts/install-android.sh` buyrug‘ini bajaring.
 Ilovada kamera va bildirishnoma ruxsatlarini bering. Alarm ovozini tekshiring.
 Samsung batareya sozlamalarida ilovani sleeping/deep sleeping ro‘yxatidan chiqaring;
 bu fon ishlashini kafolatlamaydi. Android’dagi Stop/Force stop ilovani to‘xtatadi.

@@ -79,3 +79,11 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - Flutter analizida muammo topilmadi, 3 ta test o‘tdi.
 - ARM64 release APK qayta yig‘ildi. APK v2 imzosi va SHA-256 mosligi tekshirildi.
 - ADB qurilma ko‘rsatmadi. Yangilangan APK Galaxy A51 qurilmasida sinovdan o‘tmadi.
+
+## USB o‘rnatish skripti (SD-08) — 2026-11-08
+
+- Bash sintaksisi va beshta ADB simulyatsiyasi tekshirildi: standart USB tanlovi,
+  aniq seriya raqami, qurilma yo‘qligi, offline holat va o‘rnatish xatosi.
+  O‘rnatish xato bilan tugasa, ilovani ochish buyrug‘i yuborilmaydi.
+- Haqiqiy ADB qurilma ko‘rsatmadi. Skript to‘xtadi va USB debugging hamda
+  telefondagi ruxsatni tekshirish bo‘yicha ko‘rsatma chiqardi.
