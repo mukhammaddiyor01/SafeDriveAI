@@ -31,17 +31,38 @@ class SettingsSheet extends StatelessWidget {
                   ? null
                   : (v) => controller.updatePreferences(voiceEnabled: v),
             ),
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('ChatGPT voice coach'),
-              subtitle: const Text(
-                'Use ChatGPT for a short rest-stop question. Requires the USB-connected assistant.',
-              ),
-              value: controller.llm,
-              onChanged: controller.busy || !controller.voice
-                  ? null
-                  : (v) => controller.updatePreferences(llmEnabled: v),
+            const Divider(),
+            Text(
+              'ChatGPT voice coach',
+              style: Theme.of(context).textTheme.titleMedium,
             ),
+            const Text(
+              'Connect to the assistant on your Mac before starting monitoring. '
+              'After an alert clears, the coach asks a question and sends your '
+              'transcribed reply to the saved OpenAI conversation.',
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              onPressed:
+                  controller.busy ||
+                      !controller.voice ||
+                      controller.state.active
+                  ? null
+                  : controller.connectChatGpt,
+              child: Text(
+                controller.llm ? 'Check ChatGPT connection' : 'Connect ChatGPT',
+              ),
+            ),
+            if (controller.chatGptVerified)
+              const Text('ChatGPT conversation connected'),
+            if (controller.llm)
+              TextButton(
+                onPressed: controller.busy || controller.state.active
+                    ? null
+                    : () => controller.updatePreferences(llmEnabled: false),
+                child: const Text('Disconnect ChatGPT'),
+              ),
+            if (controller.error != null) Text(controller.error!),
             const SizedBox(height: 12),
             Text('Voice source: ${controller.state.assistant}'),
             const SizedBox(height: 20),
@@ -50,7 +71,7 @@ class SettingsSheet extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             const Text(
-              'Spoken reminders use your phone’s English voice. The app does not listen for replies.',
+              'The phone’s speech service listens briefly after the question. Allow microphone access when starting monitoring.',
             ),
             const SizedBox(height: 20),
             FilledButton(

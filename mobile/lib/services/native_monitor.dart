@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 
 import '../models/monitor_state.dart';
@@ -9,6 +12,7 @@ abstract interface class NativeMonitor {
   Future<void> start();
   Future<void> stop();
   Future<void> testAlarm();
+  Future<void> connectChatGpt();
   Future<void> setPreferences({required bool voice, required bool llm});
 }
 
@@ -32,6 +36,30 @@ class MethodChannelMonitor implements NativeMonitor {
   Future<void> stop() => _methods.invokeMethod<void>('stop');
   @override
   Future<void> testAlarm() => _methods.invokeMethod<void>('testAlarm');
+  @override
+  Future<void> connectChatGpt() async {
+    final client = HttpClient();
+    try {
+      await (() async {
+        final request = await client.post('127.0.0.1', 8765, '/connect');
+        final response = await request.close();
+        final body = await response.transform(utf8.decoder).join();
+        if (response.statusCode != HttpStatus.ok ||
+            (jsonDecode(body) as Map<String, dynamic>)['conversation_id'] ==
+                null) {
+          throw const FormatException('ChatGPT connection unavailable');
+        }
+      })().timeout(const Duration(seconds: 10));
+    } catch (_) {
+      throw PlatformException(
+        code: 'coach_connection',
+        message: 'Could not connect to ChatGPT. Check the Mac assistant and ADB connection.',
+      );
+    } finally {
+      client.close(force: true);
+    }
+  }
+
   @override
   Future<void> setPreferences({required bool voice, required bool llm}) =>
       _methods.invokeMethod<void>('preferences', {'voice': voice, 'llm': llm});

@@ -52,14 +52,23 @@ batareya optimizatsiyasi, signal/DND va telefon qo‘ng‘irog‘i jismoniy sino
 
 ## Ma’lumot va LLM
 
-Tasvir/video saqlash, kamera upload endpoint’i va mikrofon ruxsati yo‘q.
-SharedPreferences’da faqat voice/llm sozlamalari turadi. LLM API loopback’da ishlaydi;
-Android cleartext faqat 127.0.0.1 uchun ruxsat etilgan. `adb reverse` USB tunnel beradi.
-OpenAI Responses API’ga faqat oldindan belgilangan inglizcha savollar yuboriladi.
-Python server javobni tasdiqlangan savollar ro‘yxati bilan tekshiradi.
-API kaliti server muhitida qoladi. Android har safar mahalliy to‘xtash ogohlantirishini
-aytadi va aloqa ishlamasa mahalliy savolni qo‘llaydi.
-Server USB orqali loopback’da ishlaydi.
+Flutter View sozlamalar va ulanish holatini ko‘rsatadi. Controller ulanishni
+tekshiradi va sozlamani saqlaydi. Model qatlamida Kotlin RecoveryTrigger
+uyquchanlikdan keyin bir soniyalik ochiq ko‘z dalilini kutadi, Python
+DriverConversation esa OpenAI suhbat ID’si va ovozga ruxsat etilgan javoblarni boshqaradi.
+Android alarm, TTS va nutqni tanish, HTTP va Flutter platform channel tashqi
+xizmatlarga adapter sifatida ishlaydi.
+
+Android mikrofonni faqat yordamchi yoqilgan va ruxsat berilgan kuzatuv sessiyasida,
+savol tugaganidan keyin qisqa muddat ochadi. Alarm qaytsa yoki kuzatuv to‘xtasa,
+ovozli almashinuv bekor qilinadi. Android nutqni tanish xizmati ishlatiladi va
+offline tanish so‘raladi. Xizmatning o‘zi ishlash usulini tanlaydi.
+
+Python server MacBook loopback manzilida ishlaydi. ADB reverse orqali telefon
+USB yoki Wi-Fi’dan ulanadi. API kaliti MacBook muhitida qoladi.
+OpenAI suhbatiga faqat trigger matni va tanilgan javob matni yuboriladi.
+Qayta ulanish, keyingi triggerlar va server qayta ishga tushganda saqlangan
+suhbat ID’si ishlatiladi.
 
 ## Rasmiy manbalar
 

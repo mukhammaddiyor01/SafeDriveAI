@@ -36,7 +36,7 @@ qolishni kafolatlash yoki suhbatni dam olish o‘rniga qo‘yish mahsulot va’d
 | SD-04 | Fon rejimida ham ishlash | Ilova fon va ekran o‘chgan holatda jismoniy telefonda tekshiriladi; doimiy bildirishnoma va Stop mavjud |
 | SD-05 | Old, yonbosh va turli burchaklardan aniqlash | Burchaklar bo‘yicha alohida dataset baholashi va telefon sinovi mavjud |
 | SD-06 | AI datasetlardan foydalanish | Dataset manbasi, 80/20 split, testning ishlatilmaganligi va yakuniy test natijalari qayd etiladi |
-| SD-07 | Haydovchiga ovozli murojaat va savollar | TTS va haqiqiy LLM yo‘li tekshiriladi; ikki tomonlama suhbat uchun ovozli javobni tinglash ham alohida amalga oshiriladi |
+| SD-07 | Haydovchiga ovozli murojaat va savollar | Mahalliy alarmdan keyin tiklanish dalili bo‘lsa inglizcha suhbat boshlanadi. Telefon javobni tinglaydi va SafeDriveAI uchun saqlangan OpenAI suhbatidan foydalanadi. |
 | SD-08 | USB orqali o‘rnatish | APK yig‘iladi, imzosi tekshiriladi va Galaxy A51’ga adb orqali o‘rnatiladi |
 | SD-09 | MVC va tushunarli kod | View, controller va domain model vazifalari ajratilgan; biznes mantig‘i alohida sinovdan o‘tadi |
 | SD-10 | Kichik mantiqiy commitlar | Har bir commit bitta vazifani bajaradi; faqat `feat:` va `fix:` prefikslari ishlatiladi |

@@ -1,10 +1,12 @@
 package uz.safedrive.safedrive_ai.controller
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +14,7 @@ import android.os.SystemClock
 import androidx.camera.core.Preview
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import uz.safedrive.safedrive_ai.MainActivity
 import uz.safedrive.safedrive_ai.R
@@ -54,10 +57,13 @@ class MonitorService : LifecycleService() {
         if (intent?.action == STOP) { stopSelf(); return START_NOT_STICKY }
         if (camera != null) return START_NOT_STICKY
         try {
-            ServiceCompat.startForeground(this, 31, notification("Starting camera"),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA)
+            val microphoneEnabled = getSharedPreferences("monitor", MODE_PRIVATE).getBoolean("llm", false) &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+            val serviceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA or
+                (if (microphoneEnabled) ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE else 0)
+            ServiceCompat.startForeground(this, 31, notification("Starting camera"), serviceType)
             MonitorRuntime.publish(MonitorState("starting", "Face the camera", active = true))
-            alarm = AlarmController(this) { source ->
+            alarm = AlarmController(this, allowVoiceReply = microphoneEnabled) { source ->
                 assistant = source
                 MonitorRuntime.publish(MonitorRuntime.state.copy(assistant = source))
             }

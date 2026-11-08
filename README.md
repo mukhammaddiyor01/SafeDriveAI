@@ -39,7 +39,7 @@ deb ko‘rsatadi; bunday kadrni "haydovchi hushyor" deb hisoblamaydi. Ko‘p bur
 tungi, ko‘zoynakli holatlar uchun dataset, model va qurilmada tekshirish kerak.
 
 Ovozli savol haydovchini davom etishga undamaydi. Uyquchanlikda xavfsiz joyda to‘xtab,
-dam olish kerak. Bu versiya mikrofonni ishlatmaydi va ovozli javobni tinglamaydi.
+dam olish kerak. Ovozli yordamchi yoqilganida telefon savoldan keyin qisqa javobni tinglaydi.
 
 ## Papkalar
 
@@ -138,20 +138,28 @@ source .venv/bin/activate
 uvicorn safedrive.controllers.assistant:app --host 127.0.0.1 --port 8765
 ```
 
-Boshqa terminalda, USB debugging orqali ulangan telefonga portni yo‘naltiring.
+Boshqa terminalda ADB tunnelini yoqing. USB qurilmada:
 
 ```bash
 source scripts/env.sh
 adb -d reverse tcp:8765 tcp:8765
-curl -X POST http://127.0.0.1:8765/question
 ```
 
-Muvaffaqiyatli OpenAI javobi `source: openai` bilan qaytadi. Ilovada
-**Settings**, **Voice reminders** va **ChatGPT voice coach** sozlamalarini
-yoqing. Uyquchanlik aniqlanganda mahalliy alarm va inglizcha to‘xtash
-ogohlantirishi ishlaydi. OpenAI xavfsiz to‘xtash haqidagi tasdiqlangan savollardan
-birini tanlaydi. USB, internet yoki API ishlamasa, mahalliy savol aytiladi.
-Kamera kadrlari va audio yuborilmaydi. Joriy ovozli oqim bitta savolni aytadi.
+Wireless debugging ishlatilsa, `adb devices -l` ro‘yxatidan qurilma ID’sini olib,
+`adb -s 'QURILMA_ID' reverse tcp:8765 tcp:8765` ni bajaring.
+
+Telefonda **Settings → Connect ChatGPT** ni bosing. Kuzatuvni boshlaganda
+mikrofonga ruxsat bering. Uyquchanlikda alarm va inglizcha to‘xtash
+ogohlantirishi ishlaydi. Alarm tugagach, ko‘zlar bir soniya davomida ochiq
+ko‘rinsa, ChatGPT xavfsiz to‘xtash haqida savol beradi. Telefon bitta inglizcha
+javobni tinglaydi va qisqa yakuniy eslatma aytiladi.
+
+Mac serveri alohida OpenAI API suhbatining ID’sini
+`~/.safedriveai/conversation-id` faylida saqlaydi. Ulanish va keyingi
+ogohlantirishlar shu ID’dan foydalanadi. Suhbat OpenAI API orqali yuritiladi
+va ChatGPT ilovasidagi shaxsiy chatlar ro‘yxatidan alohida.
+OpenAI’ga kamera yoki audio fayli yuborilmaydi. Tanilgan javob matni suhbatda
+saqlanadi. Nutqni tanishda telefonning Android xizmati ishlatiladi.
 
 ## Tekshirish
 

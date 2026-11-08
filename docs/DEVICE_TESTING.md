@@ -20,7 +20,7 @@ Model, Android versiyasi, yorug‘lik, tutqich burchagi, APK versiyasi va natija
 | Activity’ni qayta ochish | Ishlayotgan service holati ekranga qaytadi |
 | Android Force stop | Kuzatuv to‘xtaydi; avtomatik qayta ishga tushmaydi |
 | Qo‘ng‘iroq, DND, boshqa kamera | Kamera/ovoz ustuvorliklari va cheklovlar qayd etiladi |
-| ChatGPT yoqilgan va USB server ishlayapti | Inglizcha eslatma va xavfsiz to‘xtash haqida savol; manba ChatGPT |
+| Connect ChatGPT, mikrofon ruxsati va ishlayotgan Mac serveri | Alarm vaqtida mahalliy ogohlantirish, ko‘zlar qayta ochilib alarm tugagach savol, bitta ovozli javob va yakuniy eslatma |
 | Server yo‘q yoki USB uzildi | Mahalliy inglizcha eslatma; alarm uzilmaydi |
 | Inglizcha TTS yo‘q | Ovoz mavjud emasligi ko‘rsatiladi, alarm ishlaydi |
 | 30–60 min kuzatuv | FPS, qizish, quvvat sarfi va yolg‘on alarmni o‘lchang |

@@ -33,6 +33,8 @@ class FakeMonitor implements NativeMonitor {
   @override
   Future<void> testAlarm() async {}
   @override
+  Future<void> connectChatGpt() async {}
+  @override
   Future<void> setPreferences({required bool voice, required bool llm}) async {}
 }
 

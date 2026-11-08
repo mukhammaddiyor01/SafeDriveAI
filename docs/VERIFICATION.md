@@ -115,3 +115,14 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - 9 Kotlin va 3 Flutter testi o‘tdi. ARM64 APK qayta yig‘ildi, imzosi va SHA-256
   qiymati tekshirildi. Shu yangi versiyada ovoz va vibratsiya jismoniy qurilmada
   hali tinglanmagan.
+
+## Tiklanishdan keyin ovozli suhbat — 2026-11-08
+
+- 35 ta Python testi o‘tdi. OpenAI transport simulyatsiyasida bitta suhbat
+  yaratildi va server qayta ishga tushishi, ovozli javob hamda keyingi trigger
+  shu suhbat ID’sidan foydalandi.
+- 10 ta Kotlin va 3 ta Flutter testi o‘tdi. Kotlin testi tiklanish triggeri
+  alarm va uzilgan kuzatuvda ishga tushmasligini tekshirdi.
+- ARM64 release APK yig‘ildi, imzo va SHA-256 qiymati tekshirildi.
+- ADB qurilma ko‘rsatmadi. Jonli OpenAI va Galaxy A51 mikrofon oqimi sinovdan
+  o‘tishi kerak.

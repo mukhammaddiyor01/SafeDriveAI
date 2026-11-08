@@ -14,6 +14,7 @@ class MonitorController extends ChangeNotifier {
   bool busy = false;
   bool voice = true;
   bool llm = false;
+  bool chatGptVerified = false;
   String? error;
   bool _disposed = false;
   bool _initialized = false;
@@ -62,6 +63,14 @@ class MonitorController extends ChangeNotifier {
   Future<void> toggleMonitoring() =>
       _perform(state.active ? _native.stop : _native.start);
   Future<void> testAlarm() => _perform(_native.testAlarm);
+  Future<void> connectChatGpt() => _perform(() async {
+    chatGptVerified = false;
+    await _native.connectChatGpt();
+    await _native.setPreferences(voice: voice, llm: true);
+    llm = true;
+    chatGptVerified = true;
+  });
+
   Future<void> updatePreferences({bool? voiceEnabled, bool? llmEnabled}) =>
       _perform(() async {
         final nextVoice = voiceEnabled ?? voice;
@@ -69,6 +78,7 @@ class MonitorController extends ChangeNotifier {
         await _native.setPreferences(voice: nextVoice, llm: nextLlm);
         voice = nextVoice;
         llm = nextLlm;
+        if (!nextLlm) chatGptVerified = false;
       });
   @override
   void dispose() {

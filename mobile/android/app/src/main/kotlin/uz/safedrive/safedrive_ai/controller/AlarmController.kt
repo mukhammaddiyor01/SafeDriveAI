@@ -9,14 +9,21 @@ import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import uz.safedrive.safedrive_ai.model.MonitorState
+import uz.safedrive.safedrive_ai.model.RecoveryTrigger
 
-class AlarmController(context: Context, prepareVoice: Boolean = true, onSource: (String) -> Unit) {
+class AlarmController(
+    context: Context,
+    prepareVoice: Boolean = true,
+    allowVoiceReply: Boolean = false,
+    onSource: (String) -> Unit,
+) {
     private val handler = Handler(Looper.getMainLooper())
     private val tone = ToneGenerator(AudioManager.STREAM_ALARM, 100)
     private val vibrator = context.getSystemService(Vibrator::class.java)
-    private val voiceCoach = lazy { VoiceCoach(context, onSource) }
+    private val voiceCoach = lazy { VoiceCoach(context, allowVoiceReply, onSource) }
     private val voice by voiceCoach
     private val preferences = context.getSharedPreferences("monitor", Context.MODE_PRIVATE)
+    private val recovery = RecoveryTrigger()
     private var ringing = false
     private var urgent = false
     private var lastPrompt = -30_000L
@@ -35,9 +42,11 @@ class AlarmController(context: Context, prepareVoice: Boolean = true, onSource: 
     }
 
     fun update(state: MonitorState) {
-        val wasUrgent = urgent
         urgent = state.status == "drowsy"
-        if (wasUrgent && !urgent) voice.stop()
+        if (state.alarm || state.status != "monitoring" ||
+            !preferences.getBoolean("voice", true) || !preferences.getBoolean("llm", false)) {
+            voice.cancelConversation()
+        }
         if (state.alarm && !ringing) {
             ringing = true
             handler.post(pulse)
@@ -50,7 +59,11 @@ class AlarmController(context: Context, prepareVoice: Boolean = true, onSource: 
         val now = SystemClock.elapsedRealtime()
         if (urgent && state.alarm && now - lastPrompt >= 20_000 && preferences.getBoolean("voice", true)) {
             lastPrompt = now
-            voice.prompt(preferences.getBoolean("llm", false))
+            voice.warn()
+        }
+        if (recovery.update(state, now) && preferences.getBoolean("voice", true) &&
+            preferences.getBoolean("llm", false)) {
+            voice.startConversation()
         }
     }
 

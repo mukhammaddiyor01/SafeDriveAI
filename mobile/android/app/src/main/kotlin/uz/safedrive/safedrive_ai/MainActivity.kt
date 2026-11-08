@@ -72,6 +72,9 @@ class MainActivity : FlutterActivity() {
         val permissions = mutableListOf<String>()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             permissions += Manifest.permission.CAMERA
+        if (getSharedPreferences("monitor", MODE_PRIVATE).getBoolean("llm", false) &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+            permissions += Manifest.permission.RECORD_AUDIO
         if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
             permissions += Manifest.permission.POST_NOTIFICATIONS
         if (permissions.isEmpty()) startMonitor(result)
