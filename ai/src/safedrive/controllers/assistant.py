@@ -1,6 +1,7 @@
 """Run locally: uvicorn safedrive.controllers.assistant:app --host 127.0.0.1 --port 8765"""
 
 from contextlib import asynccontextmanager
+import logging
 import os
 from pathlib import Path
 
@@ -9,6 +10,9 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from safedrive.models.coach import Coach
 from safedrive.models.conversation import DriverConversation
+
+
+logger = logging.getLogger("uvicorn.error")
 
 
 @asynccontextmanager
@@ -43,8 +47,25 @@ async def connect():
     try:
         conversation_id = await app.state.conversation.connect()
         return {"conversation_id": conversation_id}
-    except (httpx.HTTPError, OSError, ValueError, KeyError, TypeError):
-        raise HTTPException(503, "ChatGPT connection unavailable") from None
+    except httpx.HTTPStatusError as error:
+        status = error.response.status_code
+        if status in (401, 403):
+            detail = "OpenAI rejected access. Check the API key and project permissions."
+        elif status == 404:
+            detail = "The saved conversation is unavailable to this OpenAI project."
+        elif status == 429:
+            detail = "OpenAI usage limit reached. Check project quota or billing."
+        else:
+            detail = f"OpenAI returned HTTP {status}."
+    except httpx.RequestError:
+        detail = "The assistant could not reach OpenAI. Check the Mac internet connection."
+    except (OSError, ValueError, KeyError, TypeError):
+        missing = [name for name in ("OPENAI_API_KEY", "OPENAI_MODEL") if not os.getenv(name, "").strip()]
+        detail = ("Missing server configuration: " + ", ".join(missing)) if missing else (
+            "The assistant could not load or save the conversation."
+        )
+    logger.warning("SafeDriveAI connection failed: %s", detail)
+    raise HTTPException(503, detail)
 
 
 @app.post("/turn")
