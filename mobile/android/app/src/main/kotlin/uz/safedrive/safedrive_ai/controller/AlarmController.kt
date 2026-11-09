@@ -47,7 +47,7 @@ class AlarmController(
         val voiceEnabled = preferences.getBoolean("voice", true)
         val wasUrgent = urgent
         urgent = state.status == "drowsy"
-        if (state.alarm || !state.active || state.eyesOpen == null ||
+        if (state.alarm || !state.active || (!liveEnabled && state.eyesOpen == null) ||
             !voiceEnabled || !coachEnabled) {
             voice.cancelConversation()
         }

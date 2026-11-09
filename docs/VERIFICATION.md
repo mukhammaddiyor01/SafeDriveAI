@@ -171,3 +171,14 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   ruxsat bilan haqiqiy Gemini tokeni olindi va javobga no-store qo‘yildi.
 - Release APK yig‘ildi va imzosi tekshirildi. ADB qurilma ko‘rsatmadi.
   Telefonda USB kabelsiz jonli audio sinovi hali bajarilishi kerak.
+
+## Gemini Live navbatma-navbat suhbat (SD-07) — 2026-11-09
+
+- Gemini Live WebSocket API sinovida sun’iy ovozdagi birinchi javob transkripsiya
+  qilindi va keyingi savol audiosi qaytdi. Mikrofon oqimining pauzasi
+  `audioStreamEnd` bilan bildirilganda ikkinchi javob `I feel okay.` ham
+  transkripsiya qilindi.
+- 37 ta Python testi va 6 ta subtest o‘tdi. Kotlin unit testlari, Flutter
+  analizi va 4 ta Flutter testi o‘tdi. Release APK yig‘ildi.
+- Galaxy A51’da jonli mikrofon va karnay bilan suhbatni to‘liq tasdiqlash
+  uchun to‘xtab turgan mashinada foydalanuvchi sinovi kerak.

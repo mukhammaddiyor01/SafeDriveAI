@@ -6,7 +6,6 @@ import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.AudioTrack
 import android.media.MediaRecorder
-import android.media.audiofx.AcousticEchoCanceler
 import android.os.Handler
 import android.os.Looper
 import android.util.Base64
@@ -23,7 +22,7 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
-/** One bounded voice conversation. The monitor owns its lifetime. */
+/** The monitor owns one voice conversation from recovery until it ends. */
 internal class GeminiLiveSession(
     private val brokerUrl: String?,
     private val brokerSecret: String?,
@@ -32,7 +31,10 @@ internal class GeminiLiveSession(
     private val handler = Handler(Looper.getMainLooper())
     private val stopped = AtomicBoolean()
     private val audioLock = Any()
-    private val deadline = Runnable { finish("Gemini Live ended") }
+    private val connectionTimeout = Runnable { finish("Gemini Live unavailable", failed = true) }
+    private var waitingForPlayback = true
+    private var writtenFrames = 0L
+    private val transcript = StringBuilder()
     private var socket: WebSocket? = null
     private var tokenCall: okhttp3.Call? = null
     private var recorder: AudioRecord? = null
@@ -40,7 +42,7 @@ internal class GeminiLiveSession(
 
     fun start() {
         onState("Gemini Live connecting", false)
-        handler.postDelayed(deadline, 60_000)
+        handler.postDelayed(connectionTimeout, 20_000)
         val call = client.newCall(tokenRequest(brokerUrl, brokerSecret))
         tokenCall = call
         call.enqueue(object : okhttp3.Callback {
@@ -64,9 +66,13 @@ internal class GeminiLiveSession(
             socket = client.newWebSocket(Request.Builder().url(endpoint).build(), object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket, response: Response) {
                     val instruction = "You are SafeDriveAI. In English, ask the driver to pull over safely " +
-                        "and rest. Keep each reply short. Never tell them to keep driving or rely on the app."
+                        "and rest. Keep each reply short and ask one brief follow-up, then wait for the driver to answer. " +
+                        "Continue until the driver says I feel okay. Never tell them to keep driving or rely on the app."
                     val setup = JSONObject().put("model", model)
                         .put("generationConfig", JSONObject().put("responseModalities", JSONArray().put("AUDIO")))
+                        .put("inputAudioTranscription", JSONObject())
+                        .put("realtimeInputConfig", JSONObject().put("automaticActivityDetection",
+                            JSONObject().put("silenceDurationMs", 650)))
                         .put("systemInstruction", JSONObject().put("parts",
                             JSONArray().put(JSONObject().put("text", instruction))))
                     webSocket.send(JSONObject().put("setup", setup).toString())
@@ -82,17 +88,37 @@ internal class GeminiLiveSession(
                             handler.post { if (!stopped.get()) startAudio(webSocket) }
                         }
                         val content = event.optJSONObject("serverContent") ?: return
-                        if (content.optBoolean("interrupted")) synchronized(audioLock) {
-                            player?.apply { pause(); flush(); play() }
+                        val inputTranscript = content.optJSONObject("inputTranscription")
+                        if (inputTranscript != null && transcript.length < 512) {
+                            transcript.append(inputTranscript.optString("text").take(512 - transcript.length))
                         }
-                        val parts = content.optJSONObject("modelTurn")?.optJSONArray("parts") ?: return
-                        for (index in 0 until parts.length()) {
-                            val audio = parts.optJSONObject(index)?.optJSONObject("inlineData") ?: continue
-                            if (!audio.optString("mimeType").startsWith("audio/pcm")) continue
-                            val pcm = Base64.decode(audio.getString("data"), Base64.DEFAULT)
-                            synchronized(audioLock) {
-                                if (!stopped.get()) player?.write(pcm, 0, pcm.size)
+                        val turnComplete = content.optBoolean("turnComplete")
+                        if (turnComplete || inputTranscript?.optBoolean("finished") == true) {
+                            val words = transcript.toString().lowercase()
+                                .replace(Regex("[^a-z]+"), " ").trim()
+                            transcript.clear()
+                            if (words == "i feel okay" || words == "i feel ok") {
+                                handler.post { finish("Gemini Live ended") }
+                                return
                             }
+                        }
+                        synchronized(audioLock) {
+                            if (stopped.get()) return
+                            if (content.optBoolean("interrupted")) {
+                                player?.apply { pause(); flush(); play() }
+                                writtenFrames = 0
+                            }
+                            val parts = content.optJSONObject("modelTurn")?.optJSONArray("parts")
+                            for (index in 0 until (parts?.length() ?: 0)) {
+                                val audio = parts?.optJSONObject(index)?.optJSONObject("inlineData") ?: continue
+                                if (!audio.optString("mimeType").startsWith("audio/pcm")) continue
+                                waitingForPlayback = true
+                                val pcm = Base64.decode(audio.getString("data"), Base64.DEFAULT)
+                                val written = player?.write(pcm, 0, pcm.size) ?: 0
+                                check(written >= 0)
+                                writtenFrames += written / 2
+                            }
+                            if (turnComplete) waitingForPlayback = false
                         }
                     } catch (_: Exception) { unavailable() }
                 }
@@ -113,7 +139,7 @@ internal class GeminiLiveSession(
                 AudioFormat.ENCODING_PCM_16BIT).coerceAtLeast(3200)
             val outputSize = AudioTrack.getMinBufferSize(24_000, AudioFormat.CHANNEL_OUT_MONO,
                 AudioFormat.ENCODING_PCM_16BIT).coerceAtLeast(4800)
-            val input = AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION, 16_000,
+            val input = AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, 16_000,
                 AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, inputSize)
             recorder = input
             synchronized(audioLock) {
@@ -127,27 +153,36 @@ internal class GeminiLiveSession(
             }
             input.startRecording()
             check(input.recordingState == AudioRecord.RECORDSTATE_RECORDING)
+            handler.removeCallbacks(connectionTimeout)
             onState("Gemini Live active", false)
             sendInput(webSocket, JSONObject().put("text",
                 "The driver has opened their eyes after an alert. Ask where they can safely stop and rest."))
             Thread {
-                var echo: AcousticEchoCanceler? = null
                 try {
-                    echo = runCatching {
-                        AcousticEchoCanceler.create(input.audioSessionId)?.apply { enabled = true }
-                    }.getOrNull()
                     val buffer = ByteArray(1600)
+                    var microphoneStreaming = false
                     while (!stopped.get()) {
                         val count = input.read(buffer, 0, buffer.size)
-                        if (count <= 0) break
+                        if (count <= 0 || stopped.get()) break
+                        val canListen = synchronized(audioLock) {
+                            !waitingForPlayback &&
+                                (player?.playbackHeadPosition?.toLong() ?: 0L) >= writtenFrames
+                        }
+                        if (!canListen) {
+                            if (microphoneStreaming) {
+                                if (!sendInput(webSocket, JSONObject().put("audioStreamEnd", true))) break
+                                microphoneStreaming = false
+                            }
+                            continue
+                        }
                         val audio = JSONObject().put("mimeType", "audio/pcm;rate=16000")
                             .put("data", Base64.encodeToString(buffer, 0, count, Base64.NO_WRAP))
                         if (!sendInput(webSocket, JSONObject().put("audio", audio))) break
+                        microphoneStreaming = true
                     }
                 } catch (_: Exception) {
                     // The microphone may be interrupted by Android or revoked mid-session.
                 } finally {
-                    echo?.release()
                     input.release()
                     if (!stopped.get()) unavailable()
                 }
@@ -166,7 +201,7 @@ internal class GeminiLiveSession(
 
     fun finish(label: String = "Gemini Live ended", failed: Boolean = false) {
         if (!stopped.compareAndSet(false, true)) return
-        handler.removeCallbacks(deadline)
+        handler.removeCallbacks(connectionTimeout)
         tokenCall?.cancel()
         socket?.cancel()
         runCatching { recorder?.stop() }
