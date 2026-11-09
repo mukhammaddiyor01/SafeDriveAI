@@ -13,7 +13,7 @@ from safedrive.models.gemini_conversation import gemini_setting
 async def issue_live_token(client: httpx.AsyncClient, key: str):
     if not key:
         raise HTTPException(503, "Gemini Live requires GEMINI_API")
-    expires = datetime.now(timezone.utc) + timedelta(minutes=2)
+    expires = datetime.now(timezone.utc) + timedelta(minutes=15)
     try:
         response = await client.post(
             "https://generativelanguage.googleapis.com/v1beta/auth_tokens",
