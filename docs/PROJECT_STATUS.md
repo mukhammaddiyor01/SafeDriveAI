@@ -103,3 +103,7 @@ saqlaydi. Jonli hisob bilan Android sinovi hali talab qilinadi.
 **Gemini Live** rejimi alarmdan keyin 60 soniyagacha ikki tomonlama audio
 suhbatni boshlaydi. MacBook serveri bir martalik token beradi. Galaxy A51’da
 mikrofon va karnay bilan to‘liq sinov hali talab qilinadi.
+
+Gemini Live uchun USB’dan mustaqil HTTPS token serveri va Android ulanish
+sozlamasi qo‘shildi. Haqiqiy kabelsiz telefon sinovi uchun telefondan
+ochiladigan HTTPS manzili kerak.

@@ -36,12 +36,85 @@ class SettingsSheet extends StatelessWidget {
               title: const Text('Gemini Live'),
               subtitle: const Text(
                 'Start a live conversation after an alert clears. '
-                'Requires the Mac assistant and sends microphone audio to Gemini.',
+                'Sends microphone audio to Gemini.',
               ),
               value: controller.geminiLive,
               onChanged: controller.busy || controller.state.active
                   ? null
                   : controller.setGeminiLive,
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Gemini Live connection'),
+              subtitle: Text(
+                controller.geminiLiveWireless
+                    ? 'HTTPS server configured'
+                    : 'USB to Mac assistant',
+              ),
+              onTap: controller.busy || controller.state.active
+                  ? null
+                  : () async {
+                      var address = '';
+                      var secret = '';
+                      final values = await showDialog<(String, String)>(
+                        context: context,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('Connect without USB'),
+                          content: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextField(
+                                  keyboardType: TextInputType.url,
+                                  decoration: const InputDecoration(
+                                    labelText: 'HTTPS server URL',
+                                  ),
+                                  onChanged: (value) => address = value.trim(),
+                                ),
+                                TextField(
+                                  obscureText: true,
+                                  enableSuggestions: false,
+                                  autocorrect: false,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Server access token',
+                                  ),
+                                  onChanged: (value) => secret = value.trim(),
+                                ),
+                              ],
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(dialogContext),
+                              child: const Text('Cancel'),
+                            ),
+                            if (controller.geminiLiveWireless)
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(dialogContext, ('', '')),
+                                child: const Text('Use USB'),
+                              ),
+                            FilledButton(
+                              onPressed: () {
+                                if (address.isNotEmpty && secret.isNotEmpty) {
+                                  Navigator.pop(dialogContext, (
+                                    address,
+                                    secret,
+                                  ));
+                                }
+                              },
+                              child: const Text('Save server'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (values != null) {
+                        await controller.setGeminiLiveBroker(
+                          values.$1,
+                          values.$2,
+                        );
+                      }
+                    },
             ),
             const Divider(),
             Text(

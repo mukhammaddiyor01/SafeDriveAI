@@ -16,6 +16,7 @@ class MonitorController extends ChangeNotifier {
   bool voice = true;
   bool llm = false;
   bool geminiLive = false;
+  bool geminiLiveWireless = false;
   bool chatGptVerified = false;
   String? chatGptEmail;
   String? error;
@@ -44,6 +45,7 @@ class MonitorController extends ChangeNotifier {
       voice = prefs['voice'] as bool? ?? true;
       llm = prefs['llm'] as bool? ?? false;
       geminiLive = prefs['geminiLive'] as bool? ?? false;
+      geminiLiveWireless = prefs['geminiLiveWireless'] as bool? ?? false;
       chatGptEmail = await _native.chatGptAccount();
     });
   }
@@ -67,6 +69,12 @@ class MonitorController extends ChangeNotifier {
 
   Future<void> toggleMonitoring() =>
       _perform(state.active ? _native.stop : _native.start);
+  Future<void> setGeminiLiveBroker(String address, String secret) =>
+      _perform(() async {
+        await _native.setGeminiLiveBroker(address, secret);
+        geminiLiveWireless = address.trim().isNotEmpty;
+      });
+
   Future<void> setGeminiLive(bool enabled) => _perform(() async {
     await _native.setGeminiLive(enabled);
     geminiLive = enabled;

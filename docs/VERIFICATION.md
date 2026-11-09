@@ -163,3 +163,11 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   Alohida Live sinovida bir martalik token bilan 24 kHz audio olindi.
 - Release APK yig‘ildi va imzosi tekshirildi. Telefonda mikrofon, karnay
   va alarmdan keyingi avtomatik ishga tushish alohida tekshirilishi kerak.
+
+## Gemini Live’ning HTTPS ulanishi — 2026-11-09
+
+- 37 ta Python testi, Kotlin unit testlari va to‘rtta Flutter testi o‘tdi.
+- Alohida token serveri ruxsatsiz so‘rovlarga HTTP 401 qaytardi. To‘g‘ri
+  ruxsat bilan haqiqiy Gemini tokeni olindi va javobga no-store qo‘yildi.
+- Release APK yig‘ildi va imzosi tekshirildi. ADB qurilma ko‘rsatmadi.
+  Telefonda USB kabelsiz jonli audio sinovi hali bajarilishi kerak.

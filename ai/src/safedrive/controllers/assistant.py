@@ -1,7 +1,6 @@
 """Run locally: uvicorn safedrive.controllers.assistant:app --host 127.0.0.1 --port 8765"""
 
 from contextlib import asynccontextmanager
-from datetime import datetime, timedelta, timezone
 import logging
 import os
 from pathlib import Path
@@ -9,6 +8,7 @@ from pathlib import Path
 import httpx
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
+from safedrive.controllers.live_broker import issue_live_token
 from safedrive.models.coach import Coach
 from safedrive.models.conversation import DriverConversation
 from safedrive.models.gemini_conversation import GeminiConversation, gemini_setting
@@ -91,17 +91,4 @@ async def turn(turn: DriverTurn):
 
 @app.post("/live/token")
 async def live_token():
-    key = app.state.gemini_key
-    if not key:
-        raise HTTPException(503, "Gemini Live requires GEMINI_API on the Mac")
-    expires = datetime.now(timezone.utc) + timedelta(minutes=2)
-    try:
-        response = await app.state.http.post(
-            "https://generativelanguage.googleapis.com/v1beta/auth_tokens",
-            headers={"x-goog-api-key": key},
-            json={"uses": 1, "expireTime": expires.isoformat()},
-        )
-        response.raise_for_status()
-        return {"token": response.json()["name"], "model": "models/gemini-3.8-live"}
-    except (httpx.HTTPError, ValueError, KeyError):
-        raise HTTPException(503, "Gemini Live could not issue a token") from None
+    return await issue_live_token(app.state.http, app.state.gemini_key)

@@ -198,3 +198,19 @@ Uyquchanlik alarmi tugab, ko‘zlar bir soniya ochiq ko‘ringach, ilova Gemini 
 sessiyasini ochadi. Yumaloq indikator ulanish va suhbat holatini ko‘rsatadi.
 Mikrofon audiosi Gemini’ga uzatiladi. Sessiya 60 soniyadan keyin, alarm qaytsa
 yoki kuzatuv to‘xtatilsa yopiladi.
+
+### Gemini Live’ni USB kabelsiz ishlatish
+
+Telefondan ochiladigan HTTPS manzilida alohida token serverini ishga tushiring.
+Server muhitiga `GEMINI_API` va `SAFEDRIVE_LIVE_BROKER_TOKEN` ni kiriting.
+Serverga kirish tokenini `openssl rand -hex 32` bilan yaratish mumkin.
+HTTPS reverse proxy serverga quyidagi jarayonni yo‘naltiradi.
+
+```bash
+.venv/bin/python -m uvicorn safedrive.controllers.live_broker:app --host 127.0.0.1 --port 8766
+```
+
+**Settings → Gemini Live connection** ichida HTTPS serverning asosiy
+manzilini va `SAFEDRIVE_LIVE_BROKER_TOKEN` qiymatini kiriting. Telefon
+bir martalik Gemini tokenini shu serverdan oladi va audio uchun bevosita
+Gemini’ga ulanadi. **Use USB** bosilsa, ilova mahalliy USB ulanishiga qaytadi.

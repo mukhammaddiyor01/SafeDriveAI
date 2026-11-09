@@ -84,7 +84,11 @@ class VoiceCoach(
         if (useGeminiLive && allowVoiceReply) {
             if (liveSession != null) return
             if (ready) speech.stop()
-            liveSession = GeminiLiveSession { label, failed ->
+            val prefs = appContext.getSharedPreferences("monitor", Context.MODE_PRIVATE)
+            liveSession = GeminiLiveSession(
+                prefs.getString("geminiLiveBrokerUrl", null),
+                prefs.getString("geminiLiveBrokerSecret", null),
+            ) { label, failed ->
                 onSource(label)
                 if (label != "Gemini Live connecting" && label != "Gemini Live active") {
                     liveSession = null

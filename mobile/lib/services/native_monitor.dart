@@ -13,6 +13,7 @@ abstract interface class NativeMonitor {
   Future<void> stop();
   Future<void> testAlarm();
   Future<void> setGeminiLive(bool enabled);
+  Future<void> setGeminiLiveBroker(String address, String secret);
   Future<void> connectChatGpt();
   Future<String?> chatGptAccount();
   Future<String?> signInChatGpt();
@@ -40,6 +41,12 @@ class MethodChannelMonitor implements NativeMonitor {
   Future<void> start() => _methods.invokeMethod<void>('start');
   @override
   Future<void> stop() => _methods.invokeMethod<void>('stop');
+  @override
+  Future<void> setGeminiLiveBroker(String address, String secret) =>
+      _methods.invokeMethod<void>('geminiLiveBroker', {
+        'address': address,
+        'secret': secret,
+      });
   @override
   Future<void> setGeminiLive(bool enabled) =>
       _methods.invokeMethod<void>('geminiLive', {'enabled': enabled});

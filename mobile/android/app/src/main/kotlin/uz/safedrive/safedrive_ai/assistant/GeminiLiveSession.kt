@@ -24,7 +24,11 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 /** One bounded voice conversation. The monitor owns its lifetime. */
-internal class GeminiLiveSession(private val onState: (String, Boolean) -> Unit) {
+internal class GeminiLiveSession(
+    private val brokerUrl: String?,
+    private val brokerSecret: String?,
+    private val onState: (String, Boolean) -> Unit,
+) {
     private val handler = Handler(Looper.getMainLooper())
     private val stopped = AtomicBoolean()
     private val audioLock = Any()
@@ -37,8 +41,10 @@ internal class GeminiLiveSession(private val onState: (String, Boolean) -> Unit)
     fun start() {
         onState("Gemini Live connecting", false)
         handler.postDelayed(deadline, 60_000)
-        val call = client.newCall(Request.Builder().url("http://127.0.0.1:8765/live/token")
-            .post(ByteArray(0).toRequestBody()).build())
+        val request = Request.Builder().url(brokerUrl ?: "http://127.0.0.1:8765/live/token")
+            .post(ByteArray(0).toRequestBody())
+        if (brokerUrl != null && brokerSecret != null) request.header("Authorization", "Bearer $brokerSecret")
+        val call = client.newCall(request.build())
         tokenCall = call
         call.enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: java.io.IOException) = unavailable()
@@ -179,6 +185,6 @@ internal class GeminiLiveSession(private val onState: (String, Boolean) -> Unit)
     }
 
     companion object {
-        private val client = OkHttpClient.Builder().callTimeout(10, TimeUnit.SECONDS).build()
+        private val client = OkHttpClient.Builder().followRedirects(false).followSslRedirects(false).callTimeout(10, TimeUnit.SECONDS).build()
     }
 }

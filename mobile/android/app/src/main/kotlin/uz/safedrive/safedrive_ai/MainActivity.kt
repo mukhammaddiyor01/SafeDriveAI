@@ -11,6 +11,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import uz.safedrive.safedrive_ai.assistant.ChatGptAccount
@@ -107,6 +108,25 @@ class MainActivity : FlutterActivity() {
                         }
                     }.start()
                 }
+                "geminiLiveBroker" -> {
+                    val address = call.argument<String>("address").orEmpty().trim()
+                    val secret = call.argument<String>("secret").orEmpty().trim()
+                    val url = address.toHttpUrlOrNull()
+                    if (address.isEmpty() && secret.isEmpty()) {
+                        preferences.edit().remove("geminiLiveBrokerUrl").remove("geminiLiveBrokerSecret").apply()
+                        result.success(null)
+                    } else if (url == null || !url.isHttps || url.username.isNotEmpty() ||
+                        url.password.isNotEmpty() || url.query != null || url.fragment != null ||
+                        !Regex("[A-Za-z0-9_-]{32,128}").matches(secret)
+                    ) {
+                        result.error("live_broker_config", "Enter an HTTPS server URL and a valid access token.", null)
+                    } else {
+                        val endpoint = url.newBuilder().addPathSegments("live/token").build().toString()
+                        preferences.edit().putString("geminiLiveBrokerUrl", endpoint)
+                            .putString("geminiLiveBrokerSecret", secret).apply()
+                        result.success(null)
+                    }
+                }
                 "geminiLive" -> {
                     preferences.edit().putBoolean("geminiLive", call.argument<Boolean>("enabled") == true).apply()
                     result.success(null)
@@ -118,7 +138,8 @@ class MainActivity : FlutterActivity() {
                     }
                     result.success(mapOf("voice" to preferences.getBoolean("voice", true),
                         "llm" to preferences.getBoolean("llm", false),
-                        "geminiLive" to preferences.getBoolean("geminiLive", false)))
+                        "geminiLive" to preferences.getBoolean("geminiLive", false),
+                        "geminiLiveWireless" to preferences.contains("geminiLiveBrokerUrl")))
                 }
                 else -> result.notImplemented()
             }
