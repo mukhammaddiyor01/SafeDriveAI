@@ -1,0 +1,231 @@
+{
+  "split": {
+    "seed": 42,
+    "side_threshold": 0.18,
+    "face_prefix_bytes": 50331648,
+    "yunet_sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+    "source_sha256": {
+      "s003_noglasses.tar.prefix": "82effe49ab35c7bde8fe062d2e2b9b121cd44ec918e32121ce0b5cc843fed4c8",
+      "s003_blink_labels.csv": "7e9e94fed50951e0adfcfff02f695ca149788e33176925d566a1b6b6b230f175",
+      "s003_noglasses_eyes.tar": "2dfddcb579c23662ef89a1326cffb5d1e1642ff54f89aff2c02e30500dda4489",
+      "s004_noglasses.tar.prefix": "9de32101dcbe59d71000d5dc4df37fab691c890bd53df8c199c1352064f09b6c",
+      "s004_blink_labels.csv": "bdacaff26a94b90143a8a5fa427734dff9496f07f39cb964b9ba3171bfed045e",
+      "s004_noglasses_eyes.tar": "ae28d66341a9fb39608b92b5e2f0831dcdc485900cdfaeed968e39c3344f4887",
+      "s007_noglasses.tar.prefix": "9814870a5058b77334ea658b805592835fc3666afc92a9ec24e7a2104e4125ff",
+      "s007_blink_labels.csv": "823b3a2e4337a5a8b65d1ebdad594e3a2ad55c4cf78e7496f02deb2dc28b6d3e",
+      "s007_noglasses_eyes.tar": "53578b9d0d423af9bffaa282bfaeb9d6a29564c52c7bd57767b3f92d59190e78",
+      "s012_noglasses.tar.prefix": "8ed78ff80bda9ad5bacc5c70f771e39c061bae3e00649c4cd3b07f0a2c4e96d1",
+      "s012_blink_labels.csv": "bd5e29b087db5be916e6c50b222ddb00d05d15dccf8dd7d495ac286fa99385a3",
+      "s012_noglasses_eyes.tar": "960a7cd273a4d835b0d21584cf3f2ca7ade530a9aa6149efc82df6d97d08d5b1",
+      "s015_noglasses.tar.prefix": "9e3a111a55079f392c1540cc6ebe04ccaafeabf6fc2aeae9301dde57a1b7fe79",
+      "s015_blink_labels.csv": "c8698cc8080188af6d79051ec11956ffc10f179b40875de3080abc60064c8f51",
+      "s015_noglasses_eyes.tar": "b16743f52786c07996673d21e4ac187abcca4029fb7afe70d98269b6032ebdd0",
+      "s016_noglasses.tar.prefix": "01354d9466bcc9dc265c52784a99bf405cf77b16c7dc5e3d5078ef1545ddaeeb",
+      "s016_blink_labels.csv": "7bd3dd76ebd9088be85a75c1c8f68f2c1a98239c3632681f71c8975f7d7d6dca",
+      "s016_noglasses_eyes.tar": "758bffdd1f164ba642df5b1fd5fb792037fc9b50b8d3028628e09ad32597c708"
+    },
+    "prior_manifest_sha256": {
+      "data/mrl/prepared-clean/manifest.csv": "4590771afb6b7d569742461def36f4cfc3a4b57ebee295568b6bae30959b09de",
+      "data/mrl/prepared-80-20/manifest.csv": "c3753bff72a2c5fd340e34d09c963b5ed65fbcf789687a5f82366012aaefbeed",
+      "data/mrl/prepared-80-20-final/manifest.csv": "c3753bff72a2c5fd340e34d09c963b5ed65fbcf789687a5f82366012aaefbeed",
+      "data/rt-bene/pilot/manifest.csv": "1d5207355c4f8662cef8ebbaa78d17c4019f5a61a8f44bbe14940c9ee0687511"
+    },
+    "annotated_and_selected_frame_counts": {
+      "s003": {
+        "annotated_frames": 3205,
+        "side_frames": 102
+      },
+      "s004": {
+        "annotated_frames": 4750,
+        "side_frames": 155
+      },
+      "s007": {
+        "annotated_frames": 1857,
+        "side_frames": 234
+      },
+      "s012": {
+        "annotated_frames": 935,
+        "side_frames": 37
+      },
+      "s015": {
+        "annotated_frames": 1810,
+        "side_frames": 271
+      },
+      "s016": {
+        "annotated_frames": 4549,
+        "side_frames": 253
+      }
+    },
+    "duplicate_rows_excluded": 0,
+    "prior_test_rows_excluded": 0,
+    "dataset_fingerprint": "71f37e643ad76424d946835fa378d04b5b7e96f40b39a91a94389b2fdbb63085",
+    "counts": [
+      {
+        "split": "test",
+        "view": "left",
+        "label": "closed",
+        "images": 20
+      },
+      {
+        "split": "test",
+        "view": "left",
+        "label": "open",
+        "images": 119
+      },
+      {
+        "split": "test",
+        "view": "right",
+        "label": "open",
+        "images": 42
+      },
+      {
+        "split": "train",
+        "view": "left",
+        "label": "closed",
+        "images": 22
+      },
+      {
+        "split": "train",
+        "view": "left",
+        "label": "open",
+        "images": 534
+      },
+      {
+        "split": "train",
+        "view": "right",
+        "label": "closed",
+        "images": 4
+      },
+      {
+        "split": "train",
+        "view": "right",
+        "label": "open",
+        "images": 164
+      }
+    ],
+    "subject_counts": {
+      "test": 2,
+      "train": 4
+    }
+  },
+  "training": {
+    "architecture": {
+      "name": "EyeClassifier",
+      "pool_size": 4
+    },
+    "device": "mps",
+    "torch_version": "2.15.0",
+    "seed": 42,
+    "batch_size": 64,
+    "requested_epochs": 10,
+    "selected_epoch": 10,
+    "closed_class_weight": 26.846153846153847,
+    "training_code_sha256": "620f6091b947fdc00a6ee2877f4c8df2a8b889af9ffae32cec7e2bebc696d8e9",
+    "model_code_sha256": "ddf3573d6dc84155c3029f1ccddd4d7667b63f0b776d92899b24b6fb257af4ad",
+    "checkpoint_sha256": "e97b189c86900198be9527bbeb85f64a0b3cf682d11e3a2c080231a2647ac2f7"
+  },
+  "training_history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.3398660124994772,
+      "seconds": 1.449
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.336268415767185,
+      "seconds": 0.234
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.3347468287246662,
+      "seconds": 0.244
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.3313837397164403,
+      "seconds": 0.221
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.3231925829339422,
+      "seconds": 0.229
+    },
+    {
+      "epoch": 6,
+      "train_loss": 1.3157356206883384,
+      "seconds": 0.226
+    },
+    {
+      "epoch": 7,
+      "train_loss": 1.2849613796940167,
+      "seconds": 0.217
+    },
+    {
+      "epoch": 8,
+      "train_loss": 1.2037241412789783,
+      "seconds": 0.243
+    },
+    {
+      "epoch": 9,
+      "train_loss": 1.0999537719547419,
+      "seconds": 0.217
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.9285870894213408,
+      "seconds": 0.238
+    }
+  ],
+  "evaluation": {
+    "evaluated_at_utc": "2026-11-09T05:08:27.382572+00:00",
+    "split": "test",
+    "subjects": 2,
+    "threshold": 0.5,
+    "checkpoint_sha256": "e97b189c86900198be9527bbeb85f64a0b3cf682d11e3a2c080231a2647ac2f7",
+    "dataset_fingerprint": "71f37e643ad76424d946835fa378d04b5b7e96f40b39a91a94389b2fdbb63085",
+    "selected_epoch": 10,
+    "selection": "fixed final epoch; no test inference or test-driven selection during training",
+    "torch_version": "2.15.0",
+    "device": "cpu",
+    "batch_size": 128,
+    "metrics": {
+      "samples": 181,
+      "tp": 12,
+      "fn": 8,
+      "fp": 11,
+      "tn": 150,
+      "accuracy": 0.8950276243093923,
+      "recall_closed": 0.6,
+      "false_positive_rate": 0.06832298136645963,
+      "precision_closed": 0.5217391304347826,
+      "balanced_accuracy": 0.7658385093167701
+    },
+    "limitations": "Eye-crop frame classification only; head posture and gaze are annotations. No event-level or on-device alarm validation."
+  },
+  "metrics_by_view": {
+    "left": {
+      "samples": 139,
+      "tp": 12,
+      "fn": 8,
+      "fp": 9,
+      "tn": 110,
+      "accuracy": 0.8776978417266187,
+      "recall_closed": 0.6,
+      "false_positive_rate": 0.07563025210084033,
+      "precision_closed": 0.5714285714285714,
+      "balanced_accuracy": 0.7621848739495798
+    },
+    "right": {
+      "samples": 42,
+      "tp": 0,
+      "fn": 0,
+      "fp": 2,
+      "tn": 40,
+      "accuracy": 0.9523809523809523,
+      "recall_closed": null,
+      "false_positive_rate": 0.047619047619047616,
+      "precision_closed": 0.0,
+      "balanced_accuracy": null
+    }
+  }
+}

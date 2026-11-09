@@ -190,3 +190,12 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   Gemini ovozda Jupiter deb javob berdi. Keyingi `I feel okay.` javobi tanildi.
 - Flutter analizi va 4 ta Flutter testi o‘tdi. Bu sinov Galaxy A51 mikrofonida
   jonli suhbatni tasdiqlamaydi.
+
+## Yonbosh ko‘z holati tajribasi (SD-05, SD-06) — 2026-11-09
+
+- 37 Python testi va 6 subtest o‘tdi.
+- 80/20 hold-out: 724 train va 181 test kesmasi, 4/2 boshqa-boshqa subyekt.
+- 10 epoch PyTorch MPS trening va 0.50 chegarada bir martalik CPU test.
+  Chap tomonda 12/20 yopiq ko‘z aniqlandi. O‘ng testda yopiq ko‘z namunasi yo‘q.
+- [Protokol va natijalar](SIDE_EYE_PILOT.md). Galaxy A51 inferensi va kamera
+  kadridan ko‘zni topish sinovi bu tajribaga kirmagan.

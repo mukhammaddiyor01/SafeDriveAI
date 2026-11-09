@@ -1,6 +1,6 @@
 # SafeDriveAI — joriy holat va davom ettirish
 
-Oxirgi mazmuniy tekshiruv: **2026-11-08**. Bu hujjat tayyorlik holatini saqlaydi;
+Oxirgi mazmuniy tekshiruv: **2026-11-09**. Bu hujjat tayyorlik holatini saqlaydi;
 mahsulotning yakuniy talablari [PROJECT_BRIEF.md](PROJECT_BRIEF.md)da.
 Dalillar: [VERIFICATION.md](VERIFICATION.md). O‘zgargan qismni yangi dalil bilan yangilang.
 
@@ -22,6 +22,12 @@ Ikki test subyekti treningdan ajratildi. MRL tarixida mos fayl xeshlari topilmad
 Model 18 yopiq ko‘z tasviridan 15 tasini topdi va 1 732 ochiq tasvirdan 620 tasini xato
 yopiq dedi. Model tadqiqot bosqichida qoladi. Keyingi testlarda ushbu manifestni
 foydalanish tarixiga qo‘shing. [Natija va cheklovlar](RT_BENE_PILOT.md)
+
+## Yonbosh ko‘z holati tajribasi — 2026-11-09
+
+RT-BENE/RT-GENE asosida 724 train va 181 avval ishlatilmagan test kesmasi
+ajratildi. Chap tomonda 12/20 yopiq ko‘z aniqlandi. O‘ng testda faqat ochiq
+ko‘zlar bor. Model tadqiqot bosqichida. [Tajriba va natija](SIDE_EYE_PILOT.md)
 
 ## Joriy bosqich
 

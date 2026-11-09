@@ -28,3 +28,27 @@ nisbatan beriladi. Bu o‘lchov gradus yoki telefon tutqichi joyi emas.
 Manbalar: [RT-BENE ko‘z yorliqlari](https://zenodo.org/records/3685316),
 [RT-GENE yuz tasvirlari](https://zenodo.org/records/2529036),
 [OpenCV YuNet](https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet).
+
+## Natija — 2026-11-09
+
+724 ko‘z tasviri to‘rtta subyektdan treningga, 181 tasvir ikkita boshqa
+subyektdan testga ajratildi. Test tasvirlari va subyektlari tekshirilgan
+oldingi MRL va RT-BENE manifestlarida topilmadi. Yangi to‘rtta RT-BENE
+arxiv/yorliq fayli manbadagi MD5 qiymatiga mos keldi. Yuz arxivlaridan
+ishlatilgan qismlar va YuNet faylining SHA-256 qiymatlari hisobotda berilgan.
+
+| Test guruhi | Tasvir | Yopiq ko‘z topildi | Ochiq ko‘z xato yopiq deb belgilandi |
+|---|---:|---:|---:|
+| Chap | 139 | 12/20 (60,00%) | 9/119 (7,56%) |
+| O‘ng | 42 | Yopiq namuna yo‘q | 2/42 (4,76%) |
+| Jami | 181 | 12/20 (60,00%) | 11/161 (6,83%) |
+
+Umumiy aniqlik 89,50%, balanslangan aniqlik 76,58%. Testdagi ikki
+subyektning ketma-ket kadrlari o‘zaro bog‘liq. Guruhlar avtomatik yuz
+belgilari asosida tuzildi va model ko‘rinadigan belgilari bor kadrlarda
+sinovdan o‘tdi. O‘ngdagi yumilish, keskin profil, ko‘zoynak va telefon
+tutqichi sharoitida qo‘shimcha dalil kerak. Model APK’ga qo‘shilmadi.
+
+Lokal manifest `data/rt-bene/side-2026-11-09/manifest.csv` da,
+checkpoint `artifacts/side-eye-2026-11-09/eye_state.pt` da.
+[Agregat hisobot](experiments/side-eye-2026-11-09.json).
