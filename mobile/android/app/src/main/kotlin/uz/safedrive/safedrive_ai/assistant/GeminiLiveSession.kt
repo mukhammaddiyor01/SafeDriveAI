@@ -65,9 +65,17 @@ internal class GeminiLiveSession(
             val model = credentials.getString("model")
             socket = client.newWebSocket(Request.Builder().url(endpoint).build(), object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket, response: Response) {
-                    val instruction = "You are SafeDriveAI. In English, ask the driver to pull over safely " +
-                        "and rest. Keep each reply short and ask one brief follow-up, then wait for the driver to answer. " +
-                        "Continue until the driver says I feel okay. Never tell them to keep driving or rely on the app."
+                    val instruction = """
+                        You are SafeDriveAI, an English-speaking conversation partner.
+                        Open with a brief reminder to pull over safely and rest, then start a casual conversation.
+                        Listen to what the driver says and respond to it. If they ask a question, answer it directly
+                        before moving on. Follow their topic changes and remember what they said earlier in this session.
+                        Use varied, easy questions about everyday topics such as music, hobbies, or favorite places.
+                        Keep replies short and natural. Ask at most one question at a time and wait for the reply.
+                        You can answer without a follow-up when that feels natural. Keep the conversation open
+                        until the driver says "I feel okay" as a standalone reply.
+                        Never encourage them to keep driving or imply that conversation makes driving safe.
+                    """.trimIndent()
                     val setup = JSONObject().put("model", model)
                         .put("generationConfig", JSONObject().put("responseModalities", JSONArray().put("AUDIO")))
                         .put("inputAudioTranscription", JSONObject())
@@ -156,7 +164,7 @@ internal class GeminiLiveSession(
             handler.removeCallbacks(connectionTimeout)
             onState("Gemini Live active", false)
             sendInput(webSocket, JSONObject().put("text",
-                "The driver has opened their eyes after an alert. Ask where they can safely stop and rest."))
+                "The driver has opened their eyes after an alert. Give the opening reminder and start a casual conversation."))
             Thread {
                 try {
                     val buffer = ByteArray(1600)

@@ -196,8 +196,8 @@ SafeDriveAI’da **Settings → Gemini Live** va **Voice reminders** ni yoqing.
 
 Uyquchanlik alarmi tugab, ko‘zlar bir soniya ochiq ko‘ringach, ilova Gemini Live
 sessiyasini ochadi. Yumaloq indikator ulanish va suhbat holatini ko‘rsatadi.
-Gemini savolini aytib bo‘lgach, mikrofon orqali javobingizni eshitadi va keyingi
-savolni beradi. Suhbatni tugatish uchun alohida javob sifatida **I feel okay**
+Gemini qisqa xavfsizlik eslatmasidan keyin inglizcha erkin suhbat boshlaydi.
+Savollaringizga javob beradi, siz tanlagan mavzuga o‘tadi va turli savollar beradi. Suhbatni tugatish uchun alohida javob sifatida **I feel okay**
 deng. Alarm qaytsa, kuzatuv to‘xtatilsa yoki ulanish uzilsa ham sessiya yopiladi.
 
 ### Gemini Live’ni USB kabelsiz ishlatish

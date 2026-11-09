@@ -182,3 +182,11 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   analizi va 4 ta Flutter testi o‘tdi. Release APK yig‘ildi.
 - Galaxy A51’da jonli mikrofon va karnay bilan suhbatni to‘liq tasdiqlash
   uchun to‘xtab turgan mashinada foydalanuvchi sinovi kerak.
+
+## Gemini Live erkin suhbat (SD-07) — 2026-11-09
+
+- Yangi ko‘rsatma bilan jonli Gemini API’ga sun’iy ovoz yuborildi. Haydovchi
+  suhbat mavzusini kosmosga o‘zgartirib, eng katta sayyorani so‘raganda
+  Gemini ovozda Jupiter deb javob berdi. Keyingi `I feel okay.` javobi tanildi.
+- Flutter analizi va 4 ta Flutter testi o‘tdi. Bu sinov Galaxy A51 mikrofonida
+  jonli suhbatni tasdiqlamaydi.

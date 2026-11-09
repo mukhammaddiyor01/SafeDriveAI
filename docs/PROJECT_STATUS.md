@@ -100,8 +100,8 @@ hisobga kirishni boshlaydi. Mos hisobdan foydalanilganda, ovozli yordamchi
 telefondan OpenAI’ga ulanadi va so‘nggi 12 ta xabarni shifrlangan holda
 saqlaydi. Jonli hisob bilan Android sinovi hali talab qilinadi.
 
-**Gemini Live (SD-07)** alarmdan keyin ovozli suhbatni boshlaydi. Savol
-tugagach mikrofon audio uzatadi. Haydovchi **I feel okay** desa, suhbat
+**Gemini Live (SD-07)** alarmdan keyin inglizcha erkin ovozli suhbatni boshlaydi.
+Gemini savollarga javob beradi va haydovchi tanlagan mavzuga o‘tadi. Haydovchi **I feel okay** desa, suhbat
 tugaydi va kamera kuzatuvi davom etadi. MacBook serveri bir martalik token
 beradi. Galaxy A51’da mikrofon va karnay bilan to‘liq sinov hali talab qilinadi.
 
