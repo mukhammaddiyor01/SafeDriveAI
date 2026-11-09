@@ -12,6 +12,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import uz.safedrive.safedrive_ai.assistant.GeminiLiveSession
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import uz.safedrive.safedrive_ai.assistant.ChatGptAccount
@@ -122,9 +123,18 @@ class MainActivity : FlutterActivity() {
                         result.error("live_broker_config", "Enter an HTTPS server URL and a valid access token.", null)
                     } else {
                         val endpoint = url.newBuilder().addPathSegments("live/token").build().toString()
-                        preferences.edit().putString("geminiLiveBrokerUrl", endpoint)
-                            .putString("geminiLiveBrokerSecret", secret).apply()
-                        result.success(null)
+                        Thread {
+                            val error = GeminiLiveSession.checkBroker(endpoint, secret)
+                            runOnUiThread {
+                                if (error != null) {
+                                    result.error("live_broker_connection", error, null)
+                                } else {
+                                    preferences.edit().putString("geminiLiveBrokerUrl", endpoint)
+                                        .putString("geminiLiveBrokerSecret", secret).apply()
+                                    result.success(null)
+                                }
+                            }
+                        }.start()
                     }
                 }
                 "geminiLive" -> {

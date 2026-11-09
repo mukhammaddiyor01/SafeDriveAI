@@ -211,6 +211,7 @@ HTTPS reverse proxy serverga quyidagi jarayonni yo‘naltiradi.
 ```
 
 **Settings → Gemini Live connection** ichida HTTPS serverning asosiy
-manzilini va `SAFEDRIVE_LIVE_BROKER_TOKEN` qiymatini kiriting. Telefon
+manzilini va `SAFEDRIVE_LIVE_BROKER_TOKEN` qiymatini kiriting.
+**Test and save server** tugmasi token olinadigan manzilni tekshiradi. Telefon
 bir martalik Gemini tokenini shu serverdan oladi va audio uchun bevosita
 Gemini’ga ulanadi. **Use USB** bosilsa, ilova mahalliy USB ulanishiga qaytadi.

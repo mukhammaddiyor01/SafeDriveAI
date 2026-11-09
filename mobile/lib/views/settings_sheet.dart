@@ -48,7 +48,7 @@ class SettingsSheet extends StatelessWidget {
               title: const Text('Gemini Live connection'),
               subtitle: Text(
                 controller.geminiLiveWireless
-                    ? 'HTTPS server configured'
+                    ? 'HTTPS server saved'
                     : 'USB to Mac assistant',
               ),
               onTap: controller.busy || controller.state.active
@@ -103,7 +103,7 @@ class SettingsSheet extends StatelessWidget {
                                   ));
                                 }
                               },
-                              child: const Text('Save server'),
+                              child: const Text('Test and save server'),
                             ),
                           ],
                         ),

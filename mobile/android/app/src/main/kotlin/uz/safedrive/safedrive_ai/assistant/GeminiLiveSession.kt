@@ -41,19 +41,13 @@ internal class GeminiLiveSession(
     fun start() {
         onState("Gemini Live connecting", false)
         handler.postDelayed(deadline, 60_000)
-        val request = Request.Builder().url(brokerUrl ?: "http://127.0.0.1:8765/live/token")
-            .post(ByteArray(0).toRequestBody())
-        if (brokerUrl != null && brokerSecret != null) request.header("Authorization", "Bearer $brokerSecret")
-        val call = client.newCall(request.build())
+        val call = client.newCall(tokenRequest(brokerUrl, brokerSecret))
         tokenCall = call
         call.enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: java.io.IOException) = unavailable()
             override fun onResponse(call: okhttp3.Call, response: Response) {
                 try {
-                    val credentials = response.use {
-                        check(it.isSuccessful)
-                        JSONObject(checkNotNull(it.body).string())
-                    }
+                    val credentials = response.use { readCredentials(it) }
                     handler.post { if (!stopped.get()) connect(credentials) }
                 } catch (_: Exception) { unavailable() }
             }
@@ -185,6 +179,44 @@ internal class GeminiLiveSession(
     }
 
     companion object {
-        private val client = OkHttpClient.Builder().followRedirects(false).followSslRedirects(false).callTimeout(10, TimeUnit.SECONDS).build()
+        private val client = OkHttpClient.Builder()
+            .followRedirects(false)
+            .followSslRedirects(false)
+            .callTimeout(10, TimeUnit.SECONDS)
+            .build()
+
+        private fun tokenRequest(url: String?, secret: String?): Request =
+            Request.Builder().url(url ?: "http://127.0.0.1:8765/live/token")
+                .post(ByteArray(0).toRequestBody())
+                .apply { if (url != null && secret != null) header("Authorization", "Bearer $secret") }
+                .build()
+
+        private fun readCredentials(response: Response): JSONObject {
+            check(response.isSuccessful)
+            val payload = JSONObject(checkNotNull(response.body).string())
+            check(payload.getString("token").isNotBlank() && payload.getString("model").isNotBlank())
+            return payload
+        }
+
+        /** Check the same token endpoint the alarm will use. */
+        fun checkBroker(url: String, secret: String): String? = try {
+            client.newCall(tokenRequest(url, secret)).execute().use { response ->
+                when (response.code) {
+                    401, 403 -> "The Gemini Live server rejected the access token."
+                    404 -> "The Gemini Live token endpoint was not found. Check the server URL."
+                    503 -> "The Gemini Live server could not issue a Gemini token."
+                    else -> {
+                        readCredentials(response)
+                        null
+                    }
+                }
+            }
+        } catch (_: javax.net.ssl.SSLException) {
+            "The Gemini Live server has an invalid or untrusted HTTPS certificate."
+        } catch (_: java.io.IOException) {
+            "The phone could not reach the Gemini Live server. Check its address and internet connection."
+        } catch (_: Exception) {
+            "The server did not return a valid Gemini Live token."
+        }
     }
 }
