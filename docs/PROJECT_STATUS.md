@@ -111,6 +111,7 @@ Gemini savollarga javob beradi va haydovchi tanlagan mavzuga o‘tadi. Haydovchi
 tugaydi va kamera kuzatuvi davom etadi. MacBook serveri bir martalik token
 beradi. Galaxy A51’da mikrofon va karnay bilan to‘liq sinov hali talab qilinadi.
 
-Gemini Live uchun USB’dan mustaqil HTTPS token serveri va Android ulanish
-sozlamasi qo‘shildi. Haqiqiy kabelsiz telefon sinovi uchun telefondan
-ochiladigan HTTPS manzili kerak.
+Gemini Live uchun HTTPS token serveri alohida Docker konteynerida ishlaydi.
+Nginx HTTPS so‘rovlarini konteynerning lokal portiga uzatadi. Galaxy A51’da
+kabelsiz ulanish sozlamasi muvaffaqiyatli saqlandi. Foydalanuvchi sinov
+muvaffaqiyatli o‘tganini bildirdi. [Tekshiruv natijalari](VERIFICATION.md)

@@ -199,3 +199,13 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   Chap tomonda 12/20 yopiq ko‘z aniqlandi. O‘ng testda yopiq ko‘z namunasi yo‘q.
 - [Protokol va natijalar](SIDE_EYE_PILOT.md). Galaxy A51 inferensi va kamera
   kadridan ko‘zni topish sinovi bu tajribaga kirmagan.
+
+## Gemini Live HTTPS joylashtiruvi (SD-07) — 2026-11-09
+
+- Python token serveri alohida Docker konteynerida ishga tushdi. Lokal
+  endpoint tokensiz HTTP 401, token bilan HTTP 200 qaytardi.
+- Alohida Nginx virtual serveri orqali HTTPS ulanishi tekshirildi. Token
+  berilmagan so‘rov HTTP 401 qaytardi. Mavjud sayt HTTP 200 qaytardi.
+- Let's Encrypt sertifikatini yangilash sinovi muvaffaqiyatli o‘tdi.
+- Galaxy A51’da HTTPS serveri muvaffaqiyatli saqlandi. Foydalanuvchi USB
+  kabelsiz sinov muvaffaqiyatli o‘tganini bildirdi.
