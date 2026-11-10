@@ -1,6 +1,6 @@
 # SafeDriveAI — joriy holat va davom ettirish
 
-Oxirgi mazmuniy tekshiruv: **2026-11-09**. Bu hujjat tayyorlik holatini saqlaydi;
+Oxirgi mazmuniy tekshiruv: **2026-11-10**. Bu hujjat tayyorlik holatini saqlaydi;
 mahsulotning yakuniy talablari [PROJECT_BRIEF.md](PROJECT_BRIEF.md)da.
 Dalillar: [VERIFICATION.md](VERIFICATION.md). O‘zgargan qismni yangi dalil bilan yangilang.
 
@@ -45,7 +45,7 @@ ish tartibi alohida commitda saqlangan. Keyingi o‘zgarishlar ham kichik commit
 | SD-02 Yuz/ko‘z/bosh/bo‘yin | Yuz, ko‘z ehtimollari va bosh burchaklari; Python YOLO bosh/yelka tajribasi | To‘liq bo‘yin holati, ishonchlilik va maxsus modelni telefonga ulash |
 | SD-03 Alarm | Vaqtga asoslangan domain mantiq, ovoz/vibratsiya kodi va 3 s uzilishdan keyin PERCLOS tarixini tozalash. Test alarm ovoz va vibratsiyani alohida sinaydi | Haqiqiy ko‘z yumilishida kechikish, eshitilish va yolg‘on alarm sinovi |
 | SD-04 Fon | Android 13 emulyatorida Home va ekran o‘chganida tahlil davom etdi; notification Stop ishladi | A51’da uzoq ishlash, batareya, qizish, qo‘ng‘iroq va boshqa kamera bilan sinash |
-| SD-05 Ko‘p burchak | Yonboshda noaniq ko‘z holati limited sifatida ko‘rsatiladi | Yonbosh va turli tutqich burchaklari uchun model va haqiqiy baholash |
+| SD-05 Ko‘p burchak | Yonboshda ko‘rinadigan ko‘z konturi orqali ochiq/yopiq holati baholanadi | Galaxy A51’da 38° atrofida va turli tutqich burchaklarida kamera sinovi |
 | SD-06 Dataset/model | 80/20 kodi va foydalanish auditi mavjud; MRL: 84,822 tasvir, 37 haydovchi; 5 epoch PyTorch MPS trening va 6 boshqa haydovchida held-out hisobot; YOLO vositasi bor | Ishlatilmagan 20% test ma’lumoti, yuqori FPR’ni train doirasida yaxshilash, RGB/ko‘p burchakli dalil, mobil model adapteri |
 | SD-07 Ovoz/LLM | Ilovada ulanish, tiklanish triggeri, inglizcha savol va bitta ovozli javob, qayta ishlatiladigan OpenAI suhbat ID’si | Jonli API hamda Galaxy A51’da mikrofon va fon rejimi |
 | SD-08 USB APK | Release APK imzosi tekshirildi. Wireless debugging yo‘riqnomasidan keyin foydalanuvchi telefon sinovi yaxshi o‘tganini bildirdi | USB orqali o‘rnatish va telefon sinovining batafsil natijalarini qayd etish |

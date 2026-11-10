@@ -12,10 +12,15 @@ import android.util.Size
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
+import com.google.mlkit.vision.face.FaceContour
+import com.google.mlkit.vision.face.FaceLandmark
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import uz.safedrive.safedrive_ai.model.Observation
+import uz.safedrive.safedrive_ai.model.SideEye
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -31,6 +36,11 @@ class CameraSession(
         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
         .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
         .enableTracking().setMinFaceSize(0.15f).build())
+    private val contourDetector = FaceDetection.getClient(FaceDetectorOptions.Builder()
+        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
+        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
+        .setMinFaceSize(0.15f).build())
     private val analysis = ImageAnalysis.Builder()
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
         .setResolutionSelector(ResolutionSelector.Builder().setResolutionStrategy(
@@ -39,7 +49,7 @@ class CameraSession(
     private val preview = Preview.Builder().build()
     private var provider: ProcessCameraProvider? = null
     private var surface: Preview.SurfaceProvider? = null
-    private var closed = false
+    @Volatile private var closed = false
     private var lastSubmitted = 0L
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
@@ -55,20 +65,28 @@ class CameraSession(
             val input = InputImage.fromMediaImage(image, proxy.imageInfo.rotationDegrees)
             try {
                 detector.process(input)
-                    .addOnSuccessListener { faces ->
-                        if (!closed) {
-                            val face = faces.singleOrNull()
-                            onObservation(Observation(
-                                timeMs = now, faceCount = faces.size,
-                                leftEyeOpen = face?.leftEyeOpenProbability,
-                                rightEyeOpen = face?.rightEyeOpenProbability,
-                                yaw = face?.headEulerAngleY ?: 0f,
-                                pitch = face?.headEulerAngleX ?: 0f,
-                                roll = face?.headEulerAngleZ ?: 0f,
-                                trackingId = face?.trackingId,
-                            ))
+                    .onSuccessTask { faces ->
+                        val face = faces.singleOrNull()
+                        val observation = Observation(
+                            timeMs = now, faceCount = faces.size,
+                            leftEyeOpen = face?.leftEyeOpenProbability,
+                            rightEyeOpen = face?.rightEyeOpenProbability,
+                            yaw = face?.headEulerAngleY ?: 0f,
+                            pitch = face?.headEulerAngleX ?: 0f,
+                            roll = face?.headEulerAngleZ ?: 0f,
+                            trackingId = face?.trackingId,
+                        )
+                        if (closed || face == null ||
+                            !SideEye.supports(observation.yaw, observation.pitch, observation.roll)) {
+                            Tasks.forResult(observation)
+                        } else {
+                            contourDetector.process(input).continueWith { task ->
+                                val contourFace = if (task.isSuccessful) task.result.singleOrNull() else null
+                                observation.copy(sideEyeOpen = readSideEye(face, contourFace, observation.yaw))
+                            }
                         }
                     }
+                    .addOnSuccessListener { if (!closed) onObservation(it) }
                     .addOnFailureListener { if (!closed) onFailure("Face detection failed. Restart monitoring.") }
                     .addOnCompleteListener { busy.set(false); proxy.close() }
             } catch (error: Exception) {
@@ -91,6 +109,28 @@ class CameraSession(
                 onFailure("Could not open the front camera. Close other camera apps.")
             }
         }, ContextCompat.getMainExecutor(context))
+    }
+
+    private fun readSideEye(tracked: Face, contoured: Face?, yaw: Float): Boolean? {
+        contoured ?: return null
+        val bounds = tracked.boundingBox
+        val other = contoured.boundingBox
+        val width = minOf(bounds.right, other.right) - maxOf(bounds.left, other.left)
+        val height = minOf(bounds.bottom, other.bottom) - maxOf(bounds.top, other.top)
+        if (width <= 0 || height <= 0) return null
+        val intersection = width.toFloat() * height
+        val union = bounds.width().toFloat() * bounds.height() +
+            other.width().toFloat() * other.height() - intersection
+        if (intersection < 0.6f * union) return null
+
+        // ML Kit reports the right eye landmark above +36° and the left below -36°.
+        val contourType = if (yaw > 0) FaceContour.RIGHT_EYE else FaceContour.LEFT_EYE
+        val landmarkType = if (yaw > 0) FaceLandmark.RIGHT_EYE else FaceLandmark.LEFT_EYE
+        val landmark = contoured.getLandmark(landmarkType)?.position ?: return null
+        if (!bounds.contains(landmark.x.toInt(), landmark.y.toInt())) return null
+        val points = contoured.getContour(contourType)?.points ?: return null
+        if (points.any { !bounds.contains(it.x.toInt(), it.y.toInt()) }) return null
+        return SideEye.isOpen(points.map { SideEye.Point(it.x, it.y) })
     }
 
     fun setPreview(value: Preview.SurfaceProvider?) {
@@ -130,6 +170,7 @@ class CameraSession(
         analysis.clearAnalyzer()
         provider?.unbind(analysis, preview)
         detector.close()
+        contourDetector.close()
         executor.shutdown()
     }
 }

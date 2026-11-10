@@ -32,6 +32,37 @@ class DrowsinessEngineTest {
         }
     }
 
+    @Test fun visibleEyeAt38DegreesKeepsMonitoringOnBothSides() {
+        for (yaw in listOf(-38f, 38f)) {
+            val engine = DrowsinessEngine()
+            for (t in 0L..3500L step 100) {
+                val state = engine.update(Observation(t, 1, yaw = yaw, sideEyeOpen = true))
+                assertEquals("monitoring", state.status)
+                assertTrue(state.sideEye)
+                assertFalse(state.alarm)
+            }
+        }
+    }
+
+    @Test fun sustainedSideEyeClosureAlarmsAndUncertaintyResetsTimer() {
+        val engine = DrowsinessEngine()
+        for (t in 0L..1400L step 100) {
+            engine.update(Observation(t, 1, yaw = 38f, sideEyeOpen = false))
+        }
+        assertNull(engine.update(Observation(1500, 1, yaw = 38f)).eyesOpen)
+        for (t in 1600L..3000L step 100) {
+            assertFalse(engine.update(Observation(t, 1, yaw = 38f, sideEyeOpen = false)).alarm)
+        }
+        assertEquals("drowsy", engine.update(Observation(3100, 1, yaw = 38f, sideEyeOpen = false)).status)
+    }
+
+    @Test fun frontalWinkDoesNotCountAsBothEyesClosed() {
+        val engine = DrowsinessEngine()
+        for (t in 0L..2000L step 100) {
+            assertFalse(engine.update(Observation(t, 1, 0.05f, 0.9f)).alarm)
+        }
+    }
+
     @Test fun inferenceGapDoesNotCountAsClosedEyes() {
         val engine = DrowsinessEngine()
         engine.update(sample(0, 0.1f))

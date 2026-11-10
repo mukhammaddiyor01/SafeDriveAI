@@ -153,10 +153,8 @@ class _DriveScreenState extends State<DriveScreen> {
                     Row(
                       children: [
                         _Metric(
-                          label: 'Eye openness',
-                          value: state.eyesOpen == null
-                              ? '—'
-                              : '${(state.eyesOpen! * 100).round()}%',
+                          label: state.sideEye ? 'Visible eye' : 'Eye openness',
+                          value: state.eyeReading,
                         ),
                         const SizedBox(width: 12),
                         _Metric(

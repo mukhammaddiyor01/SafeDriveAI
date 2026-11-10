@@ -26,13 +26,19 @@ chegaralanadi. Bu Galaxy A51’da o‘lchangan FPS emas; qurilmada profil qilish
 
 ## Aniqlash
 
-- Bitta yuz va ishonchli ikkala ko‘z klassifikatsiyasi kerak.
-- Yaw ±18°, pitch ±30°, roll ±25° ichida bo‘lgandagina ko‘z dalili qabul qilinadi.
-- Ikkala ko‘z ochiqligi <0.35 bo‘lsa yopiq deb olinadi.
+- Bitta kuzatilayotgan yuz kerak. Frontal rejimda yaw ±18°, pitch ±30° va
+  roll ±25° ichida ML Kit’ning ikkala ko‘z klassifikatsiyasi ishlatiladi.
+  Ikkala qiymat <0.35 bo‘lsa yopiq deb olinadi.
+- |Yaw| 18° dan katta va 45° gacha, pitch va roll ±25° ichida bo‘lsa,
+  alohida ML Kit kontur tahlili ko‘rinadigan ko‘zni tekshiradi. Yuzlar mos
+  tushishi, ko‘z belgisi va 16 nuqtali kontur mavjud bo‘lishi kerak.
+- Qovoq oralig‘ining ko‘z kengligiga nisbati ≤0.11 bo‘lsa yopiq, 0.18–0.65
+  bo‘lsa ochiq. Oraliq, kichik va yetishmayotgan konturlar noma’lum.
+  Bu tajriba chegaralari, Galaxy A51 kamerasi uchun validatsiya talab qiladi.
 - 700 ms da UI ogohlantiradi, 1500 ms da signal beradi.
 - PERCLOSga o‘xshash yopiq ko‘z ulushi 30 s oynada, kuzatilgan vaqt bilan hisoblanadi.
   Ko‘zlar 3 s davomida baholanmasa, oldingi ulush tarixi tozalanadi.
-  Bu klinik PERCLOS validatsiyasi emas; past ko‘z ochiqligi ehtimollari ishlatiladi.
+  Bu klinik PERCLOS validatsiyasi emas. Frontal klassifikatsiya va yon kontur holati ishlatiladi.
 - 700 ms dan katta kadr uzilishlari tarixni tozalaydi; kuzatilmagan vaqt ko‘z yumilishi
   sifatida sanalmaydi. Alohida watchdog 3 s kadr kelmasa cheklov signalini beradi.
 - Yuz identity’si o‘zgarsa vaqt tarixi yangilanadi. Bir nechta yuz ko‘rinsa haydovchi

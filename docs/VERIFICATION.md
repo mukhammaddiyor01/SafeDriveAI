@@ -209,3 +209,10 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
 - Let's Encrypt sertifikatini yangilash sinovi muvaffaqiyatli o‘tdi.
 - Galaxy A51’da HTTPS serveri muvaffaqiyatli saqlandi. Foydalanuvchi USB
   kabelsiz sinov muvaffaqiyatli o‘tganini bildirdi.
+
+## Yonboshda ko‘rinadigan ko‘z kuzatuvi (SD-05) — 2026-11-10
+
+- 14 Kotlin testi o‘tdi. Yangi sinovlar ±38° da ochiq ko‘z, davomli
+  yumilish, noaniq kadrdan keyin timer va frontal bir ko‘z yumilishini qamradi.
+- Flutter analizi toza, 4 Flutter testi o‘tdi.
+- Sinovlar kamera kadridagi kontur sifati yoki Galaxy A51 aniqligini o‘lchamaydi.

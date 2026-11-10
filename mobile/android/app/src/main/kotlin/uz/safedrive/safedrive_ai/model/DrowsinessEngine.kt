@@ -23,13 +23,21 @@ class DrowsinessEngine {
         identity = null
     }
 
-    private fun validEyes(o: Observation): Boolean =
-        o.faceCount == 1 && abs(o.yaw) <= 18 && abs(o.pitch) <= 30 && abs(o.roll) <= 25 &&
-            o.leftEyeOpen?.let { it.isFinite() && it in 0f..1f } == true &&
-            o.rightEyeOpen?.let { it.isFinite() && it in 0f..1f } == true
+    private fun eyeOpenness(o: Observation): Float? {
+        if (o.faceCount != 1 || !o.yaw.isFinite() || !o.pitch.isFinite() || !o.roll.isFinite()) return null
+        if (SideEye.supports(o.yaw, o.pitch, o.roll)) {
+            return o.sideEyeOpen?.let { if (it) 1f else 0f }
+        }
+        if (abs(o.yaw) > 18 || abs(o.pitch) > 30 || abs(o.roll) > 25) return null
+        val left = o.leftEyeOpen ?: return null
+        val right = o.rightEyeOpen ?: return null
+        if (left !in 0f..1f || right !in 0f..1f) return null
+        return minOf(left, right)
+    }
 
-    private fun closed(o: Observation): Boolean =
-        (o.leftEyeOpen ?: 1f) < 0.35f && (o.rightEyeOpen ?: 1f) < 0.35f
+    private fun eyesClosed(o: Observation, openness: Float): Boolean =
+        if (abs(o.yaw) > 18f) openness < 0.35f
+        else maxOf(o.leftEyeOpen ?: 1f, o.rightEyeOpen ?: 1f) < 0.35f
 
     fun update(o: Observation): MonitorState {
         val now = o.timeMs
@@ -50,12 +58,13 @@ class DrowsinessEngine {
                 closedSince = null
                 poseSince = null
                 unknownSince = null
-            } else if (validEyes(prior)) {
-                history.addLast(Interval(prior.timeMs, now, closed(prior)))
+            } else {
+                eyeOpenness(prior)?.let { history.addLast(Interval(prior.timeMs, now, eyesClosed(prior, it))) }
             }
         }
         previous = o
-        val eyeKnown = validEyes(o)
+        val openness = eyeOpenness(o)
+        val eyeKnown = openness != null
         val visibilityLostAt = unknownSince ?: now
         val visibilityTimedOut = now - visibilityLostAt >= VISIBILITY_TIMEOUT_MS
         if (visibilityTimedOut) history.clear()
@@ -70,14 +79,15 @@ class DrowsinessEngine {
             if (interval.closed) closedMs += duration
         }
         val perclos = if (knownMs >= 10_000) closedMs.toDouble() / knownMs else null
-        val poseUnusual = o.faceCount == 1 && (abs(o.pitch) > 25 || abs(o.yaw) > 30)
+        val poseUnusual = o.faceCount == 1 && (abs(o.pitch) > 25 || (!eyeKnown && abs(o.yaw) > 30))
         poseSince = if (poseUnusual) poseSince ?: now else null
         val poseDuration = poseSince?.let { now - it } ?: 0L
-        closedSince = if (eyeKnown && closed(o)) closedSince ?: now else null
+        closedSince = if (openness != null && eyesClosed(o, openness)) closedSince ?: now else null
         val duration = closedSince?.let { now - it } ?: 0L
         val base = MonitorState(
             active = true,
-            eyesOpen = if (eyeKnown) minOf(o.leftEyeOpen!!, o.rightEyeOpen!!).toDouble() else null,
+            eyesOpen = openness?.toDouble(),
+            sideEye = eyeKnown && abs(o.yaw) > 18f,
             closedMs = duration,
             yaw = if (o.faceCount == 1) o.yaw.toDouble() else null,
             pitch = if (o.faceCount == 1) o.pitch.toDouble() else null,
