@@ -7,6 +7,27 @@ class DrowsinessEngineTest {
     private fun sample(time: Long, open: Float = 0.9f, yaw: Float = 0f, count: Int = 1, id: Int = 1) =
         Observation(time, count, open, open, yaw, trackingId = id)
 
+    @Test fun sideEyeDisplayScoreDoesNotSuppressClosedEyeAlarmAt45Degrees() {
+        for (yaw in listOf(-45f, 45f)) {
+            val engine = DrowsinessEngine()
+            var state = MonitorState()
+            for (t in 0L..1500L step 100) {
+                state = engine.update(Observation(t, 1, yaw = yaw,
+                    sideEyeOpen = false, sideEyeOpenness = 0.48f))
+            }
+            assertEquals(0.48, state.eyesOpen!!, 0.001)
+            assertEquals("drowsy", state.status)
+            assertTrue(state.alarm)
+        }
+    }
+
+    @Test fun missingSideEyeDecisionCannotBeReplacedByDisplayScore() {
+        val state = DrowsinessEngine().update(Observation(0, 1, yaw = 45f,
+            sideEyeOpenness = 0.95f))
+        assertNull(state.eyesOpen)
+        assertEquals("limited", state.status)
+    }
+
     @Test fun normalBlinkDoesNotAlarm() {
         val engine = DrowsinessEngine()
         engine.update(sample(0))

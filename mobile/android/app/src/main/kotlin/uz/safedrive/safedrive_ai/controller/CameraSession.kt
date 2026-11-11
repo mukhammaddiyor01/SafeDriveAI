@@ -74,9 +74,10 @@ class CameraSession(
                             roll = face?.headEulerAngleZ ?: 0f,
                             trackingId = face?.trackingId,
                         )
-                        eyeDiagnostic = "faces=${faces.size} yaw=${observation.yaw} pitch=${observation.pitch} roll=${observation.roll}"
+                        val poseDiagnostic = "faces=${faces.size} yaw=${observation.yaw} pitch=${observation.pitch} roll=${observation.roll}"
                         if (closed || face == null ||
                             !SideEye.supports(observation.yaw, observation.pitch, observation.roll)) {
+                            eyeDiagnostic = poseDiagnostic
                             Tasks.forResult(observation)
                         } else {
                             Tasks.call(executor) {
@@ -91,8 +92,8 @@ class CameraSession(
                                             Matrix().apply { postRotate(rotation.toFloat()) }, false)
                                         val eye = denseEye.value
                                         val open = eye.observe(rotated, face.boundingBox, observation.yaw)
-                                        eyeDiagnostic += " " + eye.diagnostic
-                                        observation.copy(sideEyeOpen = open)
+                                        eyeDiagnostic = poseDiagnostic + " " + eye.diagnostic
+                                        observation.copy(sideEyeOpen = open, sideEyeOpenness = eye.openness)
                                     } catch (error: Exception) {
                                         eyeDiagnostic = "model-error:${error.javaClass.simpleName}"
                                         val failureTime = SystemClock.elapsedRealtime()

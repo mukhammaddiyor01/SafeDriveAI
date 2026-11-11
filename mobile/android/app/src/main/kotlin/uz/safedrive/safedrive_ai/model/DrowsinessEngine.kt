@@ -26,7 +26,10 @@ class DrowsinessEngine {
     private fun eyeOpenness(o: Observation): Float? {
         if (o.faceCount != 1 || !o.yaw.isFinite() || !o.pitch.isFinite() || !o.roll.isFinite()) return null
         if (SideEye.supports(o.yaw, o.pitch, o.roll)) {
-            return o.sideEyeOpen?.let { if (it) 1f else 0f }
+            return o.sideEyeOpen?.let { open ->
+                o.sideEyeOpenness?.takeIf { it.isFinite() && it in 0f..1f }
+                    ?: if (open) 1f else 0f
+            }
         }
         if (abs(o.yaw) > 18 || abs(o.pitch) > 30 || abs(o.roll) > 25) return null
         val left = o.leftEyeOpen ?: return null
@@ -35,8 +38,8 @@ class DrowsinessEngine {
         return minOf(left, right)
     }
 
-    private fun eyesClosed(o: Observation, openness: Float): Boolean =
-        if (abs(o.yaw) > 18f) openness < 0.35f
+    private fun eyesClosed(o: Observation): Boolean =
+        if (abs(o.yaw) > 18f) o.sideEyeOpen == false
         else maxOf(o.leftEyeOpen ?: 1f, o.rightEyeOpen ?: 1f) < 0.35f
 
     fun update(o: Observation): MonitorState {
@@ -59,7 +62,7 @@ class DrowsinessEngine {
                 poseSince = null
                 unknownSince = null
             } else {
-                eyeOpenness(prior)?.let { history.addLast(Interval(prior.timeMs, now, eyesClosed(prior, it))) }
+                eyeOpenness(prior)?.let { history.addLast(Interval(prior.timeMs, now, eyesClosed(prior))) }
             }
         }
         previous = o
@@ -82,7 +85,7 @@ class DrowsinessEngine {
         val poseUnusual = o.faceCount == 1 && (abs(o.pitch) > 25 || (!eyeKnown && abs(o.yaw) > 30))
         poseSince = if (poseUnusual) poseSince ?: now else null
         val poseDuration = poseSince?.let { now - it } ?: 0L
-        closedSince = if (openness != null && eyesClosed(o, openness)) closedSince ?: now else null
+        closedSince = if (openness != null && eyesClosed(o)) closedSince ?: now else null
         val duration = closedSince?.let { now - it } ?: 0L
         val base = MonitorState(
             active = true,

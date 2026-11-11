@@ -21,8 +21,22 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
     var diagnostic: String = "waiting"
         private set
 
+    var openness: Float? = null
+        private set
+
     fun observe(bitmap: Bitmap, bounds: Rect, yaw: Float): Boolean? {
-        val image = BitmapImageBuilder(bitmap).build()
+        openness = null
+        val region = Rect(bounds)
+        val padding = (maxOf(region.width(), region.height()) * 0.2f).toInt()
+        region.inset(-padding, -padding)
+        if (!region.intersect(0, 0, bitmap.width, bitmap.height) || region.width() < 32 || region.height() < 32) {
+            diagnostic = "face-region-invalid"
+            return null
+        }
+        val regionBitmap = Bitmap.createBitmap(bitmap, region.left, region.top, region.width(), region.height())
+        // MPImage owns its bitmap. Preserve the caller's frame when the region is the full image.
+        val crop = if (regionBitmap === bitmap) bitmap.copy(Bitmap.Config.ARGB_8888, false) else regionBitmap
+        val image = BitmapImageBuilder(crop).build()
         try {
             diagnostic = "face-not-found"
             val result = detector.detect(image)
@@ -34,11 +48,11 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
                 else listOf(33, 160, 158, 133, 153, 144)
             val points = indexes.map { index ->
                 val point = face[index]
-                Pair(point.x() * bitmap.width, point.y() * bitmap.height)
+                Pair(region.left + point.x() * crop.width, region.top + point.y() * crop.height)
             }
             diagnostic = "eye-outside-face"
             val nose = face[1]
-            if (!bounds.contains((nose.x() * bitmap.width).toInt(), (nose.y() * bitmap.height).toInt())) return null
+            if (!bounds.contains((region.left + nose.x() * crop.width).toInt(), (region.top + nose.y() * crop.height).toInt())) return null
             if (points.any { !bounds.contains(it.first.toInt(), it.second.toInt()) }) return null
             fun distance(a: Int, b: Int): Float =
                 hypot(points[a].first - points[b].first, points[a].second - points[b].second)
@@ -49,10 +63,13 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
             val category = if (left) "eyeBlinkLeft" else "eyeBlinkRight"
             val blink = scores.singleOrNull { it.categoryName() == category }?.score() ?: return null
             val open = SideEye.classify(blink, ratio, width)
+            // Continuous pretrained score for display; the closure decision stays independent.
+            openness = if (open != null) 1f - blink else null
             diagnostic = "yaw=$yaw blink=$blink gap=$ratio width=$width open=$open"
             return open
         } finally {
             image.close()
+            if (!crop.isRecycled) crop.recycle()
         }
     }
 

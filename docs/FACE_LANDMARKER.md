@@ -56,3 +56,21 @@ Past blink, juda kichik ko‘z yoki zid geometriya noma’lum holatda qoladi.
 USB service dump endi yuz/bosh holati, blink, qovoq nisbati, ko‘z kengligi
 va qaysi bosqichda dalil yo‘qolganini ko‘rsatadi. Kamera tasviri saqlanmaydi,
 bu raqamlar tarmoqqa uzatilmaydi.
+
+## Face ROI va uzluksiz score — 2026-11-11
+
+MediaPipe’ga ML Kit topgan yuzning 20% paddingli, kadrga kesilgan qismi
+beriladi. Landmarklar original koordinatalarga qaytariladi va ko‘z/nose yuz
+ichida ekanligi tekshiriladi. MPImage o‘z bitmapini yopadi; butun kadr crop
+bo‘lsa ham caller bitmap nusxasi ishlatilib, original tirik qoldiriladi.
+Diagnostika oxirgi tugagan inferensni saqlaydi, tasvirlarni loglamaydi.
+
+Yon holat uchun ko‘rsatiladigan score `1 - eyeBlink` (0–100%). Bu model
+bahosi, anatomik ochilish foizi emas. Alarm SideEye’ning blink + gap qarori
+va davomiyligiga tayanadi; score 48% bo‘lsa ham tasdiqlangan yopilish 1 500 ms
+davom etsa alarm chiqadi. Noaniq holatda score yo‘q (`—`); bu ochiq deb olinmaydi.
+Yangi PyTorch kalibrlashi qabul mezonidan o‘tmadi va APK’ga ulanmagan.
+
+Python Face Landmarker’da 3 shaxsiy regression kadri original va paddingli
+ROI bilan 6/6 mos chiqdi. Android native build/domain testlar o‘tdi, ammo bu
+versiyadagi ROI uchun telefon runtime sinovi qurilma ulanmagani sabab bajarilmadi.

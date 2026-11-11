@@ -10,6 +10,7 @@ data class Observation(
     val roll: Float = 0f,
     val trackingId: Int? = null,
     val sideEyeOpen: Boolean? = null,
+    val sideEyeOpenness: Float? = null,
 )
 
 data class MonitorState(

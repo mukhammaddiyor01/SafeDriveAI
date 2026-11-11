@@ -43,8 +43,12 @@ class MonitorState {
 
   String get eyeReading {
     final openness = eyesOpen;
-    if (openness == null) return '—';
-    if (sideEye) return openness > 0 ? 'Open' : 'Closed';
+    if (openness == null ||
+        !openness.isFinite ||
+        openness < 0 ||
+        openness > 1) {
+      return '—';
+    }
     return '${(openness * 100).round()}%';
   }
 

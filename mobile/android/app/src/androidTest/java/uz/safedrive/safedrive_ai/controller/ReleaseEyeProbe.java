@@ -52,6 +52,11 @@ public class ReleaseEyeProbe extends Instrumentation {
                 Object eye = observe.invoke(model, image, bounds, yaw);
                 report.putString("eye", String.valueOf(eye));
                 if (!Boolean.valueOf(expected).equals(eye)) throw new IllegalStateException("Eye state does not match fixture");
+                Rect insetBounds = new Rect(image.getWidth() / 5, image.getHeight() / 5,
+                    image.getWidth() * 4 / 5, image.getHeight() * 9 / 10);
+                Object croppedEye = observe.invoke(model, image, insetBounds, yaw);
+                report.putString("croppedEye", String.valueOf(croppedEye));
+                if (!Boolean.valueOf(expected).equals(croppedEye)) throw new IllegalStateException("Face crop changed the expected eye state");
             } finally {
                 image.recycle();
                 type.getMethod("close").invoke(model);
