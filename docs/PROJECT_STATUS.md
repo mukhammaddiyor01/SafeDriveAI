@@ -161,3 +161,15 @@ Jonli kamera natijasi hali foydalanuvchi bilan tekshirilmoqda.
 - Foydalanuvchi hozir telefonni jonli sinay olmaydi. ADB qurilma topmadi;
   yangilangan APK o‘rnatilmadi. Ikkala tomonda ±45° jonli yopilish aniqlanishi
   va face ROI native runtime testi hali ochiq. Ularni tugallangan deb ko‘rsatmang.
+
+
+## USB release tekshiruvi — 2026-11-11
+
+Yakuniy APK Galaxy A51 (SM-A516N) telefoniga USB orqali muvaffaqiyatli
+updated qilindi. check-release-eye.sh o‘rnatilgan APK SHA-256 mosligini
+tekshirdi. Aynan release modelida bitta ochiq (yaw argument −43°), ikki yopiq
+(−42° va +43°) regression kadri original va paddingli face ROI bilan 6/6
+kutilgan qarorni berdi. Uch instrumentation chaqiruvi muvaffaqiyatli yakunlandi.
+Bu yaw qiymatlari fixture argumentlari, jonli burchak o‘lchovi emas.
+Kamera va alarm avtomatik yoqilmadi; jonli ±45° yopilish sinovi hali kerak.
+Shaxsiy rasmlar va vaqtinchalik test APK repositoryga kiritilmadi.

@@ -296,3 +296,15 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   3 552/888, subjectlar disjoint, tarix hash auditi, fixed 400 epoch, threshold .5.
   TP35/FN4/FP83/TN766. Chap TP3/FN1, o‘ng closed=0. Mobil integratsiya rad etildi;
   test natijasidan threshold tuning qilinmadi. Kamera-relative ±45° tasdiqlanmagan.
+
+
+## USB release tekshiruvi — 2026-11-11
+
+Yakuniy APK Galaxy A51 (SM-A516N) telefoniga USB orqali muvaffaqiyatli
+updated qilindi. check-release-eye.sh o‘rnatilgan APK SHA-256 mosligini
+tekshirdi. Aynan release modelida bitta ochiq (yaw argument −43°), ikki yopiq
+(−42° va +43°) regression kadri original va paddingli face ROI bilan 6/6
+kutilgan qarorni berdi. Uch instrumentation chaqiruvi muvaffaqiyatli yakunlandi.
+Bu yaw qiymatlari fixture argumentlari, jonli burchak o‘lchovi emas.
+Kamera va alarm avtomatik yoqilmadi; jonli ±45° yopilish sinovi hali kerak.
+Shaxsiy rasmlar va vaqtinchalik test APK repositoryga kiritilmadi.
