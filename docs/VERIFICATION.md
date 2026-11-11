@@ -231,3 +231,14 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   foydalanuvchi bilan tekshirilishi kerak.
 - [Audio oqimi](ALARM_AUDIO.md), [mobil model](FACE_LANDMARKER.md),
   [yangi 80/20 trening va test](BILATERAL_EYE_PROTOCOL.md).
+
+## Tasdiqlangan mobil dizayn (SD-01, SD-09) — 2026-11-11
+
+- Flutter analizi toza, 5 test o‘tdi. 320×640 ekranda 1.3 matn masshtabi
+  bilan faol ekran, Stop tugmasi, burchak, noaniq ko‘z holati va to‘xtatish tekshirildi.
+- 360×800 ekranda sozlamalar va boshlash amali tekshirildi. Kamera-off
+  holatining PNG ko‘rinishi render qilinib ko‘rib chiqildi.
+- Burchak shkalasi kamera yaw ma’lumotini ko‘rsatadi. Ma’lumot yo‘q bo‘lsa
+  marker ko‘rsatilmaydi, diapazondan tashqarida son asl qiymatda qoladi.
+- Bluetooth qatori ulanishni tasdiqlovchi real telemetry emas. Matn
+  avtomobil audiosi ulanganida ishlashini bildiradi.

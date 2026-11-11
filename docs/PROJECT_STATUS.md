@@ -124,5 +124,6 @@ muvaffaqiyatli o‘tganini bildirdi. [Tekshiruv natijalari](VERIFICATION.md)
   so‘raladi. Mashina Bluetooth’i bilan real eshitilish sinovi hali kerak.
 - Yangi 1 704 train / 426 test PyTorch tajribasi yakunlandi. Yopiq ko‘z
   recall 4,17% bo‘ldi. Bu checkpoint mobil inferensga ulanmagan.
-- Dizayn taklifi rasm sifatida ko‘rsatildi. Interfeysni qayta dizayn qilish
-  foydalanuvchi ko‘rib chiqishidan keyingi alohida qadam.
+- Foydalanuvchi ko‘rib chiqqan dizayn Flutter ekraniga moslandi. Kamera,
+  chap/old/o‘ng burchak shkalasi va ko‘z/alarm qatorlari qo‘shildi.
+  Start/Stop tugmasi pastda doim ko‘rinadi, Bluetooth matni shartli ulanishni bildiradi.

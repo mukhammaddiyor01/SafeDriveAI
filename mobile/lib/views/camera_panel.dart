@@ -23,11 +23,11 @@ class CameraPanel extends StatelessWidget {
               const _CameraGuide(),
             Positioned(
               top: 14,
-              left: 14,
+              right: 14,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: const Color(0xCC172B46),
-                  borderRadius: BorderRadius.circular(30),
+                  color: DriveColors.blue,
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -73,31 +73,35 @@ class _CameraGuide extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Padding(
     padding: EdgeInsets.fromLTRB(14, 48, 14, 14),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: FittedBox(
-            child: Icon(
-              Icons.center_focus_strong_outlined,
-              color: Color(0xFF9DB4D6),
-              size: 100,
-            ),
+    child: Center(
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: SizedBox(
+          width: 240,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.center_focus_strong_outlined,
+                color: Color(0xFF9DB4D6),
+                size: 64,
+              ),
+              SizedBox(height: 14),
+              Text(
+                'Keep your face and shoulders in frame',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 14),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Use a secure phone mount',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Color(0xFFB6C7E0), fontSize: 12),
+              ),
+            ],
           ),
         ),
-        SizedBox(height: 10),
-        Text(
-          'Keep your face and shoulders in frame',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white, fontSize: 14),
-        ),
-        SizedBox(height: 3),
-        Text(
-          'Use a secure phone mount',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Color(0xFFB6C7E0), fontSize: 12),
-        ),
-      ],
+      ),
     ),
   );
 }

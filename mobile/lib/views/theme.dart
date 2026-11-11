@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 abstract final class DriveColors {
   static const ink = Color(0xFF172B46);
-  static const blue = Color(0xFF275FC1);
-  static const background = Color(0xFFF2F5F9);
+  static const blue = Color(0xFF2864A5);
+  static const amber = Color(0xFF966715);
+  static const border = Color(0xFFC9D2DE);
+  static const background = Color(0xFFF7F9FC);
   static const muted = Color(0xFF596C82);
   static const red = Color(0xFFBD372D);
 }
