@@ -91,6 +91,7 @@ class CameraSession(
                                             frame, 0, 0, frame.width, frame.height,
                                             Matrix().apply { postRotate(rotation.toFloat()) }, false)
                                         val eye = denseEye.value
+                                        eye.trackFace(observation.trackingId)
                                         val open = eye.observe(rotated, face.boundingBox, observation.yaw)
                                         eyeDiagnostic = poseDiagnostic + " " + eye.diagnostic
                                         observation.copy(sideEyeOpen = open, sideEyeOpenness = eye.openness)

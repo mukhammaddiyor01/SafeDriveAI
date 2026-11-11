@@ -8,6 +8,7 @@ import com.google.mediapipe.tasks.core.BaseOptions
 import com.google.mediapipe.tasks.vision.facelandmarker.FaceLandmarker
 import kotlin.math.hypot
 import uz.safedrive.safedrive_ai.model.SideEye
+import uz.safedrive.safedrive_ai.model.SideEyeCalibration
 
 /** Synchronous on-device model. CameraSession owns its worker thread and lifetime. */
 internal class DenseEyeDetector(context: Context) : AutoCloseable {
@@ -17,6 +18,14 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
             .setNumFaces(2)
             .setOutputFaceBlendshapes(true)
             .build())
+
+    private val calibration = SideEyeCalibration()
+    private var trackingId: Int? = null
+
+    fun trackFace(id: Int?) {
+        if (id != null && trackingId != null && id != trackingId) calibration.reset()
+        if (id != null) trackingId = id
+    }
 
     var diagnostic: String = "waiting"
         private set
@@ -62,9 +71,9 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
             val ratio = (distance(1, 5) + distance(2, 4)) / (2f * width)
             val category = if (left) "eyeBlinkLeft" else "eyeBlinkRight"
             val blink = scores.singleOrNull { it.categoryName() == category }?.score() ?: return null
-            openness = SideEye.openness(blink, ratio, width)
+            openness = calibration.openness(yaw, blink, ratio, width)
             val open = openness?.let { it > SideEye.CLOSED_SCORE_THRESHOLD }
-            diagnostic = "yaw=$yaw blink=$blink gap=$ratio width=$width open=$open"
+            diagnostic = "yaw=$yaw blink=$blink gap=$ratio width=$width score=$openness open=$open"
             return open
         } finally {
             image.close()

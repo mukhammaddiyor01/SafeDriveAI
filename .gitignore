@@ -26,3 +26,5 @@ mobile/android/key.properties
 releases/
 
 *.task
+
+mobile/android/.kotlin/

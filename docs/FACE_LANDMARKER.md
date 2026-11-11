@@ -74,3 +74,19 @@ Yangi PyTorch kalibrlashi qabul mezonidan o‘tmadi va APK’ga ulanmagan.
 Python Face Landmarker’da 3 shaxsiy regression kadri original va paddingli
 ROI bilan 6/6 mos chiqdi. Android native build/domain testlar o‘tdi, ammo bu
 versiyadagi ROI uchun telefon runtime sinovi qurilma ulanmagani sabab bajarilmadi.
+
+## Session-local open-eye reference — 2026-11-11
+
+The next release learns a separate normal-open lid gap in each signed 15° yaw
+bucket from five high-confidence open frames (blink <=.25, gap >=.12).
+Only similar open gaps update a reference; partial lids cannot rapidly lower it.
+No image is stored. References reset when the tracked face changes or the
+monitoring session ends. With a reference, the normalized aperture score is
+`clamp((gap/reference - .2)/.8)`. Closure also requires blink >=.30;
+opening requires blink <=.35. Contradictory observations remain unknown.
+The display and alarm share the score boundary <=.50. This is personalized
+heuristic calibration, not the rejected population PyTorch checkpoint.
+
+Live development evidence on Galaxy A51: left around −42° reached score
+.20 and closedMs=1543 with drowsy/alarm; sustained closures also appeared on
+the right around +38…+42°. These are not a complete exact ±45° benchmark.
