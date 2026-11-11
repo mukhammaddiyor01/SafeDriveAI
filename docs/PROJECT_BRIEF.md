@@ -41,6 +41,16 @@ qolishni kafolatlash yoki suhbatni dam olish o‘rniga qo‘yish mahsulot va’d
 | SD-09 | MVC va tushunarli kod | View, controller va domain model vazifalari ajratilgan; biznes mantig‘i alohida sinovdan o‘tadi |
 | SD-10 | Kichik mantiqiy commitlar | Har bir commit bitta vazifani bajaradi; faqat `feat:` va `fix:` prefikslari ishlatiladi |
 
+## Repeated closure escalation — 2026-11-11 user update
+
+SD-03/SD-07: Two separate eye closures lasting at least 3 seconds within
+60 seconds escalate to a minimum 15-second alarm, even if the eyes reopen.
+After that minimum, fresh open-eye evidence is required before the alarm
+clears and the assistant recovery flow starts. If the eyes remain closed or
+unobservable, do not start a reassuring conversation. The 100% eye score is
+not proof that the driver is fully awake. Stop monitoring remains available.
+This replaces the proposed one-second immediate stop for repeated closures.
+
 ## Texnologiyalarning vazifasi
 
 | Texnologiya | Loyihadagi vazifa |

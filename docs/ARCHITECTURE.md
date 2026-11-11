@@ -116,3 +116,19 @@ closure timer and PERCLOS. Recovery requires score >0.50. Unknown quality is
 still null. The fallback score is normalized evidence, not a calibrated
 probability or an anatomical percentage. A separately trained calibration may
 replace it only after the frozen bilateral acceptance protocol passes.
+
+
+## Repeated closure alarm policy — 2026-11-11
+
+RepeatedClosureAlarm is a pure domain policy: two >=3 000 ms episodes in
+60 000 ms arm a 15 000 ms minimum alarm. At least 300 ms of observed opening
+separates episodes; unknown frames cannot count one closure twice. New
+closures during the held alarm do not continually extend its countdown.
+After the deadline, 1 000 ms of known opening allows recovery. The service
+renders the countdown through the state message; AlarmController continues
+the alarm while state.alarm is true. RecoveryTrigger starts the assistant only
+after a further second of fresh, alarm-free open-eye evidence. Stop clears
+all state. The previous 30-second PERCLOS remains a risk statistic, but one
+second of confirmed opening acknowledges that rolling-risk alarm so it cannot
+keep ringing indefinitely after the explicit held alarm finishes. Fresh
+sustained closure and visibility-loss alerts remain active.

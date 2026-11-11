@@ -13,6 +13,9 @@ class DrowsinessEngine {
     private var poseSince: Long? = null
     private var unknownSince: Long? = null
     private var identity: Int? = null
+    private var openSince: Long? = null
+    private var perclosRecovered = false
+    private val repeatedClosure = RepeatedClosureAlarm()
 
     fun reset() {
         history.clear()
@@ -21,6 +24,9 @@ class DrowsinessEngine {
         poseSince = null
         unknownSince = null
         identity = null
+        openSince = null
+        perclosRecovered = false
+        repeatedClosure.reset()
     }
 
     private fun eyeOpenness(o: Observation): Float? {
@@ -61,6 +67,7 @@ class DrowsinessEngine {
                 closedSince = null
                 poseSince = null
                 unknownSince = null
+                openSince = null
             } else {
                 eyeOpenness(prior)?.let { history.addLast(Interval(prior.timeMs, now, eyesClosed(prior))) }
             }
@@ -87,6 +94,13 @@ class DrowsinessEngine {
         val poseDuration = poseSince?.let { now - it } ?: 0L
         closedSince = if (openness != null && eyesClosed(o)) closedSince ?: now else null
         val duration = closedSince?.let { now - it } ?: 0L
+        val consistentlyOpen = openness != null && openness > 0.5f && !eyesClosed(o)
+        openSince = if (consistentlyOpen) openSince ?: now else null
+        val openDuration = openSince?.let { now - it } ?: 0L
+        val elevatedPerclos = perclos != null && perclos >= 0.35
+        if (!elevatedPerclos) perclosRecovered = false
+        if (elevatedPerclos && openDuration >= 1_000) perclosRecovered = true
+        val heldAlarm = repeatedClosure.update(now, duration, openDuration)
         val base = MonitorState(
             active = true,
             eyesOpen = openness?.toDouble(),
@@ -97,7 +111,14 @@ class DrowsinessEngine {
             perclos = perclos,
         )
         return when {
-            eyeKnown && (duration >= 1_500 || (perclos != null && perclos >= 0.35)) ->
+            heldAlarm -> {
+                val seconds = (repeatedClosure.remainingMs + 999) / 1_000
+                val message = if (seconds > 0)
+                    "Repeated eye closure. Alarm: ${seconds}s. Pull over safely."
+                else "Keep your eyes open. Pull over safely and rest."
+                base.copy(status = "drowsy", message = message, alarm = true)
+            }
+            eyeKnown && (duration >= 1_500 || (elevatedPerclos && !perclosRecovered)) ->
                 base.copy(status = "drowsy", message = "Drowsiness detected. Pull over safely.", alarm = true)
             poseDuration >= 2_500 ->
                 base.copy(status = "warning", message = "Face angle is outside the monitoring range. Adjust the phone mount while parked.", alarm = true)
@@ -112,6 +133,8 @@ class DrowsinessEngine {
                     alarm = visibilityTimedOut)
             }
             duration >= 700 -> base.copy(status = "warning", message = "Eyes closed")
+            elevatedPerclos -> base.copy(status = "monitoring",
+                message = "Eyes open. Recent drowsiness detected; pull over safely and rest.")
             else -> base.copy(status = "monitoring", message = "Monitoring active")
         }
     }

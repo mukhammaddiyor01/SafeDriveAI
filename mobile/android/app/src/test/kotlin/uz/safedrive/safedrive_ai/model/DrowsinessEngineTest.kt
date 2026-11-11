@@ -43,6 +43,56 @@ class DrowsinessEngineTest {
         }
     }
 
+    @Test fun stableReopeningSilencesOldPerclosWithoutErasingItsHistory() {
+        val engine = DrowsinessEngine()
+        var state = MonitorState()
+        for (t in 0L..12_000L step 100) {
+            state = engine.update(sample(t, if (t % 2000 < 1000) 0.1f else 0.9f))
+        }
+        assertTrue(state.alarm)
+        for (t in 12_100L..13_000L step 100) {
+            assertTrue(engine.update(sample(t)).alarm)
+        }
+        state = engine.update(sample(13_100))
+        assertFalse(state.alarm)
+        assertEquals("monitoring", state.status)
+        assertTrue(state.perclos!! >= 0.35)
+        assertFalse(engine.update(sample(13_200, 0.1f)).alarm)
+        assertFalse(engine.update(sample(13_300)).alarm)
+        for (t in 13_400L..14_900L step 100) state = engine.update(sample(t, 0.1f))
+        assertTrue(state.alarm)
+        assertEquals("drowsy", state.status)
+    }
+
+    @Test fun repeatedSideClosuresHoldAlarmEvenAfterEyesReopen() {
+        for (yaw in listOf(-45f, 45f)) {
+            val engine = DrowsinessEngine()
+            var time = 0L
+            for (step in 0..30) {
+                engine.update(Observation(time, 1, yaw = yaw, sideEyeOpenness = 0.15f))
+                time += 100
+            }
+            for (step in 0..15) {
+                engine.update(Observation(time, 1, yaw = yaw, sideEyeOpenness = 1f))
+                time += 100
+            }
+            var state = MonitorState()
+            for (step in 0..30) {
+                state = engine.update(Observation(time, 1, yaw = yaw, sideEyeOpenness = 0.15f))
+                time += 100
+            }
+            assertTrue(state.message.contains("15s"))
+            for (step in 0..148) {
+                state = engine.update(Observation(time, 1, yaw = yaw, sideEyeOpenness = 1f))
+                assertTrue(state.alarm)
+                time += 100
+            }
+            state = engine.update(Observation(time, 1, yaw = yaw, sideEyeOpenness = 1f))
+            assertFalse(state.alarm)
+            assertEquals("monitoring", state.status)
+        }
+    }
+
     @Test fun normalBlinkDoesNotAlarm() {
         val engine = DrowsinessEngine()
         engine.update(sample(0))
