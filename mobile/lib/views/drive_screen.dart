@@ -163,7 +163,7 @@ class _DriveScreenState extends State<DriveScreen> {
                               message: 'Estimated eye-open score, not a physical eyelid measurement.',
                               child: _ReadingTile(
                                 icon: Icons.visibility_outlined,
-                                label: 'Eye-open score',
+                                label: 'Eye score',
                                 value: state.eyeReading,
                                 color: state.eyesOpen == null
                                     ? DriveColors.muted

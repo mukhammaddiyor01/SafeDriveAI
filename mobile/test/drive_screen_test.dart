@@ -105,6 +105,7 @@ void main() {
 
     expect(find.byType(Scrollable), findsNothing);
     expect(find.text('82%').hitTestable(), findsOneWidget);
+    expect(find.text('Eye score').hitTestable(), findsOneWidget);
     expect(
       tester.getTopLeft(find.byKey(const ValueKey('gemini-panel'))).dy,
       lessThan(tester.getTopLeft(find.byType(CameraPanel)).dy),
