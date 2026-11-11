@@ -173,3 +173,30 @@ kutilgan qarorni berdi. Uch instrumentation chaqiruvi muvaffaqiyatli yakunlandi.
 Bu yaw qiymatlari fixture argumentlari, jonli burchak o‘lchovi emas.
 Kamera va alarm avtomatik yoqilmadi; jonli ±45° yopilish sinovi hali kerak.
 Shaxsiy rasmlar va vaqtinchalik test APK repositoryga kiritilmadi.
+
+## Session handoff — 2026-11-11
+
+User requested stopping work here. Latest APK was built and installed on the
+Galaxy A51. Side-eye display and alarms now share a score. Session-local
+open-eye references reduce side-angle unknown readings; left around −42° and
+right around +38…+42° sustained closures were observed in development logs.
+Exact bilateral ±45° and broad population accuracy remain unconfirmed.
+
+Latest requested behavior: two separate >=3-second closures within 60 seconds
+hold the alarm for at least 15 seconds. It continues if the eyes remain closed
+or unknown; after confirmed reopening, the assistant recovery flow can start.
+The old PERCLOS statistic no longer keeps a recovered alarm ringing indefinitely.
+31 Kotlin tests, 39 Python tests + 6 subtests, and 6 Flutter tests passed.
+The final 15-second held-alarm/assistant flow still needs a live phone check.
+The fresh 7 584/1 896 PyTorch run failed acceptance and was not deployed.
+
+### Next step — 2026-11-12, user priority
+
+Improve eye detection and app stability in darkness and low light, since the
+app must work for night driving too. Start by reading the project Markdown
+rules and inspecting the current code. Measure low-light face/eye coverage,
+open/closed errors, alarm timing and Galaxy A51 performance. Preserve explicit
+unknown states and verify day/night regressions. Any new training must use
+80% train / 20% untouched test with disjoint drivers and prior-use auditing.
+Do not describe a screen-brightness workaround as verified night detection.
+No night-mode implementation was started in this session.

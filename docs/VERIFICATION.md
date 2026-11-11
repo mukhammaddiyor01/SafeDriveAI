@@ -308,3 +308,15 @@ kutilgan qarorni berdi. Uch instrumentation chaqiruvi muvaffaqiyatli yakunlandi.
 Bu yaw qiymatlari fixture argumentlari, jonli burchak o‘lchovi emas.
 Kamera va alarm avtomatik yoqilmadi; jonli ±45° yopilish sinovi hali kerak.
 Shaxsiy rasmlar va vaqtinchalik test APK repositoryga kiritilmadi.
+
+## 2026-11-11 — final session checkpoint
+
+31 Kotlin tests passed, including side-score agreement, personalized aperture
+reference isolation, repeated >=3-second closure counting, the 15-second hold,
+assistant recovery ordering, PERCLOS reopening, and preserving the held alarm
+through analysis resets. 39 Python tests + 6 subtests and 6 Flutter tests passed.
+The final release APK was built and installed successfully on Galaxy A51.
+The final 15-second alarm and assistant sequence was NOT live-validated before
+the user stopped the session. Earlier live angle observations are development
+evidence around −42° and +38…+42°, not exact bilateral ±45° acceptance.
+Next authorized priority is night/low-light detection; no implementation yet.
