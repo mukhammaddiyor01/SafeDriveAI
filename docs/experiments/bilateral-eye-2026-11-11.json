@@ -1,0 +1,323 @@
+{
+  "split": {
+    "seed": 42,
+    "train_subjects": [
+      7,
+      9,
+      12
+    ],
+    "test_subjects": [
+      1,
+      8
+    ],
+    "include_front": true,
+    "side_threshold": 0.18,
+    "face_prefix_bytes": 50331648,
+    "yunet_sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+    "source_sha256": {
+      "s001_noglasses.tar.prefix": "09a4c3680446b2de6d727d27ac5fa3547e149e5f2904b6a464a049abab90a43a",
+      "s001_blink_labels.csv": "1b12ba7b987d8955dda2d3c38f94cef6554bfb97a1ab6e60a1745d7b6fba10b6",
+      "s001_noglasses_eyes.tar": "669bd9933d84fed8f6c93e9a30512c87efb72ccc9029b9d9637e8fa4cee468b3",
+      "s007_noglasses.tar.prefix": "9814870a5058b77334ea658b805592835fc3666afc92a9ec24e7a2104e4125ff",
+      "s007_blink_labels.csv": "823b3a2e4337a5a8b65d1ebdad594e3a2ad55c4cf78e7496f02deb2dc28b6d3e",
+      "s007_noglasses_eyes.tar": "53578b9d0d423af9bffaa282bfaeb9d6a29564c52c7bd57767b3f92d59190e78",
+      "s008_noglasses.tar.prefix": "ffdea2f1201d2914e41941c1c64565d7d967111f147ea834c1f108f935758006",
+      "s008_blink_labels.csv": "4e2c0444e79100e905af030a90129444b371be0ccfd6e881c96cb5fadf0e3517",
+      "s008_noglasses_eyes.tar": "31245c39e8ea447d97db27905bb336d03d6b83bb45c239bad312b6f91e6ca131",
+      "s009_noglasses.tar.prefix": "166c9f038f9e15c1cc63bad71e0555d5778e009d53de4fec673c9a79564b0eee",
+      "s009_blink_labels.csv": "cb4854c6b0fde2d8dd97e52589d0394d651278935603ecf39d24bb6540993821",
+      "s009_noglasses_eyes.tar": "97ef99fc02464ebe827131d3cb9da01f83ba5fed4ce9381b9307dce3aa8eebe4",
+      "s012_noglasses.tar.prefix": "8ed78ff80bda9ad5bacc5c70f771e39c061bae3e00649c4cd3b07f0a2c4e96d1",
+      "s012_blink_labels.csv": "bd5e29b087db5be916e6c50b222ddb00d05d15dccf8dd7d495ac286fa99385a3",
+      "s012_noglasses_eyes.tar": "960a7cd273a4d835b0d21584cf3f2ca7ade530a9aa6149efc82df6d97d08d5b1"
+    },
+    "prior_manifest_sha256": {
+      "data/mrl/prepared-80-20-final/manifest.csv": "c3753bff72a2c5fd340e34d09c963b5ed65fbcf789687a5f82366012aaefbeed",
+      "data/mrl/prepared-80-20/manifest.csv": "c3753bff72a2c5fd340e34d09c963b5ed65fbcf789687a5f82366012aaefbeed",
+      "data/mrl/prepared-clean/manifest.csv": "4590771afb6b7d569742461def36f4cfc3a4b57ebee295568b6bae30959b09de",
+      "data/rt-bene/pilot/manifest.csv": "1d5207355c4f8662cef8ebbaa78d17c4019f5a61a8f44bbe14940c9ee0687511",
+      "data/rt-bene/side-2026-11-09/manifest.csv": "516141163b3c7cb24b0986680eade3987fc34910a6243aaef24d40224c1ce995"
+    },
+    "annotated_and_selected_frame_counts": {
+      "s001": {
+        "annotated_frames": 8671,
+        "side_frames": 730
+      },
+      "s007": {
+        "annotated_frames": 1857,
+        "side_frames": 760
+      },
+      "s008": {
+        "annotated_frames": 6108,
+        "side_frames": 738
+      },
+      "s009": {
+        "annotated_frames": 4210,
+        "side_frames": 802
+      },
+      "s012": {
+        "annotated_frames": 935,
+        "side_frames": 186
+      }
+    },
+    "duplicate_rows_excluded": 0,
+    "prior_test_rows_excluded": 0,
+    "dataset_fingerprint": "bf8191251f4cf941d4ecc80197532ab7693b8167e986dea15fea3635fe416526",
+    "counts": [
+      {
+        "split": "test",
+        "view": "front",
+        "label": "closed",
+        "images": 15
+      },
+      {
+        "split": "test",
+        "view": "front",
+        "label": "open",
+        "images": 264
+      },
+      {
+        "split": "test",
+        "view": "left",
+        "label": "closed",
+        "images": 1
+      },
+      {
+        "split": "test",
+        "view": "left",
+        "label": "open",
+        "images": 88
+      },
+      {
+        "split": "test",
+        "view": "right",
+        "label": "closed",
+        "images": 8
+      },
+      {
+        "split": "test",
+        "view": "right",
+        "label": "open",
+        "images": 50
+      },
+      {
+        "split": "train",
+        "view": "front",
+        "label": "closed",
+        "images": 49
+      },
+      {
+        "split": "train",
+        "view": "front",
+        "label": "open",
+        "images": 1067
+      },
+      {
+        "split": "train",
+        "view": "left",
+        "label": "closed",
+        "images": 19
+      },
+      {
+        "split": "train",
+        "view": "left",
+        "label": "open",
+        "images": 337
+      },
+      {
+        "split": "train",
+        "view": "right",
+        "label": "closed",
+        "images": 5
+      },
+      {
+        "split": "train",
+        "view": "right",
+        "label": "open",
+        "images": 227
+      }
+    ],
+    "subject_counts": {
+      "test": 2,
+      "train": 3
+    }
+  },
+  "training_history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.3294057459898398,
+      "seconds": 1.44
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.3150101793763782,
+      "seconds": 0.435
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.2606460832654032,
+      "seconds": 0.515
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.179390804308681,
+      "seconds": 0.442
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.0703822838868333,
+      "seconds": 0.435
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.928192245568468,
+      "seconds": 0.434
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.826407897080614,
+      "seconds": 0.433
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.7445507681985416,
+      "seconds": 0.434
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.7483362051802622,
+      "seconds": 0.435
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.6927169670521374,
+      "seconds": 0.434
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.6927077738052243,
+      "seconds": 0.433
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.7103782594203949,
+      "seconds": 0.435
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.6668506508142176,
+      "seconds": 0.434
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.6327263178400031,
+      "seconds": 0.434
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.6200163924078427,
+      "seconds": 0.434
+    }
+  ],
+  "model": {
+    "input": "float32 NCHW [N,1,64,64], OpenCV grayscale / 255, INTER_AREA resize",
+    "output": "closed-eye logit; choose sigmoid threshold before test inference",
+    "architecture": {
+      "name": "EyeClassifier",
+      "pool_size": 4
+    },
+    "seed": 42,
+    "manifest_sha256": "4f75f62d2f532fa5ede9d4f387c3d433a1e8550cc11d03f06e47fdd16fa760b7",
+    "dataset_fingerprint": "bf8191251f4cf941d4ecc80197532ab7693b8167e986dea15fea3635fe416526",
+    "training_code_sha256": "620f6091b947fdc00a6ee2877f4c8df2a8b889af9ffae32cec7e2bebc696d8e9",
+    "model_code_sha256": "ddf3573d6dc84155c3029f1ccddd4d7667b63f0b776d92899b24b6fb257af4ad",
+    "device": "mps",
+    "torch_version": "2.15.0",
+    "batch_size": 64,
+    "threads": 4,
+    "requested_epochs": 15,
+    "learning_rate": 0.001,
+    "optimizer": "AdamW",
+    "loss": "BCEWithLogitsLoss",
+    "selection": "fixed final epoch; no test inference or test-driven selection during training",
+    "closed_class_weight": 22.34246575342466,
+    "split_policy": "80/20 train/test",
+    "started_at_utc": "2026-11-11T10:05:57.680221+00:00",
+    "completed_epochs": 15,
+    "status": "training complete; held-out and phone validation still required",
+    "partition_counts": {
+      "train": 1704,
+      "test": 426
+    },
+    "selected_epoch": 15,
+    "checkpoint_sha256": "dc0825b62ff968506ae64e88f5277236439f19f3e25541e4f4663d09a80c37fc",
+    "finished_at_utc": "2026-11-11T10:06:05.303426+00:00"
+  },
+  "evaluation": {
+    "evaluated_at_utc": "2026-11-11T10:06:06.758000+00:00",
+    "split": "test",
+    "subjects": 2,
+    "threshold": 0.5,
+    "checkpoint_sha256": "dc0825b62ff968506ae64e88f5277236439f19f3e25541e4f4663d09a80c37fc",
+    "dataset_fingerprint": "bf8191251f4cf941d4ecc80197532ab7693b8167e986dea15fea3635fe416526",
+    "selected_epoch": 15,
+    "selection": "fixed final epoch; no test inference or test-driven selection during training",
+    "torch_version": "2.15.0",
+    "device": "cpu",
+    "batch_size": 128,
+    "metrics": {
+      "samples": 426,
+      "tp": 1,
+      "fn": 23,
+      "fp": 198,
+      "tn": 204,
+      "accuracy": 0.4812206572769953,
+      "recall_closed": 0.041666666666666664,
+      "false_positive_rate": 0.4925373134328358,
+      "precision_closed": 0.005025125628140704,
+      "balanced_accuracy": 0.2745646766169154
+    },
+    "limitations": "Eye-crop frame classification only; head posture and gaze are annotations. No event-level or on-device alarm validation."
+  },
+  "metrics_by_view": [
+    {
+      "view": "front",
+      "samples": 279,
+      "tp": 1,
+      "fn": 14,
+      "fp": 145,
+      "tn": 119,
+      "accuracy": 0.4301075269,
+      "recall_closed": 0.0666666667,
+      "false_positive_rate": 0.5492424242,
+      "precision_closed": 0.0068493151,
+      "balanced_accuracy": 0.2587121212
+    },
+    {
+      "view": "left",
+      "samples": 89,
+      "tp": 0,
+      "fn": 1,
+      "fp": 50,
+      "tn": 38,
+      "accuracy": 0.4269662921,
+      "recall_closed": 0.0,
+      "false_positive_rate": 0.5681818182,
+      "precision_closed": 0.0,
+      "balanced_accuracy": 0.2159090909
+    },
+    {
+      "view": "right",
+      "samples": 58,
+      "tp": 0,
+      "fn": 8,
+      "fp": 3,
+      "tn": 47,
+      "accuracy": 0.8103448276,
+      "recall_closed": 0.0,
+      "false_positive_rate": 0.06,
+      "precision_closed": 0.0,
+      "balanced_accuracy": 0.47
+    }
+  ]
+}

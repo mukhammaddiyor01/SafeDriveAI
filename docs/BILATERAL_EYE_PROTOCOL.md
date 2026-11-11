@@ -16,3 +16,20 @@ alohida hisobot beradi. Oldingi test natijasi yangi modelni tanlashga ishlatilma
 - Oxirgi checkpoint 0.50 chegarada bir marta test qilinadi.
 - Bu ko‘z kesmasining holatini baholaydi. Android Face Landmarker tayyor
   Google modeli bo‘lib, yangi PyTorch checkpointidan alohida tekshiriladi.
+
+## Yakuniy natija
+
+1 704 train tasviri uchta subyektdan va 426 yangi test tasviri ikkita
+subyektdan ajratildi. 15-epoch checkpoint bir marta 0.50 chegarada baholandi.
+
+| Ko‘rinish | Test tasviri | Yopiq ko‘zni topdi | Ochiq ko‘zni xato yopiq dedi |
+|---|---:|---:|---:|
+| Chap | 89 | 0/1 | 50/88 |
+| Old | 279 | 1/15 | 145/264 |
+| O‘ng | 58 | 0/8 | 3/50 |
+
+Umumiy accuracy 48,12%, yopiq ko‘z recall 4,17%. Bu checkpoint ko‘z
+yumilishini ishonchli topmadi. U mobil inferensga ulanmaydi.
+Test natijasiga qarab model, epoch yoki threshold qayta tanlanmadi.
+Keyingi modelga yangi mustaqil test subyektlari kerak.
+[Agregat hisobot](experiments/bilateral-eye-2026-11-11.json).
