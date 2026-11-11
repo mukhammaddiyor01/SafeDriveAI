@@ -216,3 +216,18 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   yumilish, noaniq kadrdan keyin timer va frontal bir ko‘z yumilishini qamradi.
 - Flutter analizi toza, 4 Flutter testi o‘tdi.
 - Sinovlar kamera kadridagi kontur sifati yoki Galaxy A51 aniqligini o‘lchamaydi.
+
+## Ikki yon burchak va alarm (SD-03, SD-05, SD-06) — 2026-11-11
+
+- 37 Python testi va 6 subtest, 15 Kotlin testi va 4 Flutter testi o‘tdi.
+- ARM64 release APK yig‘ildi va USB orqali Galaxy A51’ga o‘rnatildi.
+- Vaqtinchalik instrumental sinov Galaxy A51’da foydalanuvchi yuborgan
+  ikkita kamera sohasini lokal qayta ishladi. ML Kit yaw 34,14° va -32,02°
+  o‘lchadi. MediaPipe ko‘rinadigan ko‘zni ikkala rasmda ham ochiq deb topdi.
+  Screenshot preview’idan olingan burchak haqiqiy kadr telemetry’siga teng emas.
+- Sinov rasmlari va vaqtinchalik test harness Git’ga qo‘shilmadi.
+- Bu statik rasm sinovi. Jonli kamera yopiq ko‘zni topishi, barcha burchaklar,
+  alarmning real balandligi va mashina Bluetooth’i bilan eshitilishi hali
+  foydalanuvchi bilan tekshirilishi kerak.
+- [Audio oqimi](ALARM_AUDIO.md), [mobil model](FACE_LANDMARKER.md),
+  [yangi 80/20 trening va test](BILATERAL_EYE_PROTOCOL.md).
