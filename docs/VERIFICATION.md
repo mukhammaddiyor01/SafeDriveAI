@@ -278,3 +278,21 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   moslash uchun lokal gorizontal akslantirildi.
 - Rasmlar va vaqtinchalik fixture Git’ga qo‘shilmadi. Bu kadr sinovi va
   domain timer sinovi. Jonli kameradagi alarm natijasi foydalanuvchidan kutilmoqda.
+
+## 2026-11-11 — face ROI, score, scrollsiz dashboard
+
+- Flutter analyzer toza; 6 test o‘tdi. Score 0.82→82%, 0.48→48% frontal va
+  side holatlarda; null/NaN/range tashqarisi `—`. Gemini kamera ustida,
+  Scrollable yo‘q. 320×640/1.3 matn va 640×360/1.3 matnda nazoratlar ko‘rinadi.
+- 18 Kotlin testi o‘tdi. ±45° da closed qarori + 48% display score bo‘lsa ham
+  1 500 ms da drowsy/alarm chiqadi; yolg‘iz score ko‘zni known qilmaydi.
+- 38 Python testi + 6 subtest. Yangi synthetic leakage testida test label’larini
+  almashtirish o‘rgatilgan koeffitsiyentlarni o‘zgartirmadi. Bu aniqlik dalili emas.
+- Python MediaPipe 1.2.2 bilan 3 shaxsiy development fixture original va 20%
+  paddingli ROI’da 6/6 kutilgan qarorni berdi. Rasmlar Git’ga qo‘shilmadi.
+- Release APK yig‘ildi. ADB qurilma yo‘qligi sabab install va yangi release
+  instrumentation bajarilmadi. Eski telefon natijalari bu build uchun ko‘chirilmaydi.
+- [Yangi train/test hisobot](experiments/eye-calibration-2026-11-11.json):
+  3 552/888, subjectlar disjoint, tarix hash auditi, fixed 400 epoch, threshold .5.
+  TP35/FN4/FP83/TN766. Chap TP3/FN1, o‘ng closed=0. Mobil integratsiya rad etildi;
+  test natijasidan threshold tuning qilinmadi. Kamera-relative ±45° tasdiqlanmagan.

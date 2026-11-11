@@ -95,3 +95,12 @@ suhbat ID’si ishlatiladi.
 ComponentRegistrar implementatsiyalarining public no-arg konstruktorlarini saqlaydi.
 Emulyatordagi release sinovida bu qoidasiz FaceDetection.getClient ishlamasligi
 aniqlandi. [R8 / ML Kit issue](https://issuetracker.google.com/issues/574078150).
+
+## Kompakt dashboard va ko‘z score’i — 2026-11-11
+
+DriveScreen bounded LayoutBuilder/Column orqali portrait va landscape’da
+joylashadi. Gemini strip header ostida, camera ustida; Start/Stop pastda doim
+ko‘rinadi. Yon ko‘z uzluksiz display score’i Observation orqali keladi, View uni
+faqat formatlaydi. DrowsinessEngine display score’idan yon closed qarorini
+hisoblamaydi; SideEye blink/gap dalili qarorni beradi. DenseEyeDetector yuz ROI
+koordinatalarini original kadrga qaytaradi va bitmap egaligini boshqaradi.

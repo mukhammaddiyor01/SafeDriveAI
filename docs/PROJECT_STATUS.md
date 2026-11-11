@@ -144,3 +144,20 @@ blink o‘rta bo‘lgan holatni qabul qilish qo‘shildi. Galaxy A51’dagi ayna
 modeli foydalanuvchining ikki yopiq kadrini yopiq va oldingi ochiq kadrni
 ochiq deb topdi. 1 500 ms davomli yopilishning domain alarm testi o‘tdi.
 Jonli kamera natijasi hali foydalanuvchi bilan tekshirilmoqda.
+
+## Yon ko‘z va kompakt ekran — 2026-11-11, yakuniy offline tekshiruv
+
+- Gemini paneli kamera ustida; dashboard scrollsiz. Tor 320×640 va landscape
+  640×360, matn masshtabi 1.3 holatlarida Stop va score ko‘rinadi.
+- Yon ko‘z modeli yuzning paddingli crop’idan ishlaydi; caller bitmap lifecycle
+  tuzatildi. Foiz frontal/yon holatlarda saqlanadi (`Eye-open score`). Yon score
+  1−blink; alarm esa alohida blink/gap qarori va 1 500 ms davomiyligiga tayanadi.
+- 38 Python test + 6 subtest, 18 Kotlin test, 6 Flutter test o‘tdi. Release APK
+  yig‘ildi. 3 regression kadrining original/crop ko‘rinishlari Python modelida 6/6
+  mos. Bu Python rasm tekshiruvi yangi Android runtime validatsiyasi emas.
+- Yangi PyTorch kalibrlash 3 552 train / 888 mustaqil test bilan yakunlandi.
+  Yopiq recall 89.74%, precision 29.66%; chap yon 3/4, o‘ng yon closed namunasi
+  yo‘q. [Integratsiya mezonidan o‘tmadi](EYE_CALIBRATION_PROTOCOL.md), APK’ga ulanmagan.
+- Foydalanuvchi hozir telefonni jonli sinay olmaydi. ADB qurilma topmadi;
+  yangilangan APK o‘rnatilmadi. Ikkala tomonda ±45° jonli yopilish aniqlanishi
+  va face ROI native runtime testi hali ochiq. Ularni tugallangan deb ko‘rsatmang.

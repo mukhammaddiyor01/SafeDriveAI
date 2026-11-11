@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:safedrive_ai/controllers/monitor_controller.dart';
 import 'package:safedrive_ai/main.dart';
 import 'package:safedrive_ai/models/monitor_state.dart';
+import 'package:safedrive_ai/views/camera_panel.dart';
 
 import 'monitor_controller_test.dart' show FakeMonitor;
 
@@ -91,9 +92,10 @@ void main() {
         status: 'monitoring',
         message: 'Monitoring active',
         active: true,
-        eyesOpen: 1,
+        eyesOpen: 0.82,
         sideEye: true,
         yaw: -44,
+        assistant: 'Gemini Live active',
       ),
     );
     await tester.pumpAndSettle();
@@ -101,9 +103,24 @@ void main() {
     expect(find.text('Stop monitoring').hitTestable(), findsOneWidget);
     expect(tester.takeException(), isNull);
 
-    await tester.scrollUntilVisible(find.text('Open'), 100);
+    expect(find.byType(Scrollable), findsNothing);
+    expect(find.text('82%').hitTestable(), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.byKey(const ValueKey('gemini-panel'))).dy,
+      lessThan(tester.getTopLeft(find.byType(CameraPanel)).dy),
+    );
+    if (const bool.fromEnvironment('SAVE_SCREENSHOT')) {
+      final render =
+          boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+      await tester.runAsync(() async {
+        final image = await render.toImage(pixelRatio: 2);
+        final bytes = (await image.toByteData(format: ui.ImageByteFormat.png))!;
+        await File('build/review/active-dashboard.png')
+            .writeAsBytes(bytes.buffer.asUint8List());
+      });
+    }
     expect(find.text('-44°'), findsOneWidget);
-    expect(find.text('Open'), findsOneWidget);
+    expect(find.text('82%'), findsOneWidget);
     expect(find.text('Stop monitoring').hitTestable(), findsOneWidget);
     expect(tester.takeException(), isNull);
 
@@ -117,7 +134,24 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('68°'), findsOneWidget);
-    expect(find.text('—'), findsOneWidget);
+    expect(find.text('—').hitTestable(), findsOneWidget);
+    expect(find.byType(Scrollable), findsNothing);
+    expect(tester.takeException(), isNull);
+
+    tester.view.physicalSize = const Size(640, 360);
+    native.events.add(
+      const MonitorState(
+        status: 'limited',
+        message: 'Side angle limits eye tracking. Adjust the phone mount while parked.',
+        active: true,
+        yaw: 43,
+        assistant: 'Gemini Live needs microphone permission',
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(Scrollable), findsNothing);
+    expect(find.text('Stop monitoring').hitTestable(), findsOneWidget);
+    expect(find.text('—').hitTestable(), findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await tester.tap(find.text('Stop monitoring'));

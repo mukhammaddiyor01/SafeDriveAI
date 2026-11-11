@@ -20,52 +20,72 @@ class HeadAngleIndicator extends StatelessWidget {
       label: 'Head angle relative to camera',
       value: angle == null ? 'Unavailable' : '${angle.round()} degrees',
       child: ExcludeSemantics(
-        child: Column(
+        child: Row(
           children: [
-            Row(
-              children: [
-                const Flexible(child: Text('Head angle')),
-                const SizedBox(width: 10),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: angle == null ? DriveColors.muted : color,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
+            SizedBox(
+              width: 84,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Head angle', style: TextStyle(fontSize: 11)),
+                  Text(
                     angle == null ? '—' : '${angle.round()}°',
-                    style: const TextStyle(
-                      fontSize: 17,
+                    style: TextStyle(
+                      fontSize: 23,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: angle == null ? DriveColors.muted : color,
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 20,
-              width: double.infinity,
-              child: CustomPaint(
-                painter: _AngleScale(
-                  position: angle == null
-                      ? null
-                      : ((angle.clamp(-60, 60) + 60) / 120),
-                  color: color,
-                ),
+                ],
               ),
             ),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: Text('Left')),
-                Expanded(child: Text('Forward', textAlign: TextAlign.center)),
-                Expanded(child: Text('Right', textAlign: TextAlign.end)),
-              ],
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: 20,
+                    width: double.infinity,
+                    child: CustomPaint(
+                      painter: _AngleScale(
+                        position: angle == null
+                            ? null
+                            : ((angle.clamp(-60, 60) + 60) / 120),
+                        color: color,
+                      ),
+                    ),
+                  ),
+                  const Row(
+                    children: [
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text('Left', style: TextStyle(fontSize: 11)),
+                        ),
+                      ),
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'Forward',
+                            style: TextStyle(fontSize: 11),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
+                          child: Text('Right', style: TextStyle(fontSize: 11)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
