@@ -33,7 +33,7 @@ class DrowsinessEngineTest {
     }
 
     @Test fun visibleEyeAt38DegreesKeepsMonitoringOnBothSides() {
-        for (yaw in listOf(-38f, 38f)) {
+        for (yaw in listOf(-60f, -44f, -38f, 38f, 44f, 60f)) {
             val engine = DrowsinessEngine()
             for (t in 0L..3500L step 100) {
                 val state = engine.update(Observation(t, 1, yaw = yaw, sideEyeOpen = true))

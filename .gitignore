@@ -24,3 +24,5 @@ mobile/android/key.properties
 .idea/
 .tools/
 releases/
+
+*.task

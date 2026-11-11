@@ -2,26 +2,24 @@ package uz.safedrive.safedrive_ai.model
 
 import org.junit.Assert.*
 import org.junit.Test
-import kotlin.math.cos
-import kotlin.math.sin
 
 class SideEyeTest {
-    private fun contour(width: Float, height: Float, rotation: Double = 0.0) =
-        List(16) { index ->
-            val theta = index * Math.PI / 8
-            val x = width / 2 * cos(theta)
-            val y = height / 2 * sin(theta)
-            SideEye.Point(
-                (x * cos(rotation) - y * sin(rotation)).toFloat(),
-                (x * sin(rotation) + y * cos(rotation)).toFloat(),
-            )
-        }
+    @Test fun rejectsContradictoryAndMissingEyeEvidence() {
+        assertEquals(true, SideEye.classify(0.1f, 0.22f, 24f))
+        assertEquals(false, SideEye.classify(0.85f, 0.08f, 24f))
+        assertNull(SideEye.classify(0.85f, 0.3f, 24f))
+        assertNull(SideEye.classify(0.1f, 0.05f, 24f))
+        assertNull(SideEye.classify(Float.NaN, 0.22f, 24f))
+        assertNull(SideEye.classify(0.1f, 0.22f, 8f))
+    }
 
-    @Test fun distinguishesOpenClosedAndAmbiguousContours() {
-        assertEquals(true, SideEye.isOpen(contour(24f, 6f, 0.3)))
-        assertEquals(false, SideEye.isOpen(contour(24f, 2f)))
-        assertNull(SideEye.isOpen(contour(24f, 3.6f)))
-        assertNull(SideEye.isOpen(contour(8f, 2f)))
-        assertNull(SideEye.isOpen(emptyList()))
+    @Test fun supportsBothSidesAndRejectsExtremeOrInvalidPoses() {
+        for (yaw in listOf(-60f, -44f, -30f, 30f, 44f, 60f)) {
+            assertTrue(SideEye.supports(yaw, 0f, 0f))
+        }
+        assertFalse(SideEye.supports(61f, 0f, 0f))
+        assertFalse(SideEye.supports(-61f, 0f, 0f))
+        assertFalse(SideEye.supports(44f, 30f, 0f))
+        assertFalse(SideEye.supports(Float.NaN, 0f, 0f))
     }
 }

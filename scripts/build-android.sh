@@ -2,6 +2,7 @@
 set -euo pipefail
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 source "$project_root/scripts/env.sh"
+"$project_root/scripts/prepare-face-model.sh"
 cd "$project_root/mobile"
 flutter pub get
 flutter analyze

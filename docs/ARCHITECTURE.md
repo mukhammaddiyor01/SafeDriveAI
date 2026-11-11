@@ -29,12 +29,13 @@ chegaralanadi. Bu Galaxy A51’da o‘lchangan FPS emas; qurilmada profil qilish
 - Bitta kuzatilayotgan yuz kerak. Frontal rejimda yaw ±18°, pitch ±30° va
   roll ±25° ichida ML Kit’ning ikkala ko‘z klassifikatsiyasi ishlatiladi.
   Ikkala qiymat <0.35 bo‘lsa yopiq deb olinadi.
-- |Yaw| 18° dan katta va 45° gacha, pitch va roll ±25° ichida bo‘lsa,
-  alohida ML Kit kontur tahlili ko‘rinadigan ko‘zni tekshiradi. Yuzlar mos
-  tushishi, ko‘z belgisi va 16 nuqtali kontur mavjud bo‘lishi kerak.
-- Qovoq oralig‘ining ko‘z kengligiga nisbati ≤0.11 bo‘lsa yopiq, 0.18–0.65
-  bo‘lsa ochiq. Oraliq, kichik va yetishmayotgan konturlar noma’lum.
-  Bu tajriba chegaralari, Galaxy A51 kamerasi uchun validatsiya talab qiladi.
+- |Yaw| 18° dan katta va 60° gacha, pitch va roll ±25° ichida bo‘lsa,
+  MediaPipe Face Landmarker CPU modeli ko‘rinadigan ko‘zni tekshiradi.
+  Bitta kuzatilayotgan yuz, yuz ichidagi burun va ko‘z nuqtalari talab qilinadi.
+- Yaqin ko‘z qovog‘i geometriyasi va eyeBlink klassifikatori kelishganda
+  ochiq/yopiq holati beriladi. Ko‘z kamida 10 piksel kenglikda bo‘lishi kerak.
+  Blink ≥0.65 va qovoq nisbati ≤0.16 yopiq, blink ≤0.25 va nisbat 0.12–0.65
+  ochiq hisoblanadi. Bu chegaralar tajriba uchun, kamera validatsiyasi zarur.
 - 700 ms da UI ogohlantiradi, 1500 ms da signal beradi.
 - PERCLOSga o‘xshash yopiq ko‘z ulushi 30 s oynada, kuzatilgan vaqt bilan hisoblanadi.
   Ko‘zlar 3 s davomida baholanmasa, oldingi ulush tarixi tozalanadi.
