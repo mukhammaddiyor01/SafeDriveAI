@@ -32,4 +32,4 @@ class RecoveryTrigger {
 }
 
 val MonitorState.recoveryEvidence: Boolean
-    get() = active && status == "monitoring" && !alarm && (eyesOpen ?: 0.0) >= 0.5
+    get() = active && status == "monitoring" && !alarm && (eyesOpen ?: 0.0) > SideEye.CLOSED_SCORE_THRESHOLD

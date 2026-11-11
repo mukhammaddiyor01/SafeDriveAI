@@ -17,6 +17,17 @@ class SideEyeTest {
         assertNull(SideEye.classify(0.1f, 0.22f, 8f))
     }
 
+    @Test fun scoreAndDecisionAgreeForAllUsableEvidence() {
+        for (b in 0..100) for (g in 0..65) {
+            val blink = b / 100f
+            val gap = g / 100f
+            val decision = SideEye.classify(blink, gap, 24f)
+            val score = SideEye.openness(blink, gap, 24f)
+            if (decision == null) assertNull(score)
+            else assertEquals(decision, score!! > SideEye.CLOSED_SCORE_THRESHOLD)
+        }
+    }
+
     @Test fun supportsBothSidesAndRejectsExtremeOrInvalidPoses() {
         for (yaw in listOf(-60f, -44f, -30f, 30f, 44f, 60f)) {
             assertTrue(SideEye.supports(yaw, 0f, 0f))

@@ -21,11 +21,26 @@ class DrowsinessEngineTest {
         }
     }
 
-    @Test fun missingSideEyeDecisionCannotBeReplacedByDisplayScore() {
+    @Test fun sideEyeScoreProvidesTheDecisionWithoutLegacyBoolean() {
         val state = DrowsinessEngine().update(Observation(0, 1, yaw = 45f,
             sideEyeOpenness = 0.95f))
-        assertNull(state.eyesOpen)
-        assertEquals("limited", state.status)
+        assertEquals(0.95, state.eyesOpen!!, 0.001)
+        assertEquals("monitoring", state.status)
+    }
+
+    @Test fun displayedSideScoreControlsClosureOnBothSides() {
+        for (yaw in listOf(-45f, 45f)) {
+            for (score in listOf(0.2f, 0.5f, 0.8f)) {
+                val engine = DrowsinessEngine()
+                var state = MonitorState()
+                for (t in 0L..1500L step 100) {
+                    state = engine.update(Observation(t, 1, yaw = yaw,
+                        sideEyeOpen = score <= 0.5f, sideEyeOpenness = score))
+                }
+                assertEquals(score <= 0.5f, state.alarm)
+                assertEquals(score.toDouble(), state.eyesOpen!!, 0.001)
+            }
+        }
     }
 
     @Test fun normalBlinkDoesNotAlarm() {

@@ -104,3 +104,15 @@ ko‘rinadi. Yon ko‘z uzluksiz display score’i Observation orqali keladi, Vi
 faqat formatlaydi. DrowsinessEngine display score’idan yon closed qarorini
 hisoblamaydi; SideEye blink/gap dalili qarorni beradi. DenseEyeDetector yuz ROI
 koordinatalarini original kadrga qaytaradi va bitmap egaligini boshqaradi.
+
+
+## Unified side-eye score — 2026-11-11, user-requested correction
+
+This supersedes the independent side display score above. SideEye normalizes
+its existing blink/gap evidence so the closed boundary is score <=0.50.
+DenseEyeDetector publishes that score and derives its legacy Boolean from the
+same boundary. DrowsinessEngine uses the score directly, including the 1 500 ms
+closure timer and PERCLOS. Recovery requires score >0.50. Unknown quality is
+still null. The fallback score is normalized evidence, not a calibrated
+probability or an anatomical percentage. A separately trained calibration may
+replace it only after the frozen bilateral acceptance protocol passes.

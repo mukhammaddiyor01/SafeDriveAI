@@ -160,7 +160,7 @@ class _DriveScreenState extends State<DriveScreen> {
                         children: [
                           Expanded(
                             child: Tooltip(
-                              message: 'Estimated eye-open score, not a physical eyelid measurement.',
+                              message: 'Estimated eye-open score. At side angles, a score of 50% or lower for 1.5 seconds triggers the alarm.',
                               child: _ReadingTile(
                                 icon: Icons.visibility_outlined,
                                 label: 'Eye score',

@@ -26,10 +26,10 @@ class DrowsinessEngine {
     private fun eyeOpenness(o: Observation): Float? {
         if (o.faceCount != 1 || !o.yaw.isFinite() || !o.pitch.isFinite() || !o.roll.isFinite()) return null
         if (SideEye.supports(o.yaw, o.pitch, o.roll)) {
-            return o.sideEyeOpen?.let { open ->
-                o.sideEyeOpenness?.takeIf { it.isFinite() && it in 0f..1f }
-                    ?: if (open) 1f else 0f
+            if (o.sideEyeOpenness != null) {
+                return o.sideEyeOpenness.takeIf { it.isFinite() && it in 0f..1f }
             }
+            return o.sideEyeOpen?.let { if (it) 1f else 0f }
         }
         if (abs(o.yaw) > 18 || abs(o.pitch) > 30 || abs(o.roll) > 25) return null
         val left = o.leftEyeOpen ?: return null
@@ -39,7 +39,7 @@ class DrowsinessEngine {
     }
 
     private fun eyesClosed(o: Observation): Boolean =
-        if (abs(o.yaw) > 18f) o.sideEyeOpen == false
+        if (abs(o.yaw) > 18f) (eyeOpenness(o) ?: 1f) <= SideEye.CLOSED_SCORE_THRESHOLD
         else maxOf(o.leftEyeOpen ?: 1f, o.rightEyeOpen ?: 1f) < 0.35f
 
     fun update(o: Observation): MonitorState {

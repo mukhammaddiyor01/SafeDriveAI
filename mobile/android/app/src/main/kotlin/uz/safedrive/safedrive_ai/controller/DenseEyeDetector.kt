@@ -62,9 +62,8 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
             val ratio = (distance(1, 5) + distance(2, 4)) / (2f * width)
             val category = if (left) "eyeBlinkLeft" else "eyeBlinkRight"
             val blink = scores.singleOrNull { it.categoryName() == category }?.score() ?: return null
-            val open = SideEye.classify(blink, ratio, width)
-            // Continuous pretrained score for display; the closure decision stays independent.
-            openness = if (open != null) 1f - blink else null
+            openness = SideEye.openness(blink, ratio, width)
+            val open = openness?.let { it > SideEye.CLOSED_SCORE_THRESHOLD }
             diagnostic = "yaw=$yaw blink=$blink gap=$ratio width=$width open=$open"
             return open
         } finally {
