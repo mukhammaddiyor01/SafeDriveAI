@@ -18,6 +18,9 @@ android {
         applicationId = "uz.safedrive.safedrive_ai"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        if (providers.gradleProperty("eyeReleaseProbe").isPresent) {
+            testInstrumentationRunner = "uz.safedrive.safedrive_ai.controller.ReleaseEyeProbe"
+        }
         minSdk = 26
         targetSdk = flutter.targetSdkVersion
         // Uses the version code from pubspec.yaml. When using split APKs, 1000 * ABI_VERSION

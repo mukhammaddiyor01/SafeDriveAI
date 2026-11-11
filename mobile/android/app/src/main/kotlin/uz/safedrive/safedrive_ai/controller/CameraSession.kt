@@ -46,6 +46,7 @@ class CameraSession(
     private var surface: Preview.SurfaceProvider? = null
     @Volatile private var closed = false
     private var lastSubmitted = 0L
+    private var lastEyeFailure = -10_000L
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
     fun start() {
@@ -87,7 +88,12 @@ class CameraSession(
                                             Matrix().apply { postRotate(rotation.toFloat()) }, false)
                                         observation.copy(sideEyeOpen =
                                             denseEye.value.observe(rotated, face.boundingBox, observation.yaw))
-                                    } catch (_: Exception) {
+                                    } catch (error: Exception) {
+                                        val failureTime = SystemClock.elapsedRealtime()
+                                        if (failureTime - lastEyeFailure >= 10_000) {
+                                            lastEyeFailure = failureTime
+                                            android.util.Log.w("SafeDriveAI", "Side-eye analysis unavailable", error)
+                                        }
                                         observation
                                     } finally {
                                         if (rotated !== frame) rotated?.recycle()

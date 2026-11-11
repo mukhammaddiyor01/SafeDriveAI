@@ -21,3 +21,24 @@ bitta yuz topdi va ko‘rinadigan ko‘zni ochiq deb baholadi. Bu o‘lchov
 Galaxy A51 kamerasi yoki ko‘z yumilishi uchun to‘liq validatsiya emas.
 ±60° oralig‘i qo‘llab-quvvatlanadigan tekshiruv doirasi. Ko‘rinmaydigan yoki
 noaniq ko‘z `limited` bo‘lib qoladi.
+
+## Release tekshiruvi
+
+Debug builddagi rasm sinovi release APK uchun yetarli dalil bo‘lmagan.
+R8 protobuf maydonlari, Flogger chaqiruv izlari va native Graph callbacklarini
+buzgan. `proguard-rules.pro` shu runtime qismlarini saqlaydi.
+Kamera modeli xatolari endi 10 soniyada ko‘pi bilan bir marta logga yoziladi.
+Logda kamera tasviri saqlanmaydi.
+
+Release APK yig‘ilib va USB orqali o‘rnatilgach, quyidagi buyruq aynan
+o‘rnatilgan APK xeshini tekshirib, uning ichidagi modelga lokal rasm beradi.
+Bu tester faqat o‘z developer kaliti bilan imzolangan APK va test harnessiga
+ega Android USB qurilmasi uchun. Beriladigan rasm ochiq ko‘zli yuz kesmasi
+bo‘lishi kerak, test yaw -43° yo‘nalishini chaqiradi.
+
+```bash
+./scripts/check-release-eye.sh /absolute/path/to/open-eye-face-crop.jpg
+```
+
+[MediaPipe release muammosi](https://github.com/google-ai-edge/mediapipe/issues/5141),
+[Flogger release muammosi](https://github.com/google-ai-edge/mediapipe/issues/6138).

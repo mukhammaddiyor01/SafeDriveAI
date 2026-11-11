@@ -127,3 +127,12 @@ muvaffaqiyatli o‘tganini bildirdi. [Tekshiruv natijalari](VERIFICATION.md)
 - Foydalanuvchi ko‘rib chiqqan dizayn Flutter ekraniga moslandi. Kamera,
   chap/old/o‘ng burchak shkalasi va ko‘z/alarm qatorlari qo‘shildi.
   Start/Stop tugmasi pastda doim ko‘rinadi, Bluetooth matni shartli ulanishni bildiradi.
+
+## Release model tuzatishi — 2026-11-11
+
+MediaPipe’ning debug rasm sinovi release APK uchun umumlashtirilgan edi.
+Release model ishga tushishi R8/protobuf va Flogger xatolari bilan buzilgani
+Galaxy A51’da qayta olindi. Keep qoidalari tuzatildi. Aynan o‘rnatilgan
+release APK modelida yangi yuborilgan rasm ochiq ko‘z deb topildi.
+Takrorlanadigan USB regressiya skripti saqlandi. Jonli kamera va har xil
+burchaklarda ko‘z yumilishi bo‘yicha video validatsiyasi hali alohida kerak.

@@ -242,3 +242,21 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   marker ko‘rsatilmaydi, diapazondan tashqarida son asl qiymatda qoladi.
 - Bluetooth qatori ulanishni tasdiqlovchi real telemetry emas. Matn
   avtomobil audiosi ulanganida ishlashini bildiradi.
+
+## Release yon ko‘z modeli regressiyasi (SD-05) — 2026-11-11
+
+- O‘rnatilgan optimallashtirilgan APK ichidagi model refleksiya orqali
+  chaqirilib, xato qayta olindi. MediaPipe protobuf-lite `platform_`
+  maydoni R8 tomonidan chiqarib tashlangan edi.
+- GeneratedMessageLite saqlangach, Flogger’da `no caller found on the stack`
+  xatosi qayta olindi. Logger chaqiruv izlari, JNI framework callbacklari
+  va face-result konvertorlari uchun scope qilingan keep qoidalari qo‘shildi.
+- Keyingi release APK USB orqali Galaxy A51’ga o‘rnatildi. Telefonda uning
+  SHA-256 qiymati lokal release APK bilan mosligi tekshirildi.
+- Aynan shu release ichidagi model foydalanuvchining yangi rasmidagi
+  ko‘zni ochiq deb qaytardi: `eye=true`, instrumentatsiya kodi `-1`.
+- `scripts/check-release-eye.sh` mahalliy ochiq-ko‘zli yuz kesmasi bilan
+  shu regressiyani qayta ishlatadi. AndroidTest instrumenti rasmlarni
+  vaqtinchalik asset sifatida oladi va skript yakunida olib tashlaydi.
+- Flutter analizida muammo yo‘q, 5 test o‘tdi. Jonli kamera va turli
+  burchaklarda ko‘z yumilishi haqiqiy video bilan yana tekshirilishi kerak.
