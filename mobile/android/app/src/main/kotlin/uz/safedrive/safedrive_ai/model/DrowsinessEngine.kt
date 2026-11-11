@@ -17,7 +17,7 @@ class DrowsinessEngine {
     private var perclosRecovered = false
     private val repeatedClosure = RepeatedClosureAlarm()
 
-    fun reset() {
+    fun reset(clearEscalation: Boolean = true) {
         history.clear()
         previous = null
         closedSince = null
@@ -26,7 +26,7 @@ class DrowsinessEngine {
         identity = null
         openSince = null
         perclosRecovered = false
-        repeatedClosure.reset()
+        if (clearEscalation) repeatedClosure.reset()
     }
 
     private fun eyeOpenness(o: Observation): Float? {

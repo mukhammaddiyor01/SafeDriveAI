@@ -71,7 +71,7 @@ class MonitorService : LifecycleService() {
             }
             camera = CameraSession(this, this, { observation ->
                 if (SystemClock.elapsedRealtime() - observation.timeMs > 700) {
-                    engine.reset()
+                    engine.reset(clearEscalation = false)
                     update(MonitorState("limited", "Camera analysis slowed down. Check your phone.", active = true, alarm = true))
                 } else {
                     lastFrame = SystemClock.elapsedRealtime()

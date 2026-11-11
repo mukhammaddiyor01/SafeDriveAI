@@ -93,6 +93,23 @@ class DrowsinessEngineTest {
         }
     }
 
+    @Test fun analysisResetPreservesHeldAlarmWhileSessionResetClearsIt() {
+        val engine = DrowsinessEngine()
+        for (time in 0L..3000L step 100) {
+            engine.update(Observation(time, 1, yaw = 45f, sideEyeOpenness = 0.1f))
+        }
+        for (time in 3100L..4600L step 100) {
+            engine.update(Observation(time, 1, yaw = 45f, sideEyeOpenness = 1f))
+        }
+        for (time in 4700L..7700L step 100) {
+            engine.update(Observation(time, 1, yaw = 45f, sideEyeOpenness = 0.1f))
+        }
+        engine.reset(clearEscalation = false)
+        assertTrue(engine.update(Observation(8000, 1, yaw = 45f, sideEyeOpenness = 1f)).alarm)
+        engine.reset()
+        assertFalse(engine.update(Observation(8100, 1, yaw = 45f, sideEyeOpenness = 1f)).alarm)
+    }
+
     @Test fun normalBlinkDoesNotAlarm() {
         val engine = DrowsinessEngine()
         engine.update(sample(0))
