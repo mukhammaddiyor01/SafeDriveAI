@@ -1,8 +1,6 @@
 package uz.safedrive.safedrive_ai.controller
 
 import android.content.Context
-import android.media.AudioManager
-import android.media.ToneGenerator
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -18,7 +16,7 @@ class AlarmController(
     onSource: (String) -> Unit,
 ) {
     private val handler = Handler(Looper.getMainLooper())
-    private val tone = ToneGenerator(AudioManager.STREAM_ALARM, 100)
+    private val audio = AlarmAudio(context)
     private val vibrator = context.getSystemService(Vibrator::class.java)
     private val voiceCoach = lazy { VoiceCoach(context, allowVoiceReply, onSource) }
     private val voice by voiceCoach
@@ -31,7 +29,7 @@ class AlarmController(
     private val pulse = object : Runnable {
         override fun run() {
             if (!ringing || closed) return
-            tone.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 350)
+            audio.pulse()
             vibrator?.vibrate(VibrationEffect.createOneShot(250, VibrationEffect.DEFAULT_AMPLITUDE))
             handler.postDelayed(this, if (urgent) 900 else 4000)
         }
@@ -57,7 +55,7 @@ class AlarmController(
         } else if (!state.alarm && ringing) {
             ringing = false
             handler.removeCallbacks(pulse)
-            tone.stopTone()
+            audio.stop()
             vibrator?.cancel()
         }
         val now = SystemClock.elapsedRealtime()
@@ -82,8 +80,7 @@ class AlarmController(
         closed = true
         ringing = false
         handler.removeCallbacksAndMessages(null)
-        tone.stopTone()
-        tone.release()
+        audio.close()
         vibrator?.cancel()
         if (voiceCoach.isInitialized()) voice.close()
     }
