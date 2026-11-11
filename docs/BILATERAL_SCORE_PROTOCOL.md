@@ -32,3 +32,17 @@ Actual phone camera angle acceptance is a separate live test.
 
 Source annotations: https://zenodo.org/records/3685316
 Face crops: https://zenodo.org/records/2529036
+
+
+## Frozen run result
+
+7 584 train / 1 896 previously unused test images (exact 80/20), 400 epochs.
+Closed recall 602/605 = 99.50%; open false positives 264/1291 = 20.45%.
+Left-side false positives were 56.43%; the 35–45° right group had no samples.
+The checkpoint failed the predeclared criteria and was NOT integrated.
+No threshold/checkpoint was adjusted using this result. s000/s002 are now
+historically used and cannot serve as fresh subjects for another experiment.
+[Full metrics and provenance](experiments/bilateral-score-2026-11-11.json).
+
+The session-local reference introduced after live debugging is a distinct
+heuristic; these population-model numbers do not validate that heuristic.

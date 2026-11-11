@@ -1,0 +1,238 @@
+{
+  "counts": {
+    "test": 1896,
+    "train": 7584
+  },
+  "epochs": 400,
+  "selection": "fixed final epoch",
+  "seed": 42,
+  "threshold": 0.5,
+  "coefficients": {
+    "blink_weight": 9.066446304321289,
+    "gap_weight": -10.527717590332031,
+    "bias": -2.2875808477401733
+  },
+  "train_class_weight": 24.97260284423828,
+  "metrics": {
+    "samples": 1896,
+    "tp": 602,
+    "fn": 3,
+    "fp": 264,
+    "tn": 1027,
+    "accuracy": 0.8591772151898734,
+    "recall_closed": 0.9950413223140496,
+    "false_positive_rate": 0.20449264136328427,
+    "precision_closed": 0.6951501154734411,
+    "balanced_accuracy": 0.8952743404753827
+  },
+  "metrics_by_view": [
+    {
+      "view": "front",
+      "samples": 1341,
+      "tp": 436,
+      "fn": 2,
+      "fp": 103,
+      "tn": 800,
+      "accuracy": 0.9217002237136466,
+      "recall_closed": 0.9954337899543378,
+      "false_positive_rate": 0.11406423034330011,
+      "precision_closed": 0.8089053803339518,
+      "balanced_accuracy": 0.9406847798055189
+    },
+    {
+      "view": "left",
+      "samples": 441,
+      "tp": 160,
+      "fn": 1,
+      "fp": 158,
+      "tn": 122,
+      "accuracy": 0.6394557823129252,
+      "recall_closed": 0.9937888198757764,
+      "false_positive_rate": 0.5642857142857143,
+      "precision_closed": 0.5031446540880503,
+      "balanced_accuracy": 0.714751552795031
+    },
+    {
+      "view": "right",
+      "samples": 114,
+      "tp": 6,
+      "fn": 0,
+      "fp": 3,
+      "tn": 105,
+      "accuracy": 0.9736842105263158,
+      "recall_closed": 1.0,
+      "false_positive_rate": 0.027777777777777776,
+      "precision_closed": 0.6666666666666666,
+      "balanced_accuracy": 0.9861111111111112
+    }
+  ],
+  "metrics_35_to_45_degrees": [
+    {
+      "view": "left",
+      "samples": 26,
+      "tp": 14,
+      "fn": 0,
+      "fp": 0,
+      "tn": 12,
+      "accuracy": 1.0,
+      "recall_closed": 1.0,
+      "false_positive_rate": 0.0,
+      "precision_closed": 1.0,
+      "balanced_accuracy": 1.0
+    },
+    {
+      "view": "right",
+      "samples": 0,
+      "tp": 0,
+      "fn": 0,
+      "fp": 0,
+      "tn": 0,
+      "accuracy": null,
+      "recall_closed": null,
+      "false_positive_rate": null,
+      "precision_closed": null,
+      "balanced_accuracy": null
+    }
+  ],
+  "sampling": "view/label stratified",
+  "accepted_for_integration": false,
+  "fingerprint": "5c9e422b89174ab9e65ff2dcaa0fdcd9f7d1f9eea6c49364f30fe89163085bb3",
+  "training_code_sha256": "ac4bfa9a779bb73e50bbefc2061e56fc7bd5a620c00491b38fa879d5a9cdec0f",
+  "manifest_sha256": "13e1ac66b507df89e75a6e729fd0860dd88db9005a677fe570e544e1238016ba",
+  "checkpoint_sha256": "ab8a66058eecbeaeb44da5a32d1a2fe6f3044e40606087b5ef9bdce97f22a937",
+  "limitations": "Fixed pretrained features. Automatic yaw estimates only. No on-device 45-degree acceptance claim.",
+  "protocol": "docs/BILATERAL_SCORE_PROTOCOL.md",
+  "train_subjects": [
+    "s007",
+    "s009",
+    "s010",
+    "s011",
+    "s012",
+    "s013"
+  ],
+  "test_subjects": [
+    "s000",
+    "s002"
+  ],
+  "audit": {
+    "fingerprint": "5c9e422b89174ab9e65ff2dcaa0fdcd9f7d1f9eea6c49364f30fe89163085bb3",
+    "prior_manifests": {
+      "data/mrl/prepared-80-20-final/manifest.csv": "c3753bff72a2c5fd340e34d09c963b5ed65fbcf789687a5f82366012aaefbeed",
+      "data/mrl/prepared-80-20/manifest.csv": "c3753bff72a2c5fd340e34d09c963b5ed65fbcf789687a5f82366012aaefbeed",
+      "data/mrl/prepared-clean/manifest.csv": "4590771afb6b7d569742461def36f4cfc3a4b57ebee295568b6bae30959b09de",
+      "data/rt-bene/bilateral-2026-11-11/manifest.csv": "4f75f62d2f532fa5ede9d4f387c3d433a1e8550cc11d03f06e47fdd16fa760b7",
+      "data/rt-bene/calibration-fixed-2026-11-11/manifest.csv": "0f31a8b748fdc2a9d92a7935352ebc29829aeb38c543ecef9995f40ed6e99427",
+      "data/rt-bene/pilot/manifest.csv": "1d5207355c4f8662cef8ebbaa78d17c4019f5a61a8f44bbe14940c9ee0687511",
+      "data/rt-bene/side-2026-11-09/manifest.csv": "516141163b3c7cb24b0986680eade3987fc34910a6243aaef24d40224c1ce995"
+    },
+    "duplicate_rows_excluded": 0,
+    "historical_test_rows_excluded": 0,
+    "counts": [
+      {
+        "split": "test",
+        "view": "front",
+        "label": "closed",
+        "images": 438
+      },
+      {
+        "split": "test",
+        "view": "front",
+        "label": "open",
+        "images": 903
+      },
+      {
+        "split": "test",
+        "view": "left",
+        "label": "closed",
+        "images": 161
+      },
+      {
+        "split": "test",
+        "view": "left",
+        "label": "open",
+        "images": 280
+      },
+      {
+        "split": "test",
+        "view": "right",
+        "label": "closed",
+        "images": 6
+      },
+      {
+        "split": "test",
+        "view": "right",
+        "label": "open",
+        "images": 108
+      },
+      {
+        "split": "train",
+        "view": "front",
+        "label": "closed",
+        "images": 207
+      },
+      {
+        "split": "train",
+        "view": "front",
+        "label": "open",
+        "images": 5157
+      },
+      {
+        "split": "train",
+        "view": "left",
+        "label": "closed",
+        "images": 73
+      },
+      {
+        "split": "train",
+        "view": "left",
+        "label": "open",
+        "images": 1691
+      },
+      {
+        "split": "train",
+        "view": "right",
+        "label": "closed",
+        "images": 12
+      },
+      {
+        "split": "train",
+        "view": "right",
+        "label": "open",
+        "images": 444
+      }
+    ]
+  },
+  "extractions": {
+    "s000": {
+      "coverage": {
+        "s000": {
+          "eligible_frames": 4336,
+          "usable_frames": 4336
+        }
+      },
+      "sources_sha256": {
+        "s000_blink_labels.csv": "f8b882f4118aa0ecc2fd56a4defe34b2791dc501a20f043bc91904b5cc3be44d",
+        "s000_noglasses.tar.prefix": "73ba40fa57b3f055daf02fe98281b1a7df6d7b3de2f6f163f79e73421f0cb8dc"
+      },
+      "model_sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+      "mediapipe_version": "1.2.2",
+      "pose_note": "Automatic Face Landmarker yaw estimate, not a manually measured camera angle"
+    },
+    "s002": {
+      "coverage": {
+        "s002": {
+          "eligible_frames": 3904,
+          "usable_frames": 3827
+        }
+      },
+      "sources_sha256": {
+        "s002_blink_labels.csv": "7a1c2e8f2245a94ebdd456cf8fb391efebab92cec244b202c36d3b38c002ac4f",
+        "s002_noglasses.tar.prefix": "58180a3157f5532f3ddf0a5c05bda76297018244c429006d56dc3817ef92c8b2"
+      },
+      "model_sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+      "mediapipe_version": "1.2.2",
+      "pose_note": "Automatic Face Landmarker yaw estimate, not a manually measured camera angle"
+    }
+  },
+  "deployment": "Rejected; not integrated into Android. Session-local aperture references are a separate heuristic."
+}
