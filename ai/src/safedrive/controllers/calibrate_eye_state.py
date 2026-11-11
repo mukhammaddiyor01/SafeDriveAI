@@ -14,7 +14,16 @@ from safedrive.models.dataset import read_prepared_manifest
 from safedrive.models.provenance import file_sha256, manifest_fingerprint
 
 
-def calibrate(root, output, prior_manifests):
+def stratified_sample(frame, count):
+    """Keep minority eye states without using any predicted scores."""
+    ordered = frame.sort_values("rank")
+    groups = [ordered[ordered.label == label] for label in ("open", "closed")]
+    selected = pd.concat([group.head(count // 2) for group in groups])
+    remaining = ordered.loc[~ordered.index.isin(selected.index)]
+    return pd.concat([selected, remaining.head(count - len(selected))])
+
+
+def calibrate(root, output, prior_manifests, stratified=False):
     if output.exists():
         raise ValueError("Calibration output already exists")
     manifest = root / "manifest.csv"
@@ -35,7 +44,10 @@ def calibrate(root, output, prior_manifests):
         count = min(len(test), len(train) // 4)
         if count == 0:
             raise ValueError(f"No independent samples for {view}")
-        selected.extend((train.head(count * 4), test.head(count)))
+        if stratified:
+            selected.extend((stratified_sample(train, count * 4), stratified_sample(test, count)))
+        else:
+            selected.extend((train.head(count * 4), test.head(count)))
     frame = pd.concat(selected).drop(columns="rank")
     frame.to_csv(manifest, index=False)
     verified = read_prepared_manifest(manifest)
@@ -80,11 +92,21 @@ def calibrate(root, output, prior_manifests):
         row = next(row for row in views if row["view"] == view)
         accepted = accepted and row["tp"] + row["fn"] >= 5 and row["tn"] + row["fp"] >= 20
         accepted = accepted and (row["recall_closed"] or 0) >= 0.8 and row["false_positive_rate"] is not None and row["false_positive_rate"] <= 0.15
+    edge_views = []
+    if stratified:
+        edge = test[test.yaw_estimate.abs().between(35, 45)]
+        for view in ("left", "right"):
+            row = {"view": view, **classification_metrics(edge[edge.view == view])}
+            edge_views.append(row)
+            accepted = accepted and row["tp"] + row["fn"] >= 5 and row["tn"] + row["fp"] >= 20
+            accepted = accepted and (row["recall_closed"] or 0) >= 0.8 and row["false_positive_rate"] is not None and row["false_positive_rate"] <= 0.15
     report = {
         "counts": frame.groupby("split").size().to_dict(),
         "epochs": 400, "selection": "fixed final epoch", "seed": 42, "threshold": 0.5,
         "coefficients": coefficients, "train_class_weight": positive_weight.item(),
         "metrics": classification_metrics(test), "metrics_by_view": views,
+        "metrics_35_to_45_degrees": edge_views,
+        "sampling": "view/label stratified" if stratified else "view stratified",
         "accepted_for_integration": bool(accepted),
         "fingerprint": split["fingerprint"],
         "training_code_sha256": file_sha256(Path(__file__)),
@@ -102,5 +124,6 @@ if __name__ == "__main__":
     parser.add_argument("root", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--prior-manifest", type=Path, action="append", required=True)
+    parser.add_argument("--stratified", action="store_true")
     args = parser.parse_args()
-    calibrate(args.root, args.output, args.prior_manifest)
+    calibrate(args.root, args.output, args.prior_manifest, args.stratified)

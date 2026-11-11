@@ -45,3 +45,13 @@ def test_test_labels_do_not_change_trained_coefficients(tmp_path):
     manifest = pd.read_csv(root / 'manifest.csv')
     assert manifest.groupby('subject_id').split.nunique().max() == 1
     assert first['metrics'] != second['metrics']
+
+
+def test_stratification_keeps_minority_closed_images():
+    from safedrive.controllers.calibrate_eye_state import stratified_sample
+    frame = pd.DataFrame({'label': ['open'] * 50 + ['closed'] * 2,
+                          'rank': [f'{i:03}' for i in range(52)]})
+    selected = stratified_sample(frame, 20)
+    assert len(selected) == 20
+    assert (selected.label == 'closed').sum() == 2
+    assert selected.index.is_unique

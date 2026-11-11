@@ -11,7 +11,11 @@ remain estimates, not ground-truth camera angles.
 
 Use existing s007/s009/s010/s011/s012/s013 extracted features for training.
 Reserve deterministic SHA-256/seed42 strata by view AND open/closed label,
-4 train images per 1 test image. Do not select by predicted correctness.
+4 train images per 1 test image in each view. Within each partition retain
+minority eye states first (up to half of the selected count), then fill from
+the remaining deterministic rank. Exact 80/20 applies to each view overall,
+not each label: available train right-closed frames are scarce. This reservation
+clarification is recorded before new test inference. Do not select by predicted correctness.
 Require both labels in each side before fitting; report coverage separately.
 Train the same two-feature PyTorch logistic model for fixed 400 epochs,
 Adam .025, train-only normalization and class weights. Fixed threshold .50.
