@@ -23,6 +23,7 @@ def calibrate(root, output, prior_manifests):
     frame = pd.read_csv(root / "features.csv")
     history = pd.concat([pd.read_csv(path, dtype=str) for path in prior_manifests])
     historical = frame.subject_id.isin(history.subject_id) | frame.image_sha256.isin(history.image_sha256)
+    historical_test_count = int(((frame.split == "test") & historical).sum())
     duplicate = frame.image_sha256.duplicated(keep=False)
     eligible = frame.loc[~duplicate & ~((frame.split == "test") & historical)].copy()
     eligible["prior_usage"] = historical.map({True: "used", False: "unseen_in_supplied_history"})
@@ -42,7 +43,7 @@ def calibrate(root, output, prior_manifests):
     split = {
         "fingerprint": manifest_fingerprint(verified), "prior_manifests": {str(p): file_sha256(p) for p in prior_manifests},
         "duplicate_rows_excluded": int(duplicate.sum()),
-        "historical_test_rows_excluded": int(((frame.split == "test") & historical.reindex(frame.index)).sum()),
+        "historical_test_rows_excluded": historical_test_count,
         "counts": frame.groupby(["split", "view", "label"]).size().rename("images").reset_index().to_dict("records"),
     }
     (root / "split.json").write_text(json.dumps(split, indent=2) + "\n")

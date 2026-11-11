@@ -34,7 +34,7 @@ def extract(source, output, model_path):
             with annotations.open(newline="") as stream:
                 for filename, label in csv.reader(stream):
                     frame = filename.split("_")[1]
-                    labels.setdefault(frame, []).append(label)
+                    labels.setdefault(frame, {})[filename.split("_")[0]] = label
             counts = {"eligible_frames": 0, "usable_frames": 0}
             limit = archive_path.stat().st_size
             with tarfile.open(archive_path) as archive:
@@ -46,8 +46,8 @@ def extract(source, output, model_path):
                     if not member.isfile() or not match:
                         continue
                     frame = match[1]
-                    states = labels.get(frame, [])
-                    if len(states) != 2 or states[0] != states[1] or states[0] not in {"0.0", "1.0"}:
+                    states = labels.get(frame, {})
+                    if not any(state in {"0.0", "1.0"} for state in states.values()):
                         continue
                     counts["eligible_frames"] += 1
                     with archive.extractfile(member) as stream:
@@ -68,6 +68,8 @@ def extract(source, output, model_path):
                         ("Left", (263, 387, 385, 362, 380, 373)),
                         ("Right", (33, 160, 158, 133, 153, 144)),
                     ):
+                        if states.get(side.lower()) not in {"0.0", "1.0"}:
+                            continue
                         points = [(face[i].x * image.width, face[i].y * image.height) for i in indexes]
                         width = math.dist(points[0], points[3])
                         if width < 10:
@@ -76,10 +78,10 @@ def extract(source, output, model_path):
                         if not 0 <= gap <= 0.65:
                             continue
                         blink = next(c.score for c in result.face_blendshapes[0] if c.category_name == "eyeBlink" + side)
-                        candidates.append((width, blink, gap))
+                        candidates.append((width, blink, gap, states[side.lower()]))
                     if not candidates:
                         continue
-                    width, blink, gap = max(candidates)
+                    width, blink, gap, state = max(candidates)
                     eye_a, eye_b = face[33], face[263]
                     nose = face[1]
                     side_offset = nose.x - (eye_a.x + eye_b.x) / 2
@@ -90,7 +92,7 @@ def extract(source, output, model_path):
                     destination.write_bytes(encoded)
                     rows.append({
                         "image_path": relative.as_posix(), "image_sha256": hashlib.sha256(encoded).hexdigest(),
-                        "subject_id": f"rt_bene_{session}", "label": "closed" if states[0] == "1.0" else "open",
+                        "subject_id": f"rt_bene_{session}", "label": "closed" if state == "1.0" else "open",
                         "view": view, "yaw_estimate": yaw, "blink": blink, "gap": gap, "eye_width": width,
                         "split": "test" if subject in {11, 13} else "train",
                     })
@@ -100,6 +102,8 @@ def extract(source, output, model_path):
                 with path.open("rb") as stream:
                     source_hashes[path.name] = hashlib.file_digest(stream, "sha256").hexdigest()
             print(session, counts, flush=True)
+    if not rows:
+        raise ValueError("No usable labeled face features were extracted")
     with (output / "features.csv").open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
         writer.writeheader()
