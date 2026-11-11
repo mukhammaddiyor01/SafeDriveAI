@@ -15,7 +15,9 @@ from PIL import Image
 import io
 
 
-def extract(source, output, model_path):
+def extract(source, output, model_path, subjects=(7, 9, 10, 11, 12, 13), test_subjects=(11, 13)):
+    if not subjects or not set(test_subjects) <= set(subjects):
+        raise ValueError("Test subjects must belong to the extraction subjects")
     output.mkdir(parents=True, exist_ok=False)
     rows = []
     coverage = {}
@@ -26,7 +28,7 @@ def extract(source, output, model_path):
         output_facial_transformation_matrixes=True,
     )
     with mp.tasks.vision.FaceLandmarker.create_from_options(options) as detector:
-        for subject in (7, 9, 10, 11, 12, 13):
+        for subject in subjects:
             session = f"s{subject:03d}"
             annotations = source / f"{session}_blink_labels.csv"
             archive_path = source / f"{session}_noglasses.tar.prefix"
@@ -94,7 +96,7 @@ def extract(source, output, model_path):
                         "image_path": relative.as_posix(), "image_sha256": hashlib.sha256(encoded).hexdigest(),
                         "subject_id": f"rt_bene_{session}", "label": "closed" if state == "1.0" else "open",
                         "view": view, "yaw_estimate": yaw, "blink": blink, "gap": gap, "eye_width": width,
-                        "split": "test" if subject in {11, 13} else "train",
+                        "split": "test" if subject in test_subjects else "train",
                     })
                     counts["usable_frames"] += 1
             coverage[session] = counts
@@ -121,5 +123,9 @@ if __name__ == "__main__":
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("model", type=Path)
+    parser.add_argument("--subjects", type=int, nargs="+")
+    parser.add_argument("--test-subjects", type=int, nargs="+")
     arguments = parser.parse_args()
-    extract(arguments.source, arguments.output, arguments.model)
+    extract(arguments.source, arguments.output, arguments.model,
+            arguments.subjects or (7, 9, 10, 11, 12, 13),
+            arguments.test_subjects if arguments.test_subjects is not None else (11, 13))
