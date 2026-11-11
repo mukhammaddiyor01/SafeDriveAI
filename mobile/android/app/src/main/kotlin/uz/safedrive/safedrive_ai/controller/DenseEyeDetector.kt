@@ -18,11 +18,16 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
             .setOutputFaceBlendshapes(true)
             .build())
 
+    var diagnostic: String = "waiting"
+        private set
+
     fun observe(bitmap: Bitmap, bounds: Rect, yaw: Float): Boolean? {
         val image = BitmapImageBuilder(bitmap).build()
         try {
+            diagnostic = "face-not-found"
             val result = detector.detect(image)
             val face = result.faceLandmarks().singleOrNull() ?: return null
+            diagnostic = "blink-scores-unavailable"
             val scores = result.faceBlendshapes().orElse(emptyList()).singleOrNull() ?: return null
             val left = yaw < 0
             val indexes = if (left) listOf(263, 387, 385, 362, 380, 373)
@@ -31,17 +36,21 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
                 val point = face[index]
                 Pair(point.x() * bitmap.width, point.y() * bitmap.height)
             }
+            diagnostic = "eye-outside-face"
             val nose = face[1]
             if (!bounds.contains((nose.x() * bitmap.width).toInt(), (nose.y() * bitmap.height).toInt())) return null
             if (points.any { !bounds.contains(it.first.toInt(), it.second.toInt()) }) return null
             fun distance(a: Int, b: Int): Float =
                 hypot(points[a].first - points[b].first, points[a].second - points[b].second)
             val width = distance(0, 3)
+            diagnostic = "eye-width=$width"
             if (width < 10f) return null
             val ratio = (distance(1, 5) + distance(2, 4)) / (2f * width)
             val category = if (left) "eyeBlinkLeft" else "eyeBlinkRight"
             val blink = scores.singleOrNull { it.categoryName() == category }?.score() ?: return null
-            return SideEye.classify(blink, ratio, width)
+            val open = SideEye.classify(blink, ratio, width)
+            diagnostic = "yaw=$yaw blink=$blink gap=$ratio width=$width open=$open"
+            return open
         } finally {
             image.close()
         }

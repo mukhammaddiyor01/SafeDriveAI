@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Run the supplied open-eye face crop through the APK already installed by USB.
+# Run a supplied labeled face crop through the APK already installed by USB.
 set -euo pipefail
 project_root="$(cd "$(dirname "$0")/.." && pwd)"
 source "$project_root/scripts/env.sh"
-sample="${1:?Supply a local open-eye face-crop image for the release regression}"
+sample="${1:?Supply a local face-crop image for the release regression}"
 test -f "$sample"
 apk="$project_root/releases/SafeDriveAI.apk"
 mapping="$project_root/mobile/build/app/outputs/mapping/release/mapping.txt"
@@ -43,7 +43,11 @@ PY
   ./gradlew :app:assembleDebugAndroidTest -PeyeReleaseProbe=true
 )
 adb -d install -t -r "$project_root/mobile/build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk"
-result=$(adb -d shell am instrument -w   -e modelClass "$(sed -n '1p' "$symbol_file")"   -e observeMethod "$(sed -n '2p' "$symbol_file")"   uz.safedrive.safedrive_ai.test/uz.safedrive.safedrive_ai.controller.ReleaseEyeProbe)
+result=$(adb -d shell am instrument -w \
+  -e yaw "${2:--43}" -e expectedOpen "${3:-true}" \
+  -e modelClass "$(sed -n '1p' "$symbol_file")" \
+  -e observeMethod "$(sed -n '2p' "$symbol_file")" \
+  uz.safedrive.safedrive_ai.test/uz.safedrive.safedrive_ai.controller.ReleaseEyeProbe)
 printf '%s\n' "$result"
 grep -q 'INSTRUMENTATION_CODE: -1' <<< "$result"
 adb -d shell am start -n uz.safedrive.safedrive_ai/.MainActivity

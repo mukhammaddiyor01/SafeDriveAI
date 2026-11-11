@@ -124,4 +124,23 @@ class DrowsinessEngineTest {
         assertEquals("limited", state.status)
         assertNull(state.eyesOpen)
     }
+    @Test fun moderateBlinkWithNarrowLidsTriggersSideClosureAlarm() {
+        for (yaw in listOf(-42f, 43f)) {
+            val engine = DrowsinessEngine()
+            for (time in 0L..1000L step 100) {
+                val state = engine.update(Observation(time, 1, yaw = yaw,
+                    sideEyeOpen = SideEye.classify(0.1f, 0.25f, 24f)))
+                assertFalse(state.alarm)
+            }
+            var state = MonitorState()
+            for (time in 1100L..2600L step 100) {
+                state = engine.update(Observation(time, 1, yaw = yaw,
+                    sideEyeOpen = SideEye.classify(0.52f, 0.093f, 24f)))
+            }
+            assertEquals("drowsy", state.status)
+            assertTrue(state.alarm)
+            assertEquals(1500L, state.closedMs)
+        }
+    }
+
 }

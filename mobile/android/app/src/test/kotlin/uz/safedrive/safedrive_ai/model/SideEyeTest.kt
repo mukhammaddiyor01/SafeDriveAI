@@ -7,6 +7,10 @@ class SideEyeTest {
     @Test fun rejectsContradictoryAndMissingEyeEvidence() {
         assertEquals(true, SideEye.classify(0.1f, 0.22f, 24f))
         assertEquals(false, SideEye.classify(0.85f, 0.08f, 24f))
+        assertEquals(false, SideEye.classify(0.55f, 0.037f, 24f))
+        assertEquals(false, SideEye.classify(0.52f, 0.093f, 24f))
+        assertNull(SideEye.classify(0.44f, 0.08f, 24f))
+        assertNull(SideEye.classify(0.52f, 0.2f, 24f))
         assertNull(SideEye.classify(0.85f, 0.3f, 24f))
         assertNull(SideEye.classify(0.1f, 0.05f, 24f))
         assertNull(SideEye.classify(Float.NaN, 0.22f, 24f))

@@ -47,9 +47,11 @@ public class ReleaseEyeProbe extends Instrumentation {
             }
             try {
                 Rect bounds = new Rect(0, 0, image.getWidth(), image.getHeight());
-                Object eye = observe.invoke(model, image, bounds, -43f);
+                float yaw = Float.parseFloat(arguments.getString("yaw", "-43"));
+                boolean expected = Boolean.parseBoolean(arguments.getString("expectedOpen", "true"));
+                Object eye = observe.invoke(model, image, bounds, yaw);
                 report.putString("eye", String.valueOf(eye));
-                if (!Boolean.TRUE.equals(eye)) throw new IllegalStateException("Eye evidence unavailable");
+                if (!Boolean.valueOf(expected).equals(eye)) throw new IllegalStateException("Eye state does not match fixture");
             } finally {
                 image.recycle();
                 type.getMethod("close").invoke(model);

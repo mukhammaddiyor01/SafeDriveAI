@@ -34,11 +34,25 @@ Release APK yig‘ilib va USB orqali o‘rnatilgach, quyidagi buyruq aynan
 o‘rnatilgan APK xeshini tekshirib, uning ichidagi modelga lokal rasm beradi.
 Bu tester faqat o‘z developer kaliti bilan imzolangan APK va test harnessiga
 ega Android USB qurilmasi uchun. Beriladigan rasm ochiq ko‘zli yuz kesmasi
-bo‘lishi kerak, test yaw -43° yo‘nalishini chaqiradi.
+bo‘lishi kerak. Qo‘shimcha argumentlar yaw va kutilayotgan ochiq holat
+qiymatidir. Default holat yaw -43° va ochiq ko‘z.
 
 ```bash
 ./scripts/check-release-eye.sh /absolute/path/to/open-eye-face-crop.jpg
+./scripts/check-release-eye.sh /absolute/path/to/closed-eye-face-crop.jpg 43 false
 ```
 
 [MediaPipe release muammosi](https://github.com/google-ai-edge/mediapipe/issues/5141),
 [Flogger release muammosi](https://github.com/google-ai-edge/mediapipe/issues/6138).
+
+## Yopiq ko‘zdagi o‘rta blink bahosi
+
+2026-11-11 yuborilgan ikki yopiq-ko‘z rasmida Python MediaPipe o‘lchovi
+yaqin ko‘z uchun blink taxminan 0.50–0.64 bo‘lganini ko‘rsatdi.
+Oldingi 0.65 minimal qoida kuchli tor qovoq dalilini ham rad etgan.
+Tor qovoq va o‘rta blink birga kuzatilganda yopiq holatga yo‘l ochildi.
+Past blink, juda kichik ko‘z yoki zid geometriya noma’lum holatda qoladi.
+
+USB service dump endi yuz/bosh holati, blink, qovoq nisbati, ko‘z kengligi
+va qaysi bosqichda dalil yo‘qolganini ko‘rsatadi. Kamera tasviri saqlanmaydi,
+bu raqamlar tarmoqqa uzatilmaydi.

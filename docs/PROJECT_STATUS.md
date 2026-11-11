@@ -136,3 +136,11 @@ Galaxy A51’da qayta olindi. Keep qoidalari tuzatildi. Aynan o‘rnatilgan
 release APK modelida yangi yuborilgan rasm ochiq ko‘z deb topildi.
 Takrorlanadigan USB regressiya skripti saqlandi. Jonli kamera va har xil
 burchaklarda ko‘z yumilishi bo‘yicha video validatsiyasi hali alohida kerak.
+
+## Yonboshda ko‘z yumilishi — 2026-11-11
+
+Foydalanuvchi yopiq ko‘z limited bo‘layotganini bildirdi. Qovoq juda tor va
+blink o‘rta bo‘lgan holatni qabul qilish qo‘shildi. Galaxy A51’dagi aynan release
+modeli foydalanuvchining ikki yopiq kadrini yopiq va oldingi ochiq kadrni
+ochiq deb topdi. 1 500 ms davomli yopilishning domain alarm testi o‘tdi.
+Jonli kamera natijasi hali foydalanuvchi bilan tekshirilmoqda.

@@ -260,3 +260,21 @@ qurilma sinovi o‘tkazilgani da’vo qilinmaydi. Galaxy A51 USB ro‘yxatida to
   vaqtinchalik asset sifatida oladi va skript yakunida olib tashlaydi.
 - Flutter analizida muammo yo‘q, 5 test o‘tdi. Jonli kamera va turli
   burchaklarda ko‘z yumilishi haqiqiy video bilan yana tekshirilishi kerak.
+
+## Yonboshdagi yopiq ko‘z regressiyasi (SD-03, SD-05) — 2026-11-11
+
+- Foydalanuvchi ko‘z ochiqligi topilganini, yumilganda esa limited qolganini
+  bildirdi va chap/o‘ng yopiq-ko‘z rasmlarini berdi.
+- Python o‘lchovida yaqin ko‘z blink qiymati 0.50–0.64 oralig‘ida edi.
+  Oldingi 0.65 sharti tor qovoq dalili bilan birga ham yopiq holatni rad etgan.
+- Endi blink ≥0.45 va qovoq nisbati ≤0.11 bo‘lsa yopiq deb olinadi.
+  Oldingi blink ≥0.65 va nisbat ≤0.16 sharti ham saqlanadi.
+- 16 Kotlin testi va 5 Flutter testi o‘tdi. Regressiya testi ±42/43°
+  holatda o‘rta blink/tor qovoqdan 1 500 ms davomli yopilish alarmi chiqishini tekshiradi.
+- Yangilangan ARM64 release APK Galaxy A51’ga o‘rnatildi. APK xeshi
+  mosligi tekshirilib, aynan release modelida ikki yopiq rasm `eye=false`,
+  oldingi ochiq rasm `eye=true` natijasini berdi. Uchala instrumentatsiya
+  natijasi `-1` bo‘ldi. Kamera preview rasmlari tahlil koordinatalariga
+  moslash uchun lokal gorizontal akslantirildi.
+- Rasmlar va vaqtinchalik fixture Git’ga qo‘shilmadi. Bu kadr sinovi va
+  domain timer sinovi. Jonli kameradagi alarm natijasi foydalanuvchidan kutilmoqda.

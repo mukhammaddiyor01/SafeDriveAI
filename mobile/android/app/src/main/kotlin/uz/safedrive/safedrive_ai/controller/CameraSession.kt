@@ -45,6 +45,8 @@ class CameraSession(
     private var provider: ProcessCameraProvider? = null
     private var surface: Preview.SurfaceProvider? = null
     @Volatile private var closed = false
+    @Volatile var eyeDiagnostic = "waiting"
+        private set
     private var lastSubmitted = 0L
     private var lastEyeFailure = -10_000L
 
@@ -72,6 +74,7 @@ class CameraSession(
                             roll = face?.headEulerAngleZ ?: 0f,
                             trackingId = face?.trackingId,
                         )
+                        eyeDiagnostic = "faces=${faces.size} yaw=${observation.yaw} pitch=${observation.pitch} roll=${observation.roll}"
                         if (closed || face == null ||
                             !SideEye.supports(observation.yaw, observation.pitch, observation.roll)) {
                             Tasks.forResult(observation)
@@ -86,9 +89,12 @@ class CameraSession(
                                         rotated = if (rotation == 0) frame else Bitmap.createBitmap(
                                             frame, 0, 0, frame.width, frame.height,
                                             Matrix().apply { postRotate(rotation.toFloat()) }, false)
-                                        observation.copy(sideEyeOpen =
-                                            denseEye.value.observe(rotated, face.boundingBox, observation.yaw))
+                                        val eye = denseEye.value
+                                        val open = eye.observe(rotated, face.boundingBox, observation.yaw)
+                                        eyeDiagnostic += " " + eye.diagnostic
+                                        observation.copy(sideEyeOpen = open)
                                     } catch (error: Exception) {
+                                        eyeDiagnostic = "model-error:${error.javaClass.simpleName}"
                                         val failureTime = SystemClock.elapsedRealtime()
                                         if (failureTime - lastEyeFailure >= 10_000) {
                                             lastEyeFailure = failureTime

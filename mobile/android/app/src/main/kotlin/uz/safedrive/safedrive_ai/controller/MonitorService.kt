@@ -141,6 +141,7 @@ class MonitorService : LifecycleService() {
         writer.println("SafeDriveAI status=${MonitorRuntime.state.status} active=${MonitorRuntime.state.active}")
         writer.println("observations=$observations lastFrameAgeMs=${SystemClock.elapsedRealtime() - lastFrame}")
         writer.println("alerts=$alerts")
+        writer.println("eyeDiagnostic=${camera?.eyeDiagnostic}")
     }
 
     companion object {

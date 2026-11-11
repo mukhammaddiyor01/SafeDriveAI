@@ -34,8 +34,9 @@ chegaralanadi. Bu Galaxy A51’da o‘lchangan FPS emas; qurilmada profil qilish
   Bitta kuzatilayotgan yuz, yuz ichidagi burun va ko‘z nuqtalari talab qilinadi.
 - Yaqin ko‘z qovog‘i geometriyasi va eyeBlink klassifikatori kelishganda
   ochiq/yopiq holati beriladi. Ko‘z kamida 10 piksel kenglikda bo‘lishi kerak.
-  Blink ≥0.65 va qovoq nisbati ≤0.16 yopiq, blink ≤0.25 va nisbat 0.12–0.65
-  ochiq hisoblanadi. Bu chegaralar tajriba uchun, kamera validatsiyasi zarur.
+  Blink ≥0.45 va qovoq nisbati ≤0.11 bo‘lsa kuchli yopilish dalili olinadi.
+  Blink ≥0.65 va nisbat ≤0.16 ham yopiq hisoblanadi. Blink ≤0.25 va
+  nisbat 0.12–0.65 ochiq hisoblanadi. Bu chegaralar tajriba uchun, kamera validatsiyasi zarur.
 - 700 ms da UI ogohlantiradi, 1500 ms da signal beradi.
 - PERCLOSga o‘xshash yopiq ko‘z ulushi 30 s oynada, kuzatilgan vaqt bilan hisoblanadi.
   Ko‘zlar 3 s davomida baholanmasa, oldingi ulush tarixi tozalanadi.
