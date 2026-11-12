@@ -11,6 +11,7 @@ data class Observation(
     val trackingId: Int? = null,
     val sideEyeOpen: Boolean? = null,
     val sideEyeOpenness: Float? = null,
+    val lighting: Lighting = Lighting.NORMAL,
 )
 
 data class MonitorState(
@@ -26,10 +27,11 @@ data class MonitorState(
     val alerts: Int = 0,
     val assistant: String = "Voice reminders",
     val sideEye: Boolean = false,
+    val lighting: String = "normal",
 ) {
     fun toMap(): Map<String, Any?> = mapOf(
         "status" to status, "message" to message, "active" to active,
-        "eyesOpen" to eyesOpen, "sideEye" to sideEye, "closedMs" to closedMs, "yaw" to yaw,
+        "lighting" to lighting, "eyesOpen" to eyesOpen, "sideEye" to sideEye, "closedMs" to closedMs, "yaw" to yaw,
         "pitch" to pitch, "perclos" to perclos, "alarm" to alarm,
         "alerts" to alerts, "assistant" to assistant,
     )
