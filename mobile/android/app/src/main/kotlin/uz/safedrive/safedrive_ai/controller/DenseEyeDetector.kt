@@ -21,6 +21,17 @@ internal class DenseEyeDetector(context: Context) : AutoCloseable {
 
     private val calibration = SideEyeCalibration()
     private var trackingId: Int? = null
+    private var enhanced: Boolean? = null
+
+    fun resetCalibration() {
+        calibration.reset()
+        openness = null
+    }
+
+    fun setEnhancement(value: Boolean) {
+        if (enhanced != null && enhanced != value) resetCalibration()
+        enhanced = value
+    }
 
     fun trackFace(id: Int?) {
         if (id != null && trackingId != null && id != trackingId) calibration.reset()

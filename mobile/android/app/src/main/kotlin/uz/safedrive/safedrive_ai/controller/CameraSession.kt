@@ -1,8 +1,7 @@
 package uz.safedrive.safedrive_ai.controller
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Matrix
+import android.graphics.Rect
 import android.os.SystemClock
 import android.view.Surface
 import androidx.camera.core.CameraSelector
@@ -15,9 +14,11 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.tasks.Tasks
-import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
+import uz.safedrive.safedrive_ai.model.Lighting
+import uz.safedrive.safedrive_ai.model.LowLightPolicy
 import uz.safedrive.safedrive_ai.model.Observation
 import uz.safedrive.safedrive_ai.model.SideEye
 import java.util.concurrent.Executors
@@ -49,6 +50,10 @@ class CameraSession(
         private set
     private var lastSubmitted = 0L
     private var lastEyeFailure = -10_000L
+    private val lowLight = LowLightPolicy()
+    private var previousFace: Rect? = null
+    private var previousRotation: Int? = null
+    private var lastFaceAt = 0L
 
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
     fun start() {
@@ -60,69 +65,43 @@ class CameraSession(
                 return@setAnalyzer
             }
             lastSubmitted = now
-            val input = InputImage.fromMediaImage(image, proxy.imageInfo.rotationDegrees)
+            var prepared: PreparedCameraFrame? = null
             try {
-                detector.process(input)
-                    .onSuccessTask { faces ->
-                        val face = faces.singleOrNull()
-                        val observation = Observation(
-                            timeMs = now, faceCount = faces.size,
-                            leftEyeOpen = face?.leftEyeOpenProbability,
-                            rightEyeOpen = face?.rightEyeOpenProbability,
-                            yaw = face?.headEulerAngleY ?: 0f,
-                            pitch = face?.headEulerAngleX ?: 0f,
-                            roll = face?.headEulerAngleZ ?: 0f,
-                            trackingId = face?.trackingId,
-                        )
-                        val poseDiagnostic = "faces=${faces.size} yaw=${observation.yaw} pitch=${observation.pitch} roll=${observation.roll}"
-                        if (closed || face == null ||
-                            !SideEye.supports(observation.yaw, observation.pitch, observation.roll)) {
-                            eyeDiagnostic = poseDiagnostic
-                            Tasks.forResult(observation)
-                        } else {
-                            Tasks.call(executor) {
-                                if (closed) observation else {
-                                    var frame: Bitmap? = null
-                                    var rotated: Bitmap? = null
-                                    try {
-                                        frame = proxy.toBitmap()
-                                        val rotation = proxy.imageInfo.rotationDegrees
-                                        rotated = if (rotation == 0) frame else Bitmap.createBitmap(
-                                            frame, 0, 0, frame.width, frame.height,
-                                            Matrix().apply { postRotate(rotation.toFloat()) }, false)
-                                        val eye = denseEye.value
-                                        eye.trackFace(observation.trackingId)
-                                        val open = eye.observe(rotated, face.boundingBox, observation.yaw)
-                                        eyeDiagnostic = poseDiagnostic + " " + eye.diagnostic
-                                        observation.copy(sideEyeOpen = open, sideEyeOpenness = eye.openness)
-                                    } catch (error: Exception) {
-                                        eyeDiagnostic = "model-error:${error.javaClass.simpleName}"
-                                        val failureTime = SystemClock.elapsedRealtime()
-                                        if (failureTime - lastEyeFailure >= 10_000) {
-                                            lastEyeFailure = failureTime
-                                            android.util.Log.w("SafeDriveAI", "Side-eye analysis unavailable", error)
-                                        }
-                                        observation
-                                    } finally {
-                                        if (rotated !== frame) rotated?.recycle()
-                                        frame?.recycle()
-                                    }
-                                }
-                            }
-                        }
+                val rotation = proxy.imageInfo.rotationDegrees
+                if (rotation != previousRotation) previousFace = null
+                previousRotation = rotation
+                val recentFace = previousFace?.takeIf { now - lastFaceAt < 2_000 }
+                val frame = PreparedCameraFrame(proxy, recentFace, lowLight)
+                prepared = frame
+                val observation = if (frame.lighting == Lighting.INSUFFICIENT) {
+                    if (denseEye.isInitialized()) denseEye.value.resetCalibration()
+                    eyeDiagnostic = frame.diagnostic
+                    Tasks.forResult(Observation(now, 0, lighting = Lighting.INSUFFICIENT))
+                } else {
+                    detector.process(frame.input()).onSuccessTask { faces ->
+                        if (closed) Tasks.forResult(Observation(now, 0))
+                        else Tasks.call(executor) { analyzeFaces(frame, faces, now) }
                     }
+                }
+                observation
                     .addOnSuccessListener { if (!closed) onObservation(it) }
                     .addOnFailureListener { if (!closed) onFailure("Face detection failed. Restart monitoring.") }
-                    .addOnCompleteListener { busy.set(false); proxy.close() }
+                    .addOnCompleteListener {
+                        frame.close()
+                        proxy.close()
+                        busy.set(false)
+                    }
             } catch (error: Exception) {
                 android.util.Log.e("SafeDriveAI", "Frame submission failed", error)
-                busy.set(false)
+                prepared?.close()
                 proxy.close()
+                busy.set(false)
                 if (!closed) ContextCompat.getMainExecutor(context).execute {
                     onFailure("Could not analyze the camera frame.")
                 }
             }
         }
+
         val future = ProcessCameraProvider.getInstance(context)
         future.addListener({
             if (closed) return@addListener
@@ -134,6 +113,50 @@ class CameraSession(
                 onFailure("Could not open the front camera. Close other camera apps.")
             }
         }, ContextCompat.getMainExecutor(context))
+    }
+
+    private fun analyzeFaces(frame: PreparedCameraFrame, faces: List<Face>, timeMs: Long): Observation {
+        val face = faces.singleOrNull()
+        val faceBounds = face?.boundingBox?.let { Rect(it) }
+        if (faceBounds != null) {
+            previousFace = faceBounds
+            lastFaceAt = timeMs
+        }
+        frame.updateFace(faceBounds)
+        val usable = frame.eyeEvidenceUsable
+        val observation = Observation(
+            timeMs = timeMs, faceCount = faces.size,
+            leftEyeOpen = if (usable) face?.leftEyeOpenProbability else null,
+            rightEyeOpen = if (usable) face?.rightEyeOpenProbability else null,
+            yaw = face?.headEulerAngleY ?: 0f,
+            pitch = face?.headEulerAngleX ?: 0f,
+            roll = face?.headEulerAngleZ ?: 0f,
+            trackingId = face?.trackingId,
+            lighting = frame.lighting,
+        )
+        val diagnostic = "${frame.diagnostic} faces=${faces.size} yaw=${observation.yaw} pitch=${observation.pitch} roll=${observation.roll}"
+        if (closed || face == null || !usable ||
+            !SideEye.supports(observation.yaw, observation.pitch, observation.roll)) {
+            if (!usable && denseEye.isInitialized()) denseEye.value.resetCalibration()
+            eyeDiagnostic = diagnostic
+            return observation
+        }
+        return try {
+            val eye = denseEye.value
+            eye.trackFace(observation.trackingId)
+            eye.setEnhancement(frame.enhanced)
+            val open = eye.observe(frame.bitmap(), face.boundingBox, observation.yaw)
+            eyeDiagnostic = diagnostic + " " + eye.diagnostic
+            observation.copy(sideEyeOpen = open, sideEyeOpenness = eye.openness)
+        } catch (error: Exception) {
+            eyeDiagnostic = diagnostic + " model-error:${error.javaClass.simpleName}"
+            val failureTime = SystemClock.elapsedRealtime()
+            if (failureTime - lastEyeFailure >= 10_000) {
+                lastEyeFailure = failureTime
+                android.util.Log.w("SafeDriveAI", "Side-eye analysis unavailable", error)
+            }
+            observation
+        }
     }
 
     fun setPreview(value: Preview.SurfaceProvider?) {

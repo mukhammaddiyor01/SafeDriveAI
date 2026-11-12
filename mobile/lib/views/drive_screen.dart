@@ -376,7 +376,10 @@ class _StatusMessage extends StatelessWidget {
         : warning
         ? DriveColors.amber
         : DriveColors.blue;
-    final message = state.status == 'monitoring' && state.sideEye
+    final message =
+        state.status == 'monitoring' &&
+            state.sideEye &&
+            state.lighting == 'normal'
         ? 'Visible eye detected'
         : state.message;
     return Tooltip(

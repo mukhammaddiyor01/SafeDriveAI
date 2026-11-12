@@ -12,6 +12,7 @@ class MonitorState {
     this.alarm = false,
     this.alerts = 0,
     this.assistant = 'Voice reminders',
+    this.lighting = 'normal',
   });
 
   factory MonitorState.fromMap(Map<dynamic, dynamic> map) => MonitorState(
@@ -27,6 +28,7 @@ class MonitorState {
     alarm: map['alarm'] as bool? ?? false,
     alerts: (map['alerts'] as num?)?.toInt() ?? 0,
     assistant: map['assistant'] as String? ?? 'Voice reminders',
+    lighting: map['lighting'] as String? ?? 'normal',
   );
   final String status;
   final String message;
@@ -40,6 +42,7 @@ class MonitorState {
   final bool alarm;
   final int alerts;
   final String assistant;
+  final String lighting;
 
   String get eyeReading {
     final openness = eyesOpen;

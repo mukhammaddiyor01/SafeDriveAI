@@ -127,6 +127,25 @@ void main() {
 
     native.events.add(
       const MonitorState(
+        status: 'monitoring',
+        active: true,
+        sideEye: true,
+        eyesOpen: 0.82,
+        yaw: -44,
+        lighting: 'low',
+        message: 'Low-light assistance active. Keep your face visible.',
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Low-light assistance active. Keep your face visible.'),
+      findsOneWidget,
+    );
+    expect(find.byType(Scrollable), findsNothing);
+    expect(tester.takeException(), isNull);
+
+    native.events.add(
+      const MonitorState(
         status: 'limited',
         message: 'Eyes not clearly visible.',
         active: true,
