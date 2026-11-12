@@ -336,8 +336,9 @@ Original and synthetic .30/.15 exposures, raw/enhanced, each had 24/24 frozen
 Face Landmarker face/eye-geometry detections. Black: 0/24. This demonstrates no
 coverage gain, no eye-state accuracy and no actual night performance. No model
 was trained or threshold tuned on these results. See the low-light stress report.
-No connected phone test or install: the user is unavailable for physical testing.
-New camera bitmap/lifecycle behavior is compiled, not on-device validated yet.
+At the end of the offline implementation, no phone test or install had occurred.
+The subsequent verified USB install is recorded below. Camera bitmap/lifecycle
+and actual low-light detection are still not live-validated.
 
 
 ## USB low-light release install — 2026-11-12
@@ -347,3 +348,9 @@ APK installed successfully; SHA-256 of the installed base APK matched the local
 release. MainActivity opened. Monitoring was not running in the post-install
 service check. Live day-to-dim/open-closed validation remains pending; installation
 is not evidence of night detection accuracy. No camera images were collected.
+
+
+2026-11-12 scope confirmation: the user requested installation only. No live
+camera/night test was performed after installation. The last recorded checks
+remain 40 Kotlin, 41 Python + 6 subtests and 7 Flutter tests; no tests were rerun
+for this documentation-only clarification.

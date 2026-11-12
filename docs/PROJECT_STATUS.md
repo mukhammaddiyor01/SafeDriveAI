@@ -216,8 +216,9 @@ No night-mode implementation was started in this session.
   non-black variant, 0/24 black. Raw dark variants already passed, so a coverage
   improvement was NOT demonstrated. This is neither new training nor real-night
   open/closed accuracy validation.
-- User cannot test the phone today. No install or on-device runtime/night test
-  was performed. Real night noise/blur, false alarms, FPS/thermal/battery and
+- The offline implementation was followed by a successful USB install on Galaxy
+  A51 (see below). The user requested installation only; no live camera/night
+  test was started. Real night noise/blur, false alarms, FPS/thermal/battery and
   exact bilateral ±45° remain open; do not label night detection complete.
 - Next: parked Galaxy A51 day-to-dim transitions, frontal and side open/closed
   eyes, true insufficient-light behavior, and held-alarm/assistant live flow.
@@ -231,3 +232,12 @@ APK installed successfully; SHA-256 of the installed base APK matched the local
 release. MainActivity opened. Monitoring was not running in the post-install
 service check. Live day-to-dim/open-closed validation remains pending; installation
 is not evidence of night detection accuracy. No camera images were collected.
+
+
+### Latest scope clarification — 2026-11-12
+
+The user confirmed that only APK installation was needed. Installation and
+installed/local APK hash equality are verified. Live low-light detection,
+open/closed accuracy and the final held-alarm/assistant sequence remain pending.
+No additional camera testing was started. Continue with those checks when the
+user requests them; preserve MVC, small feat/fix commits and the 80/20 policy.

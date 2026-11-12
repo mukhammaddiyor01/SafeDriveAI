@@ -55,4 +55,6 @@ exposure variants with and without enhancement. Black controls: 0/24.
 No coverage gain was demonstrated on this small development set; no open/closed
 accuracy, real night performance or device latency claim follows from it.
 [Machine-readable report](experiments/low-light-stress-2026-11-12.json).
-Phone testing was unavailable; the APK was not installed in this session.
+The offline implementation was followed by a successful USB install on Galaxy
+A51 (Android 13/API 33), with the installed APK hash matching the local release.
+The user requested installation only; live low-light testing was not performed.
