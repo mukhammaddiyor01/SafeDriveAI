@@ -44,3 +44,15 @@ Android Low Light Boost AE requires supported Android 15+ hardware; it is not
 assumed to exist on Galaxy A51. The current CameraX dependency is unchanged.
 Official references: https://developer.android.com/media/camera/lowlight/low-light-boost-ae
 and https://developer.android.com/media/camera/camerax/configuration
+
+
+## Recorded result
+
+40 Kotlin tests, 41 Python tests + 6 subtests, and 7 Flutter tests passed.
+Flutter analyzer reported no issues and the arm64 release APK built successfully.
+Synthetic stress: 24/24 face/eye-geometry detections in original, .30 and .15
+exposure variants with and without enhancement. Black controls: 0/24.
+No coverage gain was demonstrated on this small development set; no open/closed
+accuracy, real night performance or device latency claim follows from it.
+[Machine-readable report](experiments/low-light-stress-2026-11-12.json).
+Phone testing was unavailable; the APK was not installed in this session.

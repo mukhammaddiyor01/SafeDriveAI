@@ -320,3 +320,21 @@ The final 15-second alarm and assistant sequence was NOT live-validated before
 the user stopped the session. Earlier live angle observations are development
 evidence around −42° and +38…+42°, not exact bilateral ±45° acceptance.
 Next authorized priority is night/low-light detection; no implementation yet.
+
+
+## 2026-11-12 — deterministic low-light assistance
+
+40 Kotlin tests, 41 Python tests + 6 subtests and 7 Flutter tests passed. Analyzer
+clean; arm64 release APK built. Tests include padded Y-plane strides/position,
+percentiles, bounded monotonic tone, lighting hysteresis, unknown eye evidence,
+held-alarm preservation in darkness and preventing assistant recovery from it.
+Low-light text remains visible on the compact Flutter dashboard.
+
+24 prior TRAIN development images across front/left/right and open/closed were
+selected deterministically and hashed; reserved test images were not read.
+Original and synthetic .30/.15 exposures, raw/enhanced, each had 24/24 frozen
+Face Landmarker face/eye-geometry detections. Black: 0/24. This demonstrates no
+coverage gain, no eye-state accuracy and no actual night performance. No model
+was trained or threshold tuned on these results. See the low-light stress report.
+No connected phone test or install: the user is unavailable for physical testing.
+New camera bitmap/lifecycle behavior is compiled, not on-device validated yet.

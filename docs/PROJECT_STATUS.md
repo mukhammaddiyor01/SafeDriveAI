@@ -200,3 +200,25 @@ unknown states and verify day/night regressions. Any new training must use
 80% train / 20% untouched test with disjoint drivers and prior-use auditing.
 Do not describe a screen-brightness workaround as verified night detection.
 No night-mode implementation was started in this session.
+
+
+## Low-light assistance — 2026-11-12
+
+- Original luminance and face-region quality now drive bounded low-light tone
+  enhancement shared by ML Kit and Face Landmarker. Existing daytime input is
+  preserved when enhancement is inactive. Darkness/flat dark input stays unknown;
+  an English Too dark message replaces misleading pose/closed-eye decisions.
+- Enhancement hysteresis and side-eye reference resets protect lighting changes.
+  Asynchronous frame/bitmap ownership was consolidated. Existing visibility-loss
+  and 15-second repeated-closure alarms remain independent of network/LLM.
+- 40 Kotlin, 41 Python + 6 subtests, 7 Flutter tests passed; release APK built.
+  [Synthetic development stress](LOW_LIGHT.md): 24/24 geometry coverage in each
+  non-black variant, 0/24 black. Raw dark variants already passed, so a coverage
+  improvement was NOT demonstrated. This is neither new training nor real-night
+  open/closed accuracy validation.
+- User cannot test the phone today. No install or on-device runtime/night test
+  was performed. Real night noise/blur, false alarms, FPS/thermal/battery and
+  exact bilateral ±45° remain open; do not label night detection complete.
+- Next: parked Galaxy A51 day-to-dim transitions, frontal and side open/closed
+  eyes, true insufficient-light behavior, and held-alarm/assistant live flow.
+  Fresh dataset training must retain subject-disjoint 80/20 and history auditing.

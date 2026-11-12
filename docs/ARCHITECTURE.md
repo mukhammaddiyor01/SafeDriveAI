@@ -132,3 +132,16 @@ all state. The previous 30-second PERCLOS remains a risk statistic, but one
 second of confirmed opening acknowledges that rolling-risk alarm so it cannot
 keep ringing indefinitely after the explicit held alarm finishes. Fresh
 sustained closure and visibility-loss alerts remain active.
+
+
+## Low-light frame preparation — 2026-11-12
+
+FrameLighting is a pure domain policy for original luminance quality, hysteresis
+and a bounded tone curve. PreparedCameraFrame is the Android bitmap adapter;
+CameraSession owns its lifetime through both asynchronous detectors. Recent
+face-region luminance helps a bright background avoid hiding a dark driver.
+Raw pixels determine usability; corrected pixels are shared by ML Kit and
+Face Landmarker. New lighting state flows through Observation/MonitorState to
+Flutter without image transfer. References reset on enhancement transitions or
+unusable evidence. No new camera/library dependencies or light overrides.
+See LOW_LIGHT.md for thresholds, synthetic evidence and real-night limitations.

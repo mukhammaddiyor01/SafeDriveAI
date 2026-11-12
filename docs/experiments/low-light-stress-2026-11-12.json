@@ -1,0 +1,68 @@
+{
+  "purpose": "Artificial degradation of prior train/development images only",
+  "not_training": true,
+  "not_real_night_accuracy": true,
+  "manifest_sha256": "0f31a8b748fdc2a9d92a7935352ebc29829aeb38c543ecef9995f40ed6e99427",
+  "model_sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff",
+  "code_sha256": "5fbfd0b997f9652bc4c7469270085a17af01f8541174264b174873358e31d3ba",
+  "mediapipe_version": "1.2.2",
+  "selected_hashes": [
+    "00076a78dc1a3f7c6183e627ae191c799011378ea39b9405e18c87e840b71f7d",
+    "0026f492f8f8b5f5151fecacab9f6514a17acba9ed4b5a542a540fea557b1263",
+    "004669b47c7d60b53e35dcff08a70cee99bd029551b6cc717b007d705d71194b",
+    "00559274dd74aac0d35abcae2e26b2e8d7ca0bf19c359c50f51e42937fc07f61",
+    "0679f5ff575907bd0d39ad1abae407f4778243ca35ddb2dc0684235014c8fdfa",
+    "0d4e923530b0d053efa35bbe1ad8305088da83b32541f1ad494aec3c7a33ed8a",
+    "1180cdda391e711a2fada8689be2ef8d0de12a25ac3b87a3ac5b17f3c8205ee5",
+    "1299fc059f756ee3a8024d0eb9d934d5a75ff5f41ca06197b8c5831947f3a0b0",
+    "000973e762953e5256121051eadc2f977157b3999da51bb82258470779bdccab",
+    "009d10995071f5c4e1763d94924e2e1ce5b1595803a2718344a3712102c1130f",
+    "01086d98ec219dc66c8c4a0f9aa70f17c44ad0ab20971cc01c9a33454af37230",
+    "03c45b58bebf2e9ce52e32ee9a9df9c1bd95b9b5b53abea1d47627114a603d29",
+    "0881652472cf696778d4d638edd844507060e54f5bddf8c350817308158e2723",
+    "177a4bd42497d7323d6a6cc1d1a4dc077a5e05cf365a65e9bc36c23333e48f8d",
+    "195579c5be947b37b565b2561bc770d025c0a51affa9cbee3553ac4a3b580c99",
+    "1fd24891a47241ca328d286f83dd820b7b06c9a38e41a0e767587f212cfbff1c",
+    "016e4676fe5c43e80599a9a0fefff9d220a2cd9a6b7a0a8f3743494e3fb7dc82",
+    "02a96d0a440243d604c26c930dad076603dcb14248fe671507048c159f33ef2b",
+    "0342972ae3ec0fb847d699f00f4b18589f421cbe58ecd56b609122079a52397b",
+    "035e037be222aae40b4e6233fcdb93f015ef21b669bf99f306de81956df89393",
+    "1d6089d92fff48fd24e0c769a9cb157e193a6af4cb9795a54bf4016476c52ddc",
+    "3df92bbcdc810eb37e129980ebd150bd50b0876eef292a244172c42d26a71b6a",
+    "602b09360290d92c06fcd197a776b596c61c7674c331393961e2a0b87881e481",
+    "b4ebf7a15b2901edf56ec87ded95f5e78c2214a98fd0475e88244dcc78889eb9"
+  ],
+  "variants": {
+    "black_control": {
+      "samples": 24,
+      "faces_found": 0,
+      "eye_geometry_available": 0
+    },
+    "dark_0.15": {
+      "samples": 24,
+      "faces_found": 24,
+      "eye_geometry_available": 24
+    },
+    "dark_0.3": {
+      "samples": 24,
+      "faces_found": 24,
+      "eye_geometry_available": 24
+    },
+    "enhanced_0.15": {
+      "samples": 24,
+      "faces_found": 24,
+      "eye_geometry_available": 24
+    },
+    "enhanced_0.3": {
+      "samples": 24,
+      "faces_found": 24,
+      "eye_geometry_available": 24
+    },
+    "original": {
+      "samples": 24,
+      "faces_found": 24,
+      "eye_geometry_available": 24
+    }
+  },
+  "limitations": "No ML Kit, Android CameraX, exposure noise, motion blur, FPS or real night validation. Eye geometry is not an open/closed prediction."
+}

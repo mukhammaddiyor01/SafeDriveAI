@@ -46,6 +46,31 @@ class FrameLightingTest {
             assertTrue(state.message.startsWith("Low light"))
         }
     }
+    @Test fun blackFramesBreakTheConsecutiveBrightRecoverySequence() {
+        val policy = LowLightPolicy()
+        policy.shouldEnhance(LuminanceStats(30, 10, 60))
+        repeat(4) { policy.shouldEnhance(LuminanceStats(120, 30, 220)) }
+        assertFalse(policy.shouldEnhance(LuminanceStats(0, 0, 0)))
+        repeat(4) { assertTrue(policy.shouldEnhance(LuminanceStats(120, 30, 220))) }
+        assertFalse(policy.shouldEnhance(LuminanceStats(120, 30, 220)))
+    }
+    @Test fun darknessCannotClearAHeldAlarmOrStartTheAssistant() {
+        val engine = DrowsinessEngine()
+        val recovery = RecoveryTrigger()
+        for (time in 0L..7700L step 100) {
+            val closed = time <= 3000 || time >= 4700
+            val state = engine.update(Observation(time, 1, yaw = 45f,
+                sideEyeOpenness = if (closed) 0.1f else 1f))
+            recovery.update(state, time)
+        }
+        for (time in 7800L..24000L step 100) {
+            val state = engine.update(Observation(time, 1, yaw = 45f,
+                sideEyeOpenness = 1f, lighting = Lighting.INSUFFICIENT))
+            assertTrue(state.alarm)
+            assertNull(state.eyesOpen)
+            assertFalse(recovery.update(state, time))
+        }
+    }
     @Test fun boundedToneIsMonotonicAndPreservesBlack() {
         val lut = LowLightTone.lookup
         assertEquals(0, lut[0])
