@@ -222,3 +222,12 @@ No night-mode implementation was started in this session.
 - Next: parked Galaxy A51 day-to-dim transitions, frontal and side open/closed
   eyes, true insufficient-light behavior, and held-alarm/assistant live flow.
   Fresh dataset training must retain subject-disjoint 80/20 and history auditing.
+
+
+## USB low-light release install — 2026-11-12
+
+Galaxy A51 (SM-A516N), Android 13 / API 33 was connected. The low-light release
+APK installed successfully; SHA-256 of the installed base APK matched the local
+release. MainActivity opened. Monitoring was not running in the post-install
+service check. Live day-to-dim/open-closed validation remains pending; installation
+is not evidence of night detection accuracy. No camera images were collected.

@@ -338,3 +338,12 @@ coverage gain, no eye-state accuracy and no actual night performance. No model
 was trained or threshold tuned on these results. See the low-light stress report.
 No connected phone test or install: the user is unavailable for physical testing.
 New camera bitmap/lifecycle behavior is compiled, not on-device validated yet.
+
+
+## USB low-light release install — 2026-11-12
+
+Galaxy A51 (SM-A516N), Android 13 / API 33 was connected. The low-light release
+APK installed successfully; SHA-256 of the installed base APK matched the local
+release. MainActivity opened. Monitoring was not running in the post-install
+service check. Live day-to-dim/open-closed validation remains pending; installation
+is not evidence of night detection accuracy. No camera images were collected.
